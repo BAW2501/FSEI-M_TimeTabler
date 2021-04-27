@@ -5,6 +5,8 @@ from openpyxl import load_workbook
 from resources import *
 
 if __name__ == '__main__':
+    # using the data in the test file to check the validity of the data model
+    # the code looks bad but it's only test code
     workbook = load_workbook(filename=Path(r"../test/Resources.xlsx"))
     Module_sheet = workbook['Modules']
     professor_sheet = workbook['Professors']

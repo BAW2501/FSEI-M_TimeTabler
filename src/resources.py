@@ -2,15 +2,13 @@ from enum import Enum
 from functools import lru_cache
 from typing import Union
 
+# this is temporary this will be later taken as class arguments
 timeslots_per_day = 8
 days_per_week = 5
 
 
-# TODO make a hard constraint class
-# TODO  make the PET class which should be like the CSP class from that bok
 # TODO make a mock up solver function
 # TODO  implement multiple teacher per type of session cause you can only set one for now
-# TODO  hurry you have taken too long to implement this
 
 
 class LimitedResource:
@@ -105,12 +103,19 @@ class Section(LimitedResource):
     def nb_group(self) -> int:
         return len(self.list_group)
 
+    @property
+    def effective(self):
+        return sum(group.effective for group in self.list_group)
+
     def is_available_on(self, day: int, slot_number: int) -> bool:
         return all([group.is_available_on(day, slot_number) for group in self.list_group])
 
     def set_busy_on(self, day: int, slot_number: int) -> None:
         for group in self.list_group:
             group.set_busy_on(day, slot_number)
+
+
+Attendance = Union[Group, Section]
 
 
 class Promotion:
@@ -152,7 +157,8 @@ class Department:
 
 
 class Session:
-    def __init__(self, attendance: Union[Group, Section], prof: Professor, s: Room, session_type: SessionType) -> None:
+
+    def __init__(self, attendance: Attendance, prof: Professor, s: Room, session_type: SessionType) -> None:
         super().__init__()
         self.attendance: Union[Group, Section] = attendance
         self.prof: Professor = prof
