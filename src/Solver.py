@@ -64,8 +64,6 @@ class StudentAvailability(Constraint):
         return g.is_available_on(day, slot)
 
 
-# TODO i only have one prof per assignment atm so better implement that later
-
 def best_fit_room(roomtype, effective) -> Room:
     pass
 

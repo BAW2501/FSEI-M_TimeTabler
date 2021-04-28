@@ -8,7 +8,6 @@ days_per_week = 5
 
 
 # TODO make a mock up solver function
-# TODO  implement multiple teacher per type of session cause you can only set one for now
 
 
 class LimitedResource:
@@ -64,21 +63,19 @@ class Module:
         self.nb_cour: int = nb_cours
         self.nb_td: int = nb_td
         self.nb_tp: int = nb_tp
-        self.cour_profs: set[Professor] = set()
-        self.td_profs: set[Professor] = set()
-        self.tp_profs: set[Professor] = set()
+        # for example (prof_a,[1,2,3]) means prof_a teaches attendance 1,2,3
+        self.cour_profs: set[(Professor, list[int])] = set()
+        self.td_profs: set[(Professor, list[int])] = set()
+        self.tp_profs: set[(Professor, list[int])] = set()
 
-    def assign_cour_prof(self, prof: Professor) -> None:
-        if prof.name is not None:
-            self.cour_profs.add(prof)
+    def assign_cour_prof(self, cour_profs: set[(Professor, list[int])]) -> None:
+        self.cour_profs = cour_profs
 
-    def assign_td_prof(self, prof: Professor) -> None:
-        if prof.name is not None:
-            self.td_profs.add(prof)
+    def assign_td_prof(self, td_profs: set[(Professor, list[int])]) -> None:
+        self.td_profs = td_profs
 
-    def assign_tp_prof(self, prof: Professor) -> None:
-        if prof.name is not None:
-            self.tp_profs.add(prof)
+    def assign_tp_prof(self, tp_profs: set[(Professor, list[int])]) -> None:
+        self.tp_profs = tp_profs
 
 
 class Group(LimitedResource):
