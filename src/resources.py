@@ -54,6 +54,9 @@ class Professor(LimitedResource):
     def __str__(self) -> str:
         return self.name
 
+    def __repr__(self) -> str:
+        return f'prof{self.name}'
+
 
 class Module:
     def __init__(self, name: str, abbreviation: str, nb_cours: int, nb_td: int, nb_tp: int) -> None:
@@ -63,19 +66,6 @@ class Module:
         self.nb_cour: int = nb_cours
         self.nb_td: int = nb_td
         self.nb_tp: int = nb_tp
-        # for example (prof_a,[1,2,3]) means prof_a teaches attendance 1,2,3
-        self.cour_profs: set[(Professor, list[int])] = set()
-        self.td_profs: set[(Professor, list[int])] = set()
-        self.tp_profs: set[(Professor, list[int])] = set()
-
-    def assign_cour_prof(self, cour_profs: set[(Professor, list[int])]) -> None:
-        self.cour_profs = cour_profs
-
-    def assign_td_prof(self, td_profs: set[(Professor, list[int])]) -> None:
-        self.td_profs = td_profs
-
-    def assign_tp_prof(self, tp_profs: set[(Professor, list[int])]) -> None:
-        self.tp_profs = tp_profs
 
 
 class Group(LimitedResource):
@@ -84,17 +74,29 @@ class Group(LimitedResource):
         self.number: int = number
         self.effective: int = effective
 
+    def __repr__(self) -> str:
+        return f'G{self.number}'
+
 
 class Section(LimitedResource):
 
-    def __init__(self) -> None:
+    def __init__(self, section_number: int) -> None:
         super().__init__()
+        self.number = section_number
         self.EDT: list[list[TimeSlot]] = [[TimeSlot(day_index, slot_index) for slot_index in range(timeslots_per_day)]
                                           for day_index in range(days_per_week)]
         self.list_group: list[Group] = []
+        # for example (prof_a,[1,2,3]) means prof_a teaches attendance 1,2,3
+        self.required_sessions: list[(Professor, Attendance, SessionType)] = list()
 
     def add_group(self, gr: Group) -> None:
         self.list_group.append(gr)
+
+    def add_required_session(self, tuple_details: (Professor, 'Attendance', SessionType)) -> None:
+        self.required_sessions.append(tuple_details)
+
+    def add_required_sessions(self, tuple_details: list[(Professor, 'Attendance', SessionType)]) -> None:
+        self.required_sessions.extend(tuple_details)
 
     @property
     def nb_group(self) -> int:
@@ -103,6 +105,9 @@ class Section(LimitedResource):
     @property
     def effective(self):
         return sum(group.effective for group in self.list_group)
+
+    def __repr__(self) -> str:
+        return f'sect{self.number}'
 
     def is_available_on(self, day: int, slot_number: int) -> bool:
         return all([group.is_available_on(day, slot_number) for group in self.list_group])
@@ -136,6 +141,23 @@ class Promotion:
     @property
     def nb_module(self) -> int:
         return len(self.canvas)
+
+    @property
+    def nb_group(self) -> int:
+        return sum([section.nb_group for section in self.list_section])
+
+    def find_section(self, section_index: int) -> Union[Section, None]:
+        for section in self.list_section:
+            if section.number == section_index:
+                return section
+        return None
+
+    def find_group(self, group_index: int) -> Union[Section, None]:
+        for sect in self.list_section:
+            for group in sect.list_group:
+                if group.number == group_index:
+                    return sect
+        return None
 
 
 class Department:
