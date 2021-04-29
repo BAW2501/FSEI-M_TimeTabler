@@ -67,6 +67,9 @@ class Module:
         self.nb_td: int = nb_td
         self.nb_tp: int = nb_tp
 
+    def __repr__(self) -> str:
+        return self.abbreviation
+
 
 class Group(LimitedResource):
     def __init__(self, number: int, effective: int) -> None:
@@ -87,15 +90,15 @@ class Section(LimitedResource):
                                           for day_index in range(days_per_week)]
         self.list_group: list[Group] = []
         # for example (prof_a,[1,2,3]) means prof_a teaches attendance 1,2,3
-        self.required_sessions: list[(Professor, Attendance, SessionType)] = list()
+        self.required_sessions: list[(Professor, 'Attendance', Module, SessionType)] = list()
 
     def add_group(self, gr: Group) -> None:
         self.list_group.append(gr)
 
-    def add_required_session(self, tuple_details: (Professor, 'Attendance', SessionType)) -> None:
+    def add_required_session(self, tuple_details: (Professor, 'Attendance', Module, SessionType)) -> None:
         self.required_sessions.append(tuple_details)
 
-    def add_required_sessions(self, tuple_details: list[(Professor, 'Attendance', SessionType)]) -> None:
+    def add_required_sessions(self, tuple_details: list[(Professor, 'Attendance', Module, SessionType)]) -> None:
         self.required_sessions.extend(tuple_details)
 
     @property

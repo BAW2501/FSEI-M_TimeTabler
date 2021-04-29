@@ -1,11 +1,13 @@
 import re
 from pathlib import Path
 from pprint import pprint
+
 from openpyxl import load_workbook
+
 from resources import *
 
 
-def parse_assignment(promo: Promotion, session_type: SessionType, assignment_str: str) -> None:
+def parse_assignment(promo: Promotion, module: Module, session_type: SessionType, assignment_str: str) -> None:
     regex = r"(\w+)\(([*0-9,]+[0-9]*)+\)"
     matches = re.finditer(regex, assignment_str)
 
@@ -19,7 +21,9 @@ def parse_assignment(promo: Promotion, session_type: SessionType, assignment_str
                 attendance = [int(section_index) for section_index in temp]
             for attendance_index in attendance:
                 if sect_found := promo.find_section(attendance_index):
-                    sect_found.add_required_session((Professor(prof), sect_found, session_type))
+                    # add multiplicity
+                    for _ in range(module.nb_cour):
+                        sect_found.add_required_session((Professor(prof), sect_found, module, session_type))
         else:
             # they are tds or tps
             if temp[0] == '*':
@@ -29,7 +33,10 @@ def parse_assignment(promo: Promotion, session_type: SessionType, assignment_str
             for group_index in attendance:
                 if sect_found := promo.find_group(group_index):
                     group = sect_found.list_group[group_index - 1]
-                    sect_found.add_required_session((Professor(prof), group, session_type))
+                    # add multiplicity
+                    multiplicity = module.nb_td if session_type is SessionType.Td else module.nb_tp
+                    for _ in range(multiplicity):
+                        sect_found.add_required_session((Professor(prof), group, module, session_type))
 
 
 if __name__ == '__main__':
@@ -57,15 +64,15 @@ if __name__ == '__main__':
     promoL3.add_section(sectionL3)
     promoL3.canvas = list(modules.values())
 
-    for assignment_row in professor_sheet.iter_rows(min_row=2, values_only=True):
+    for i, assignment_row in enumerate(professor_sheet.iter_rows(min_row=2, values_only=True)):
         # print(value)
         module_name, cour_assignment, td_assignment, tp_assignment = assignment_row
         if cour_assignment is not None:
-            parse_assignment(promoL3, SessionType.Cour, cour_assignment)
+            parse_assignment(promoL3, promoL3.canvas[i], SessionType.Cour, cour_assignment)
         if td_assignment is not None:
-            parse_assignment(promoL3, SessionType.Td, td_assignment)
+            parse_assignment(promoL3, promoL3.canvas[i], SessionType.Td, td_assignment)
         if tp_assignment is not None:
-            parse_assignment(promoL3, SessionType.Tp, tp_assignment)
+            parse_assignment(promoL3, promoL3.canvas[i], SessionType.Tp, tp_assignment)
 
     for room in rooms_sheet.iter_rows(min_row=2, values_only=True):
         room_name, room_type, capacity = room
