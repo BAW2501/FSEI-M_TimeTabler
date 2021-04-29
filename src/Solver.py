@@ -1,6 +1,5 @@
 import abc
 from abc import ABC, abstractmethod
-from copy import deepcopy
 
 from resources import *
 
@@ -68,26 +67,23 @@ def best_fit_room(roomtype, effective) -> Room:
     pass
 
 
-def get_detail(possible_session) -> (Professor, Attendance, SessionType):
-    pass
-
-
 class PET:
     """ this problem is a constraint satisfaction problem
     which in we have a set of variables in this example the set to time tables
     and a set of domains in this examples the sessions(les seances) one for each variable
-    and we have to assign the variables a value from their respective of domain """
+    and we have to assign the variables a value from their respective domain """
 
     def __init__(self, promos: list[Promotion]) -> None:
 
         # our variables
         self.section_list: list[Section] = [section for promo in promos for section in promo.list_section]
         # the domains but not in usable form
-        self.canvas_list: list[list[Module]] = [deepcopy(promo.canvas) for promo in promos for _ in
-                                                promo.list_section]
+        # self.canvas_list: list[list[Module]] = [deepcopy(promo.canvas) for promo in promos for _ in
+        #                                       promo.list_section]
         # our actual domains  not implemented yet until i clear up the type of input i'll be getting from the user
-        self.sessions_list: list[list[(Professor, Attendance, Module, SessionType)]] = []
-
+        self.sessions_list: list[list[(Professor, Attendance, Module, SessionType)]] = [section.required_sessions for
+                                                                                        promo in promos for section in
+                                                                                        promo.list_section]
         # list of hard and soft constraints pretty self explanatory
         self.hard_constraints: list[HardConstraint] = []
         self.soft_constraints: list[SoftConstraint] = []
@@ -114,18 +110,10 @@ class PET:
 
     def all_assigned(self) -> bool:
         # TODO this will change after i change the domains
-        for canvas in self.canvas_list:
-            for module in canvas:
-                # check if all remaining session numbers
+        for sect_sessions in self.sessions_list:
+            if len(sect_sessions) is not 0:
+                return False
 
-                unassigned = [module.nb_cour is not 0,
-                              module.nb_td is not 0,
-                              module.nb_tp is not 0]
-                # if there is any session number that's not zero
-                if any(unassigned):
-                    # then we still have a session remaining -> they aren't all assigned return false
-                    return False
-        # then if we checked them all  -> all assigned -> return true
         return True
 
     def first_available_slot(self) -> (int, int, int):
@@ -145,12 +133,11 @@ class PET:
             return True
         section_index, day, slot = self.first_available_slot()
         section = self.section_list[section_index]
-        canvas = self.canvas_list[section_index]
-        # TODO possibly change this also after i get a reply from mr miroud
+        sessions = self.sessions_list[section_index]
         # TODO implement all the helper functions for the solver to work
-        for possible_session in canvas:
+        for possible_session in sessions:
             # get possible session
-            prof, attendance, session_type = get_detail(possible_session)
+            prof, attendance, module, session_type = possible_session
             # find smalled possible appropriate room
             # TODO  add possibility of using td rooom+ datashow for cours
             room = best_fit_room(session_type, attendance.effective)
