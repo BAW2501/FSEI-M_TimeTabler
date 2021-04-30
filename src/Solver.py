@@ -63,17 +63,13 @@ class StudentAvailability(Constraint):
         return g.is_available_on(day, slot)
 
 
-def best_fit_room(roomtype, effective) -> Room:
-    pass
-
-
 class PET:
     """ this problem is a constraint satisfaction problem
     which in we have a set of variables in this example the set to time tables
     and a set of domains in this examples the sessions(les seances) one for each variable
     and we have to assign the variables a value from their respective domain """
 
-    def __init__(self, promos: list[Promotion]) -> None:
+    def __init__(self, promos: list[Promotion], rooms: list[Room]) -> None:
 
         # our variables
         self.section_list: list[Section] = [section for promo in promos for section in promo.list_section]
@@ -84,6 +80,7 @@ class PET:
         self.sessions_list: list[list[(Professor, Attendance, Module, SessionType)]] = [section.required_sessions for
                                                                                         promo in promos for section in
                                                                                         promo.list_section]
+        self.list_of_rooms: list[Room] = rooms
         # list of hard and soft constraints pretty self explanatory
         self.hard_constraints: list[HardConstraint] = []
         self.soft_constraints: list[SoftConstraint] = []
@@ -108,10 +105,22 @@ class PET:
 
         return all(available_and_valid)
 
+    def best_fit_room(self, session_type: SessionType, effective: int) -> (Room, LimitedResource):
+        """ find the smallest room that will fit for the session"""
+        rooms_that_fit = filter(lambda room: room.capacity >= effective, self.list_of_rooms)
+        if session_type == SessionType.Cour:
+            appropriate_rooms = filter(lambda room: room.type_salle == RoomType.amphi or room.type_salle == RoomType.td,
+                                       rooms_that_fit)
+            return min(appropriate_rooms), LimitedResource()
+        else:
+            appropriate_rooms = filter(lambda room: room.type_salle == RoomType.tp,
+                                       rooms_that_fit)
+            return min(appropriate_rooms), LimitedResource()
+
     def all_assigned(self) -> bool:
         # TODO this will change after i change the domains
         for sect_sessions in self.sessions_list:
-            if len(sect_sessions) is not 0:
+            if len(sect_sessions) != 0:
                 return False
 
         return True
@@ -140,7 +149,7 @@ class PET:
             prof, attendance, module, session_type = possible_session
             # find smalled possible appropriate room
             # TODO  add possibility of using td rooom+ datashow for cours
-            room = best_fit_room(session_type, attendance.effective)
+            room, equipment = self.best_fit_room(session_type, attendance.effective)
             # instantiate session object
             possible_session_object = Session(attendance, prof, room, session_type)
             if self.valid(possible_session_object, day, slot):

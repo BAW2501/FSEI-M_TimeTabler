@@ -37,11 +37,30 @@ class SessionType(Enum):
 
 
 class Room(LimitedResource):
+
     def __init__(self, name: str, type_room: RoomType, cap: int) -> None:
         super().__init__()
         self.name: str = name
         self.capacity: int = cap
         self.type_salle: RoomType = type_room
+
+    def __repr__(self) -> str:
+        return f"room({self.name},cap {self.capacity} ,type {self.type_salle})"
+
+    def __eq__(self, other: 'Room') -> bool:
+        return self.capacity == other.capacity
+
+    def __ge__(self, other: 'Room') -> bool:
+        return self.capacity >= other.capacity
+
+    def __gt__(self, other: 'Room') -> bool:
+        return self.capacity > other.capacity
+
+    def __le__(self, other: 'Room') -> bool:
+        return self.capacity <= other.capacity
+
+    def __lt__(self, other: 'Room') -> bool:
+        return self.capacity <= other.capacity
 
 
 @lru_cache(maxsize=None)

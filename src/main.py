@@ -4,6 +4,7 @@ from pprint import pprint
 
 from openpyxl import load_workbook
 
+from Solver import *
 from resources import *
 
 
@@ -49,7 +50,7 @@ if __name__ == '__main__':
     rooms_sheet = workbook['Rooms']
     modules = dict()
     professors = dict()
-    rooms = dict()
+    rooms = list()
     sectionL3 = Section(1)
 
     for group_row in groups_sheet.iter_rows(min_row=2, values_only=True):
@@ -76,15 +77,13 @@ if __name__ == '__main__':
 
     for room in rooms_sheet.iter_rows(min_row=2, values_only=True):
         room_name, room_type, capacity = room
-        rooms[room_name] = Room(room_name, room_type, capacity)
-        # print(room_name, room_type, capacity)
+        rooms.append( Room(room_name, room_type, capacity))
+        print(room_name, room_type, capacity)
 
     promos = [promoL3]
 
     # pprint(promoL3.EDT)
 
-    # problem_emploi_du_temp = PET
-    for sect in promoL3.list_section:
-        for assign in sect.required_sessions:
-            pprint(assign)
-    print(len(promoL3.list_section[0].required_sessions))
+    problem_emploi_du_temp = PET(promos,rooms)
+    print(problem_emploi_du_temp.all_assigned())
+
