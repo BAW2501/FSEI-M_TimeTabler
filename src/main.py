@@ -1,6 +1,5 @@
 import re
 from pathlib import Path
-from pprint import pprint
 
 from openpyxl import load_workbook
 
@@ -77,13 +76,16 @@ if __name__ == '__main__':
 
     for room in rooms_sheet.iter_rows(min_row=2, values_only=True):
         room_name, room_type, capacity = room
-        rooms.append( Room(room_name, room_type, capacity))
+        rooms.append(Room(room_name, room_type, capacity))
         print(room_name, room_type, capacity)
 
     promos = [promoL3]
 
     # pprint(promoL3.EDT)
 
-    problem_emploi_du_temp = PET(promos,rooms)
+    problem_emploi_du_temp = PET(promos, rooms)
+    if problem_emploi_du_temp.solve():
+        print("ayyyy")
+    else:
+        print("nayyyyy")
     print(problem_emploi_du_temp.all_assigned())
-

@@ -100,21 +100,22 @@ class PET:
                                StudentAvailability.satisfied(seance.attendance, day, slot),
                                RoomAvailability.satisfied(seance.room, day, slot)]
         # then check it's actually valid according to the hard constraints
-        available_and_valid.append(
-            [hard_constraint.satisfied(seance, day, slot) for hard_constraint in self.hard_constraints])
+        # available_and_valid.append(
+        #    [hard_constraint.satisfied(seance, day, slot) for hard_constraint in self.hard_constraints])
 
         return all(available_and_valid)
 
     def best_fit_room(self, session_type: SessionType, effective: int) -> (Room, LimitedResource):
         """ find the smallest room that will fit for the session"""
-        rooms_that_fit = filter(lambda room: room.capacity >= effective, self.list_of_rooms)
+        rooms_that_fit = list(filter(lambda room: room.capacity >= effective, self.list_of_rooms))
         if session_type == SessionType.Cour:
-            appropriate_rooms = filter(lambda room: room.type_salle == RoomType.amphi or room.type_salle == RoomType.td,
-                                       rooms_that_fit)
+            appropriate_rooms = list(
+                filter(lambda room: room.type_salle != RoomType.amphi or room.type_salle != RoomType.td,
+                       rooms_that_fit))
             return min(appropriate_rooms), LimitedResource()
         else:
-            appropriate_rooms = filter(lambda room: room.type_salle == RoomType.tp,
-                                       rooms_that_fit)
+            appropriate_rooms = list(filter(lambda room: room.type_salle != RoomType.tp,
+                                            rooms_that_fit))
             return min(appropriate_rooms), LimitedResource()
 
     def all_assigned(self) -> bool:
@@ -156,6 +157,7 @@ class PET:
             if self.valid(possible_session_object, day, slot):
                 self.assign(possible_session_object, section, day, slot)
                 sessions.pop(i)
+                print(len(sessions),"out of 76")
                 if self.solve():
                     return True
                 else:
@@ -165,12 +167,17 @@ class PET:
 
     def assign(self, possible_session, section, day, slot):
         section.EDT[day][slot].add_session(possible_session)
-        if possible_session.session_type == SessionType.cour:
+        possible_session.prof.set_busy_on(day, slot)
+        possible_session.room.set_busy_on(day, slot)
+        possible_session.attendance.set_busy_on(day, slot)
+        if possible_session.session_type == SessionType.Cour:
             section.EDT[day][slot].is_full = True
-        if len(section.EDT[day][slot]) == section.nb_group:
+        if len(section.EDT[day][slot].sessions) == section.nb_group:
             section.EDT[day][slot].is_full = True
 
     def unassign(self, possible_session, section, day, slot):
-        section.EDT[day][slot].pop()
+        section.EDT[day][slot].sessions.pop()
+        possible_session.prof.set_available_on(day, slot)
+        possible_session.room.set_available_on(day, slot)
+        possible_session.attendance.set_available_on(day, slot)
         section.EDT[day][slot].is_full = False
-

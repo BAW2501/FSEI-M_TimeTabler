@@ -23,6 +23,9 @@ class LimitedResource:
     def set_busy_on(self, day: int, slot_number: int) -> None:
         self.available[day][slot_number] = False
 
+    def set_available_on(self, day: int, slot_number: int) -> None:
+        self.available[day][slot_number] = True
+
 
 class RoomType(Enum):
     amphi = 1
@@ -137,6 +140,10 @@ class Section(LimitedResource):
     def set_busy_on(self, day: int, slot_number: int) -> None:
         for group in self.list_group:
             group.set_busy_on(day, slot_number)
+
+    def set_available_on(self, day: int, slot_number: int) -> None:
+        for group in self.list_group:
+            group.set_available_on(day, slot_number)
 
 
 Attendance = Union[Group, Section]
