@@ -144,23 +144,33 @@ class PET:
         section = self.section_list[section_index]
         sessions = self.sessions_list[section_index]
         # TODO implement all the helper functions for the solver to work
-        for possible_session in sessions:
+        for i, possible_session in enumerate(sessions):
             # get possible session
             prof, attendance, module, session_type = possible_session
             # find smalled possible appropriate room
             # TODO  add possibility of using td rooom+ datashow for cours
+            # equipment is just a placeholder rn
             room, equipment = self.best_fit_room(session_type, attendance.effective)
             # instantiate session object
             possible_session_object = Session(attendance, prof, room, session_type)
             if self.valid(possible_session_object, day, slot):
-                self.assign(possible_session, section, day, slot)
+                self.assign(possible_session_object, section, day, slot)
+                sessions.pop(i)
                 if self.solve():
                     return True
                 else:
-                    self.unassign(possible_session, section, day, slot)
+                    self.unassign(possible_session_object, section, day, slot)
+                    sessions.insert(i, possible_session)
+        return False
 
     def assign(self, possible_session, section, day, slot):
-        pass
+        section.EDT[day][slot].add_session(possible_session)
+        if possible_session.session_type == SessionType.cour:
+            section.EDT[day][slot].is_full = True
+        if len(section.EDT[day][slot]) == section.nb_group:
+            section.EDT[day][slot].is_full = True
 
     def unassign(self, possible_session, section, day, slot):
-        pass
+        section.EDT[day][slot].pop()
+        section.EDT[day][slot].is_full = False
+
