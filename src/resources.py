@@ -3,7 +3,7 @@ from functools import lru_cache
 from typing import Union
 
 # this is temporary this will be later taken as class arguments
-timeslots_per_day = 8
+timeslots_per_day = 7
 days_per_week = 5
 
 
@@ -15,7 +15,7 @@ class LimitedResource:
         super().__init__()
         self.days: int = days
         self.slots_per_day: int = slots_per_day
-        self.available: list = [[True] * self.slots_per_day] * self.days
+        self.available: list = [[True for x in range(slots_per_day)] for x2 in range(days)]
 
     def is_available_on(self, day: int, slot_number: int) -> bool:
         return self.available[day][slot_number]
@@ -48,7 +48,9 @@ class Room(LimitedResource):
         self.type_salle: RoomType = type_room
 
     def __repr__(self) -> str:
-        return f"room({self.name},cap {self.capacity} ,type {self.type_salle})"
+        return f"room({self.name}"
+
+    # ,cap {self.capacity} ,type {self.type_salle})"
 
     def __eq__(self, other: 'Room') -> bool:
         return self.capacity == other.capacity
@@ -206,12 +208,20 @@ class Department:
 
 class Session:
 
-    def __init__(self, attendance: Attendance, prof: Professor, s: Room, session_type: SessionType) -> None:
+    def __init__(self, attendance: Attendance, prof: Professor, module: Module, s: Room,
+                 session_type: SessionType) -> None:
         super().__init__()
         self.attendance: Union[Group, Section] = attendance
         self.prof: Professor = prof
+        self.module = module
         self.room: Room = s
         self.session_type: SessionType = session_type
+
+    def __repr__(self) -> str:
+        return f"{self.room},{self.prof},{self.attendance},{self.module},{self.session_type}"
+
+    def __str__(self) -> str:
+        return f"{self.room.name},{self.prof.name},{self.attendance},{self.module},{self.session_type._name_}"
 
 
 class TimeSlot:
@@ -231,4 +241,4 @@ class TimeSlot:
         return len(self.sessions) == 0
 
     def __repr__(self) -> str:
-        return f"({self.day},{self.slot_number})"
+        return self.sessions.__repr__()
