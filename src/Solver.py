@@ -1,6 +1,5 @@
 import abc
 from abc import ABC, abstractmethod
-from pprint import pprint
 
 from resources import *
 
@@ -106,19 +105,27 @@ class PET:
 
         return all(available_and_valid)
 
-    def best_fit_room(self, session_type: SessionType, effective: int,day,slot) -> (Room, LimitedResource):
+    def best_fit_room(self, session_type: SessionType, effective: int, day, slot) -> (Room, LimitedResource):
         """ find the smallest room that will fit for the session"""
-        rooms_that_fit = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day,slot), self.list_of_rooms))
+        rooms_that_fit = list(
+            filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot), self.list_of_rooms))
+        appropriate_rooms = []
         if session_type == SessionType.Cour:
-            appropriate_rooms = list(
-                filter(lambda room: room.type_salle != RoomType.amphi or room.type_salle != RoomType.td,
-                       rooms_that_fit))
-            return min(appropriate_rooms), LimitedResource()
-        else:
-            needed = RoomType.td if session_type == SessionType.Td else RoomType.tp
-            appropriate_rooms = list(filter(lambda room: room.type_salle != needed,
-                                            rooms_that_fit))
-            return min(appropriate_rooms), LimitedResource()
+
+            for room in rooms_that_fit:
+                if room.type_salle == RoomType.amphi.value or room.type_salle == RoomType.tp.value:
+                    appropriate_rooms.append(room)
+        if session_type == SessionType.Td:
+            for room in rooms_that_fit:
+                if room.type_salle == RoomType.td.value:
+                    appropriate_rooms.append(room)
+        if session_type == SessionType.Tp:
+            for room in rooms_that_fit:
+                if room.type_salle == RoomType.tp.value:
+                    appropriate_rooms.append(room)
+        if appropriate_rooms == []:
+            return None, None
+        return min(appropriate_rooms), LimitedResource()
 
     def all_assigned(self) -> bool:
         # TODO this will change after i change the domains
@@ -148,34 +155,34 @@ class PET:
         sessions = self.sessions_list[section_index]
         i = 0
         # for i, possible_session in enumerate(sessions):
-            # get possible session
+        # get possible session
         while sessions and i < len(sessions):
             possible_session = sessions[i]
             prof, attendance, module, session_type = possible_session
             # find smalled possible appropriate room
             # TODO  add possibility of using td rooom+ datashow for cours
             # equipment is just a placeholder rn
-            room, equipment = self.best_fit_room(session_type, attendance.effective,day,slot)
+            room, equipment = self.best_fit_room(session_type, attendance.effective, day, slot)
             # instantiate session object
-            possible_session_object = Session(attendance, prof,module, room, session_type)
-            if self.valid(possible_session_object, day, slot):
+            possible_session_object = Session(attendance, prof, module, room, session_type)
+            if room and self.valid(possible_session_object, day, slot):
                 self.assign(possible_session_object, section, day, slot)
                 sessions.pop(i)
-                print(len(sessions),"out of 76")
+                print(len(sessions), "out of 76")
                 if self.solve():
                     return True
                 else:
                     self.unassign(possible_session_object, section, day, slot)
                     sessions.insert(i, possible_session)
-                    i=i+1
+                    i = i + 1
             else:
-                i=i+1
+                i = i + 1
         self.section_list[section_index].EDT[day][slot].is_full = True
         if self.solve():
             return True
 
     def assign(self, possible_session, section, day, slot):
-        print(day,slot)
+        print(day, slot)
         section.EDT[day][slot].add_session(possible_session)
         possible_session.prof.set_busy_on(day, slot)
         possible_session.room.set_busy_on(day, slot)
