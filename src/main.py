@@ -90,4 +90,13 @@ if __name__ == '__main__':
         print("nayyyyy")
     print(problem_emploi_du_temp.all_assigned())
 
-
+    # saving solution to an excel file
+    workbook = load_workbook(filename=Path(r"../test/result.xlsx"))
+    EDT_sheet = workbook["L3"]
+    print(EDT_sheet[7][1].value)
+    for j,day in enumerate(sectionL3.EDT, start=1):
+        for k,slot in enumerate(day, start=2):
+            for i, session in enumerate(slot.sessions, start=1):
+                print(j * 7 + i,k)
+                EDT_sheet.cell(j * 7 + i,k).value = str(session)
+    workbook.save('L3.xlsx')
