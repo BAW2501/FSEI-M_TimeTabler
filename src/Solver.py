@@ -107,23 +107,18 @@ class PET:
 
     def best_fit_room(self, session_type: SessionType, effective: int, day, slot) -> (Room, LimitedResource):
         """ find the smallest room that will fit for the session"""
-        rooms_that_fit = list(
-            filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot), self.list_of_rooms))
-        appropriate_rooms = []
-        if session_type == SessionType.Cour:
 
-            for room in rooms_that_fit:
-                if room.type_salle == RoomType.amphi.value or room.type_salle == RoomType.tp.value:
-                    appropriate_rooms.append(room)
-        if session_type == SessionType.Td:
-            for room in rooms_that_fit:
-                if room.type_salle == RoomType.td.value:
-                    appropriate_rooms.append(room)
+        appropriate_type = []
         if session_type == SessionType.Tp:
-            for room in rooms_that_fit:
-                if room.type_salle == RoomType.tp.value:
-                    appropriate_rooms.append(room)
-        if appropriate_rooms == []:
+            appropriate_type.append(RoomType.tp.value)
+        else:
+            appropriate_type.append(RoomType.td.value)
+        if session_type == SessionType.Cour:
+            appropriate_type.append(RoomType.amphi.value)
+        appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
+                                                     and room.type_salle in appropriate_type, self.list_of_rooms))
+
+        if not appropriate_rooms:
             return None, None
         return min(appropriate_rooms), LimitedResource()
 
