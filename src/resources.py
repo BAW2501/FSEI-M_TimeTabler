@@ -15,7 +15,7 @@ class LimitedResource:
         super().__init__()
         self.days: int = days
         self.slots_per_day: int = slots_per_day
-        self.available: list = [[True for x in range(slots_per_day)] for x2 in range(days)]
+        self.available: list = [[True for _ in range(slots_per_day)] for _ in range(days)]
 
     def is_available_on(self, day: int, slot_number: int) -> bool:
         return self.available[day][slot_number]
@@ -48,9 +48,7 @@ class Room(LimitedResource):
         self.type_salle: RoomType = type_room
 
     def __repr__(self) -> str:
-        return f"room({self.name}"
-
-    # ,cap {self.capacity} ,type {self.type_salle})"
+        return self.name
 
     def __eq__(self, other: 'Room') -> bool:
         return self.capacity == other.capacity
@@ -221,7 +219,7 @@ class Session:
         return f"{self.room},{self.prof},{self.attendance},{self.module},{self.session_type}"
 
     def __str__(self) -> str:
-        return f"{self.room.name},{self.prof.name},{self.attendance},{self.module},{self.session_type._name_}"
+        return f"{self.room.name},{self.prof.name},{self.attendance},{self.module},{self.session_type.name}"
 
 
 class TimeSlot:

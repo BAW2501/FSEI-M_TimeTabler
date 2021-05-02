@@ -77,7 +77,7 @@ if __name__ == '__main__':
     for room in rooms_sheet.iter_rows(min_row=2, values_only=True):
         room_name, room_type, capacity = room
         rooms.append(Room(room_name, room_type, capacity))
-        print(room_name, room_type, capacity)
+        # print(room_name, room_type, capacity)
 
     promos = [promoL3]
 
@@ -85,18 +85,17 @@ if __name__ == '__main__':
 
     problem_emploi_du_temp = PET(promos, rooms)
     if problem_emploi_du_temp.solve():
-        print("ayyyy")
+        print("successfully generated EDT")
     else:
-        print("nayyyyy")
-    print(problem_emploi_du_temp.all_assigned())
+        print("nope debug more")
 
     # saving solution to an excel file
     workbook = load_workbook(filename=Path(r"../test/result.xlsx"))
     EDT_sheet = workbook["L3"]
-    print(EDT_sheet[7][1].value)
-    for j,day in enumerate(sectionL3.EDT, start=1):
-        for k,slot in enumerate(day, start=2):
+    # print(EDT_sheet[7][1].value)
+    for j, day in enumerate(sectionL3.EDT, start=1):
+        for k, slot in enumerate(day, start=2):
             for i, session in enumerate(slot.sessions, start=1):
-                print(j * 7 + i,k)
-                EDT_sheet.cell(j * 7 + i,k).value = str(session)
+                # print(j * 7 + i,k)
+                EDT_sheet.cell(j * 7 + i, k).value = str(session)
     workbook.save('L3.xlsx')
