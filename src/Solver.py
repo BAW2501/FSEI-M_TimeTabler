@@ -1,24 +1,15 @@
-import abc
 from abc import ABC, abstractmethod
 
 from resources import *
 
 
-class Constraint(ABC):
-    # abstract constraint class
-    @staticmethod
-    def satisfied(res: LimitedResource, day: int, slot: int) -> bool:
-        ...
-
-
 class HardConstraint(ABC):
     # abstract Hard Constraint class
-    def __init__(self, section_timetables: list[Section], section_canvases: list[list[Module]]) -> None:
+    def __init__(self, section_timetables: list[Section] = None, section_canvases: list[list[Module]] = None) -> None:
         super().__init__()
         self.section_timetables = section_timetables
         self.section_canvases = section_canvases
 
-    @abc.abstractmethod
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         ...
 
@@ -33,36 +24,60 @@ class SoftConstraint(ABC):
         ...
 
 
-class ProfessorAvailability(Constraint):
+class ProfessorAvailability(HardConstraint):
     """a Professor can only teach one session at any given time slot
      so we need to check that """
 
     # so we need to check if assigning a professor break  this constraint in the method below
-    @staticmethod
-    def satisfied(prof: Professor, day: int, slot: int) -> bool:
-        return prof.is_available_on(day, slot)
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
+        return seance.prof.is_available_on(day, slot)
 
 
-class RoomAvailability(Constraint):
+class RoomAvailability(HardConstraint):
     """a Room can only be used for one session at any given time slot
      so we need to check that """
 
     # so we need to check if assigning a professor break  this constraint in the method below
-    @staticmethod
-    def satisfied(room: Room, day: int, slot: int) -> bool:
-        return room.is_available_on(day, slot)
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
+        return seance.room.is_available_on(day, slot)
 
 
-class StudentAvailability(Constraint):
+class StudentAvailability(HardConstraint):
     """a group can only be taught one session at any given time slot
      so we need to check that """
 
     # so we need to check if assigning a professor break  this constraint in the method below
-    @staticmethod
-    def satisfied(g: Group, day: int, slot: int) -> bool:
-        return g.is_available_on(day, slot)
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
+        return seance.attendance.is_available_on(day, slot)
 
 
+class ThreeConsecutiveMaxSessions(HardConstraint):
+    """a group or professor should have at most Three consecutive sessions """
+
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
+        if slot < 3:
+            return True
+        if any(seance.prof.available[day][slot - 3:slot]):
+            return True
+        return False
+
+
+class TwoCourPerDayMax(HardConstraint):
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
+        if slot < 2 or seance.session_type != SessionType.Cour:
+            return True
+
+        # if seance.session_type == SessionType.Cour:
+        #     day_edt_section = seance.attendance.EDT[day][0:slot - 1]
+        #     return sum([1 for slot in day_edt_section if slot.sessions and slot.sessions[0].session_type == SessionType.Cour]) < 2
+        # return False
+        cour_count = 0
+        for slot in seance.attendance.EDT[day]:
+            if slot.sessions:
+                if slot.sessions[0].session_type == SessionType.Cour:
+                    cour_count += 1
+
+        return cour_count < 2
 class PET:
     """ this problem is a constraint satisfaction problem
     which in we have a set of variables in this example the set to time tables
@@ -93,17 +108,11 @@ class PET:
 
     def valid(self, seance: Session, day: int, slot: int) -> bool:
         """ check that the timetable is still valid when inserting a new session  """
-
         # first check it's physically possible
 
-        available_and_valid = [ProfessorAvailability.satisfied(seance.prof, day, slot),
-                               StudentAvailability.satisfied(seance.attendance, day, slot),
-                               RoomAvailability.satisfied(seance.room, day, slot)]
         # then check it's actually valid according to the hard constraints
-        # available_and_valid.append(
-        #    [hard_constraint.satisfied(seance, day, slot) for hard_constraint in self.hard_constraints])
 
-        return all(available_and_valid)
+        return all([constraint.satisfied(seance, day, slot) for constraint in self.hard_constraints])
 
     def best_fit_room(self, session_type: SessionType, effective: int, day, slot) -> (Room, LimitedResource):
         """ find the smallest room that will fit for the session"""
@@ -115,9 +124,11 @@ class PET:
             appropriate_type.append(RoomType.td.value)
         if session_type == SessionType.Cour:
             appropriate_type.append(RoomType.amphi.value)
-        appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
-                                                     and room.type_salle in appropriate_type, self.list_of_rooms))
-
+        # appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
+        #                                             and room.type_salle in appropriate_type, self.list_of_rooms))
+        appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
+                             and room.is_available_on(day, slot)
+                             and room.type_salle in appropriate_type]
         if not appropriate_rooms:
             return None, None
         return min(appropriate_rooms), LimitedResource()

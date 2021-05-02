@@ -1,4 +1,5 @@
 import re
+import time
 from pathlib import Path
 
 from openpyxl import load_workbook
@@ -40,6 +41,7 @@ def parse_assignment(promo: Promotion, module: Module, session_type: SessionType
 
 
 if __name__ == '__main__':
+    start = time.perf_counter()
     # using the data in the test file to check the validity of the data model
     # the code looks bad but it's only test code
     workbook = load_workbook(filename=Path(r"../test/Resources.xlsx"))
@@ -74,18 +76,27 @@ if __name__ == '__main__':
         if tp_assignment is not None:
             parse_assignment(promoL3, promoL3.canvas[i], SessionType.Tp, tp_assignment)
 
+    sectionL3.required_sessions.sort(key=lambda s: s[3].value)
     for room in rooms_sheet.iter_rows(min_row=2, values_only=True):
         room_name, room_type, capacity = room
         rooms.append(Room(room_name, room_type, capacity))
         # print(room_name, room_type, capacity)
-
     promos = [promoL3]
 
     # pprint(promoL3.EDT)
-
+    end = time.perf_counter()
+    print("Time for import from excel +:", end - start)
+    start = time.perf_counter()
     problem_emploi_du_temp = PET(promos, rooms)
+    problem_emploi_du_temp.add_hard_constraint(ProfessorAvailability())
+    problem_emploi_du_temp.add_hard_constraint(StudentAvailability())
+    problem_emploi_du_temp.add_hard_constraint(RoomAvailability())
+    problem_emploi_du_temp.add_hard_constraint(ThreeConsecutiveMaxSessions())
+    problem_emploi_du_temp.add_hard_constraint(TwoCourPerDayMax())
+
     if problem_emploi_du_temp.solve():
-        print("successfully generated EDT")
+        end = time.perf_counter()
+        print("successfully generated EDT in", end - start)
     else:
         print("nope debug more")
 
@@ -97,5 +108,8 @@ if __name__ == '__main__':
         for k, slot in enumerate(day, start=2):
             for i, session in enumerate(slot.sessions, start=1):
                 # print(j * 7 + i,k)
+                if session.session_type == SessionType.Cour:
+                    EDT_sheet.merge_cells(start_row=j * 7 + i, start_column=k, end_row=(j + 1) * 7 + i - 1,
+                                          end_column=k)
                 EDT_sheet.cell(j * 7 + i, k).value = str(session)
     workbook.save('L3.xlsx')
