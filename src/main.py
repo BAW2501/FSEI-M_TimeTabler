@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 
 from openpyxl import load_workbook
+from openpyxl.styles import Font, Alignment
 
 from Solver import *
 from resources import *
@@ -106,10 +107,15 @@ if __name__ == '__main__':
     # print(EDT_sheet[7][1].value)
     for j, day in enumerate(sectionL3.EDT, start=1):
         for k, slot in enumerate(day, start=2):
+            slot.sessions.sort(key=lambda s: s.attendance.number)
             for i, session in enumerate(slot.sessions, start=1):
                 # print(j * 7 + i,k)
                 if session.session_type == SessionType.Cour:
                     EDT_sheet.merge_cells(start_row=j * 7 + i, start_column=k, end_row=(j + 1) * 7 + i - 1,
                                           end_column=k)
+                    EDT_sheet.cell(j * 7 + i, k).font = Font(bold=True)
+                    EDT_sheet.cell(j * 7 + i, k).alignment = Alignment(wrap_text=True, horizontal='center',
+                                                                       vertical='center')
                 EDT_sheet.cell(j * 7 + i, k).value = str(session)
     workbook.save('L3.xlsx')
+    print("EDT is in \\src\\L3.xlsx ")

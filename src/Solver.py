@@ -10,6 +10,7 @@ class HardConstraint(ABC):
         self.section_timetables = section_timetables
         self.section_canvases = section_canvases
 
+    @abstractmethod
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         ...
 
@@ -67,10 +68,6 @@ class TwoCourPerDayMax(HardConstraint):
         if slot < 2 or seance.session_type != SessionType.Cour:
             return True
 
-        # if seance.session_type == SessionType.Cour:
-        #     day_edt_section = seance.attendance.EDT[day][0:slot - 1]
-        #     return sum([1 for slot in day_edt_section if slot.sessions and slot.sessions[0].session_type == SessionType.Cour]) < 2
-        # return False
         cour_count = 0
         for slot in seance.attendance.EDT[day]:
             if slot.sessions:
@@ -78,6 +75,8 @@ class TwoCourPerDayMax(HardConstraint):
                     cour_count += 1
 
         return cour_count < 2
+
+
 class PET:
     """ this problem is a constraint satisfaction problem
     which in we have a set of variables in this example the set to time tables

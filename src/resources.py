@@ -132,7 +132,7 @@ class Section(LimitedResource):
         return sum(group.effective for group in self.list_group)
 
     def __repr__(self) -> str:
-        return f'sect{self.number}'
+        return f'section {self.number}'
 
     def is_available_on(self, day: int, slot_number: int) -> bool:
         return all([group.is_available_on(day, slot_number) for group in self.list_group])
@@ -219,7 +219,7 @@ class Session:
         return f"{self.room},{self.prof},{self.attendance},{self.module},{self.session_type}"
 
     def __str__(self) -> str:
-        return f"{self.room.name},{self.prof.name},{self.attendance},{self.module},{self.session_type.name}"
+        return f"{self.module}, {self.session_type.name.upper()}/ {self.attendance}, {self.room.name}, {self.prof.name}"
 
 
 class TimeSlot:
