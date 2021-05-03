@@ -107,7 +107,7 @@ if __name__ == '__main__':
                     for group in sect_i.list_group:
                         for _ in range(mod.nb_td):
                             sect_i.add_required_session((tp_profs.pop(), group, mod, SessionType.Tp))
-                    # sect_i.required_sessions.sort(key=lambda s: s[3].value)
+                    sect_i.required_sessions.sort(key=lambda s: s[3].value)
 
     # promoL3 = Promotion("L3")
     # promoL3.add_section(sectionL3)
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     # print("Time for import from excel +:", end - start)
     # start = time.perf_counter()
     promos = list(promos.values())
-    promos.reverse()
+    # promos.reverse()
     problem_emploi_du_temp = PET(promos, rooms)
     problem_emploi_du_temp.add_hard_constraint(ProfessorAvailability())
     problem_emploi_du_temp.add_hard_constraint(StudentAvailability())
@@ -145,5 +145,5 @@ if __name__ == '__main__':
         print("successfully generated EDT in")
     else:
         print("nope debug more")
-    promos.reverse()
+    # promos.reverse()
     excel_export_EDT(list(promos))
