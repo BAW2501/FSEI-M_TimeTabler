@@ -41,8 +41,8 @@ def excel_export_EDT(promo_list: list[Promotion]):
                                                                                          horizontal='center',
                                                                                          vertical='center')
                         EDT_sheet.cell(start_session_index, k).value = str(session)
-            # export_workbook.remove(export_workbook["L3"])
-            export_workbook.save('Department MI.xlsx')
+    del export_workbook["template"]
+    export_workbook.save('Department MI.xlsx')
 
 
 if __name__ == '__main__':
