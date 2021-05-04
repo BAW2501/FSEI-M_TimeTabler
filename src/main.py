@@ -27,11 +27,11 @@ def excel_export_EDT(promo_list: list[Promotion]):
                     slot.sessions.sort(key=lambda s: s.attendance.number)
                     for session_index, session in enumerate(slot.sessions, start=1):
                         # print(j * 7 + i,k)
-                        nb_row = max(7,sect.nb_group)
+                        nb_row = max(9,sect.nb_group)
                         start_session_index = (j - 1) * nb_row + session_index + 7
                         end_session_index = j * nb_row + session_index - 1 + 7
-                        if nb_row > 7:
-                            EDT_sheet.insert_rows(end_session_index - 2, nb_row - 7)
+                        if nb_row > 9:
+                            EDT_sheet.insert_rows(end_session_index - 2, nb_row - 9)
                         if session.session_type == SessionType.Cour:
                             EDT_sheet.merge_cells(start_row=start_session_index, start_column=k,
                                                   end_row=end_session_index,
@@ -107,7 +107,7 @@ if __name__ == '__main__':
                     for group in sect_i.list_group:
                         for _ in range(mod.nb_td):
                             sect_i.add_required_session((tp_profs.pop(), group, mod, SessionType.Tp))
-                    sect_i.required_sessions.sort(key=lambda s: s[3].value)
+                    #sect_i.required_sessions.sort(key=lambda s: s[3].value)
 
     # promoL3 = Promotion("L3")
     # promoL3.add_section(sectionL3)

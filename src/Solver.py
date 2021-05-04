@@ -188,7 +188,7 @@ class PET:
         possible_session.attendance.set_busy_on(day, slot)
         if possible_session.session_type == SessionType.Cour:
             section.EDT[day][slot].is_full = True
-        if len(section.EDT[day][slot].sessions) == section.nb_group//2 +1 :
+        if len(section.EDT[day][slot].sessions) == section.nb_group // 2 + 1:
             section.EDT[day][slot].is_full = True
         # pprint(section.EDT)
 
