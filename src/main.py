@@ -27,7 +27,7 @@ def excel_export_EDT(promo_list: list[Promotion]):
                     slot.sessions.sort(key=lambda s: s.attendance.number)
                     for session_index, session in enumerate(slot.sessions, start=1):
                         # print(j * 7 + i,k)
-                        nb_row = max(9,sect.nb_group)
+                        nb_row = max(9, sect.nb_group)
                         start_session_index = (j - 1) * nb_row + session_index + 7
                         end_session_index = j * nb_row + session_index - 1 + 7
                         if nb_row > 9:
@@ -102,12 +102,12 @@ if __name__ == '__main__':
                 for prof_string in tp_profs_strings:
                     name = prof_string.split("(")[0]
                     times = int(prof_string[prof_string.find("(") + 1].split(")")[0])
-                    tp_profs.extend([Professor(name) for _ in range(times * mod.nb_td)])
+                    tp_profs.extend([Professor(name) for _ in range(times * mod.nb_tp)])
                 for sect_i in promos[promo_name].list_section:
                     for group in sect_i.list_group:
-                        for _ in range(mod.nb_td):
+                        for _ in range(mod.nb_tp):
                             sect_i.add_required_session((tp_profs.pop(), group, mod, SessionType.Tp))
-                    #sect_i.required_sessions.sort(key=lambda s: s[3].value)
+                    # sect_i.required_sessions.sort(key=lambda s: s[3].value)
 
     # promoL3 = Promotion("L3")
     # promoL3.add_section(sectionL3)
@@ -128,12 +128,13 @@ if __name__ == '__main__':
         room_name, room_type, capacity = room
         # print(room)
         rooms.append(Room(room_name, room_type, capacity))
-
-    # print("Time for import from excel +:", end - start)
-    # start = time.perf_counter()
+    end = time.perf_counter()
+    print("Time for import from excel +:", end - start)
+    start = time.perf_counter()
     promos = list(promos.values())
     # promos.reverse()
     problem_emploi_du_temp = PET(promos, rooms)
+    number_assignments = sum(len(session_list) for session_list in problem_emploi_du_temp.sessions_list)
     problem_emploi_du_temp.add_hard_constraint(ProfessorAvailability())
     problem_emploi_du_temp.add_hard_constraint(StudentAvailability())
     problem_emploi_du_temp.add_hard_constraint(RoomAvailability())
@@ -141,9 +142,12 @@ if __name__ == '__main__':
     problem_emploi_du_temp.add_hard_constraint(TwoCourPerDayMax())
     #
     if problem_emploi_du_temp.solve():
-        #     end = time.perf_counter()
-        print("successfully generated EDT in")
+        end = time.perf_counter()
+        print("successfully generated EDT(", number_assignments, " assignments) in", end - start)
     else:
         print("nope debug more")
     # promos.reverse()
+    start = time.perf_counter()
     excel_export_EDT(list(promos))
+    end = time.perf_counter()
+    print("exported in", end - start)
