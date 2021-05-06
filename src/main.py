@@ -8,9 +8,10 @@ from Solver import *
 from resources import *
 
 
-def excel_export_EDT(promo_list: list[Promotion]):
+def excel_export(promo_list: list[Promotion]):
     # saving solution to an excel file
     export_workbook = load_workbook(filename=Path(r"../test/result.xlsx"))
+
     for promo in promo_list:
         for sect in promo.list_section:
             EDT_sheet = export_workbook.copy_worksheet(export_workbook["template"])
@@ -45,32 +46,28 @@ def excel_export_EDT(promo_list: list[Promotion]):
     export_workbook.save('Department MI.xlsx')
 
 
-if __name__ == '__main__':
-    start = time.perf_counter()
+def get_data(xlsx):
+    modules_dict = dict()
+    promos_dict = dict()
+    professors_dict = dict()
     # using the data in the test file to check the validity of the data model
     # the code looks bad but it's only test code
-    workbook = load_workbook(filename=Path(r"../test/Resources.xlsx"), read_only=True)
+    workbook = load_workbook(filename=Path(xlsx), read_only=True)
     Module_sheet = workbook['Modules']
-    professor_sheet = workbook['Professors']
     promos_sheet = workbook['Promos']
     rooms_sheet = workbook['Rooms']
-    modules = dict()
-    promos = dict()
-    professors = dict()
-    rooms = list()
-    sectionL3 = Section(1)
     for promo_row in promos_sheet.iter_rows(min_row=2, values_only=True):
         promo_name, nb_section, nb_group, group_effective, mod_start, mod_end = promo_row
-        promos[promo_name] = Promotion(promo_name)
-        promos[promo_name].list_section = [Section(i + 1) for i in range(nb_section)]
-        for section in promos[promo_name].list_section:
+        promos_dict[promo_name] = Promotion(promo_name)
+        promos_dict[promo_name].list_section = [Section(i + 1) for i in range(nb_section)]
+        for section in promos_dict[promo_name].list_section:
             section.list_group = [Group(i + 1, group_effective) for i in range(nb_group // nb_section)]
             nb_group -= nb_group // nb_section
             nb_section -= 1
         for module_row in Module_sheet.iter_rows(min_row=mod_start, max_row=mod_end, min_col=2, values_only=True):
             # print(module_row)
             mod = Module(module_row[0], module_row[1], module_row[2] or 0, module_row[3] or 0, module_row[4] or 0)
-            modules[module_row[0]] = mod
+            modules_dict[module_row[0]] = mod
             cour_str, td_str, tp_str = module_row[5], module_row[6], module_row[7]
             if cour_str:
                 cour_profs_strings = cour_str.split(",")
@@ -79,12 +76,9 @@ if __name__ == '__main__':
                     name = prof_string.split("(")[0]
                     times = int(prof_string[prof_string.find("(") + 1].split(")")[0])
                     cour_profs.extend([Professor(name) for _ in range(times * mod.nb_cour)])
-                for sect_i in promos[promo_name].list_section:
-                    for _ in range(mod.nb_cour):
-                        # print(cour_profs.pop(), sect_i, mod, SessionType.Cour)
-                        sect_i.add_required_session((cour_profs.pop(), sect_i, mod, SessionType.Cour))
-                    # print(sect_i.required_sessions)
-            # print(cour_str, td_str, tp_str)
+                for sect_i in promos_dict[promo_name].list_section:
+                    sect_i.add_required_sessions(
+                        [(cour_profs.pop(), sect_i, mod, SessionType.Cour) for _ in range(mod.nb_cour)])
             if td_str:
                 td_profs_strings = td_str.split(",")
                 td_profs = []
@@ -92,10 +86,10 @@ if __name__ == '__main__':
                     name = prof_string.split("(")[0]
                     times = int(prof_string[prof_string.find("(") + 1].split(")")[0])
                     td_profs.extend([Professor(name) for _ in range(times * mod.nb_td)])
-                for sect_i in promos[promo_name].list_section:
+                for sect_i in promos_dict[promo_name].list_section:
                     for group in sect_i.list_group:
-                        for _ in range(mod.nb_td):
-                            sect_i.add_required_session((td_profs.pop(), group, mod, SessionType.Td))
+                        sect_i.add_required_sessions(
+                            [(td_profs.pop(), group, mod, SessionType.Td) for _ in range(mod.nb_td)])
             if tp_str:
                 tp_profs_strings = tp_str.split(",")
                 tp_profs = []
@@ -103,33 +97,22 @@ if __name__ == '__main__':
                     name = prof_string.split("(")[0]
                     times = int(prof_string[prof_string.find("(") + 1].split(")")[0])
                     tp_profs.extend([Professor(name) for _ in range(times * mod.nb_tp)])
-                for sect_i in promos[promo_name].list_section:
+                for sect_i in promos_dict[promo_name].list_section:
                     for group in sect_i.list_group:
-                        for _ in range(mod.nb_tp):
-                            sect_i.add_required_session((tp_profs.pop(), group, mod, SessionType.Tp))
-                    # sect_i.required_sessions.sort(key=lambda s: s[3].value)
+                        sect_i.add_required_sessions(
+                            [(tp_profs.pop(), group, mod, SessionType.Tp) for _ in range(mod.nb_tp)])
 
-    # promoL3 = Promotion("L3")
-    # promoL3.add_section(sectionL3)
-    # promoL3.canvas = list(modules.values())
-    #
-    # for i, assignment_row in enumerate(professor_sheet.iter_rows(min_row=2, values_only=True)):
-    #     # print(value)
-    #     module_name, cour_assignment, td_assignment, tp_assignment = assignment_row
-    #     if cour_assignment is not None:
-    #         parse_assignment(promoL3, promoL3.canvas[i], SessionType.Cour, cour_assignment)
-    #     if td_assignment is not None:
-    #         parse_assignment(promoL3, promoL3.canvas[i], SessionType.Td, td_assignment)
-    #     if tp_assignment is not None:
-    #         parse_assignment(promoL3, promoL3.canvas[i], SessionType.Tp, tp_assignment)
-    #
+    # *room == room_name, room_type, capacity = room
+    rooms_list = [(Room(*room)) for room in rooms_sheet.iter_rows(min_row=2, values_only=True)]
+    return modules_dict, promos_dict, professors_dict, rooms_list
 
-    for room in rooms_sheet.iter_rows(min_row=2, values_only=True):
-        room_name, room_type, capacity = room
-        # print(room)
-        rooms.append(Room(room_name, room_type, capacity))
+
+if __name__ == '__main__':
+    start = time.perf_counter()
+    modules, promos, professors, rooms = get_data(r"../test/Resources.xlsx")
+
     end = time.perf_counter()
-    print("Time for import from excel +:", end - start)
+    print("Time for import from excel +:", format((end - start) * 1000, ".2f"), "ms")
     start = time.perf_counter()
     promos = list(promos.values())
     # promos.reverse()
@@ -143,11 +126,12 @@ if __name__ == '__main__':
     #
     if problem_emploi_du_temp.solve():
         end = time.perf_counter()
-        print("successfully generated EDT(", number_assignments, " assignments) in", end - start)
+        print("successfully generated EDT(", number_assignments, " assignments) in",
+              format((end - start) * 1000, ".2f"), "ms")
     else:
         print("nope debug more")
     # promos.reverse()
     start = time.perf_counter()
-    excel_export_EDT(list(promos))
+    excel_export(list(promos))
     end = time.perf_counter()
-    print("exported in", end - start)
+    print("exported to excel in", format((end - start) * 1000, ".2f"), "ms")

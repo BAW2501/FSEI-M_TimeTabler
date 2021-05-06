@@ -69,12 +69,32 @@ class TwoCourPerDayMax(HardConstraint):
             return True
 
         cour_count = 0
-        for slot in seance.attendance.EDT[day]:
-            if slot.sessions:
-                if slot.sessions[0].session_type == SessionType.Cour:
-                    cour_count += 1
+        attendance: Section = seance.attendance
+        for slot in attendance.EDT[day]:
+            if slot.sessions and slot.sessions[0].session_type == SessionType.Cour:
+                cour_count += 1
 
         return cour_count < 2
+
+
+def assign(possible_session, section, day, slot):
+    section.EDT[day][slot].add_session(possible_session)
+    possible_session.prof.set_busy_on(day, slot)
+    possible_session.room.set_busy_on(day, slot)
+    possible_session.attendance.set_busy_on(day, slot)
+    if possible_session.session_type == SessionType.Cour:
+        section.EDT[day][slot].is_full = True
+    if len(section.EDT[day][slot].sessions) == section.nb_group // 2 + 1:
+        section.EDT[day][slot].is_full = True
+    # pprint(section.EDT)
+
+
+def unassign(possible_session, section, day, slot):
+    section.EDT[day][slot].sessions.pop()
+    possible_session.prof.set_available_on(day, slot)
+    possible_session.room.set_available_on(day, slot)
+    possible_session.attendance.set_available_on(day, slot)
+    section.EDT[day][slot].is_full = False
 
 
 class PET:
@@ -91,9 +111,11 @@ class PET:
         # self.canvas_list: list[list[Module]] = [deepcopy(promo.canvas) for promo in promos for _ in
         #                                       promo.list_section]
         # our actual domains  not implemented yet until i clear up the type of input i'll be getting from the user
-        self.sessions_list: list[list[(Professor, Attendance, Module, SessionType)]] = [section.required_sessions for
-                                                                                        promo in promos for section in
-                                                                                        promo.list_section]
+        self.sessions_list: list[list[tuple[Professor, Attendance, Module, SessionType]]] = [section.required_sessions
+                                                                                             for
+                                                                                             promo in promos for section
+                                                                                             in
+                                                                                             promo.list_section]
         self.list_of_rooms: list[Room] = rooms
         # list of hard and soft constraints pretty self explanatory
         self.hard_constraints: list[HardConstraint] = []
@@ -113,7 +135,7 @@ class PET:
 
         return all([constraint.satisfied(seance, day, slot) for constraint in self.hard_constraints])
 
-    def best_fit_room(self, session_type: SessionType, effective: int, day, slot) -> (Room, LimitedResource):
+    def best_fit_room(self, session_type: SessionType, effective: int, day, slot) -> tuple[Room, LimitedResource]:
         """ find the smallest room that will fit for the session"""
 
         appropriate_type = []
@@ -128,9 +150,10 @@ class PET:
         appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
                              and room.is_available_on(day, slot)
                              and room.type_salle in appropriate_type]
-        if not appropriate_rooms:
+        if appropriate_rooms:
+            return min(appropriate_rooms), LimitedResource()
+        else:
             return None, None
-        return min(appropriate_rooms), LimitedResource()
 
     def all_assigned(self) -> bool:
         # TODO this will change after i change the domains
@@ -140,7 +163,7 @@ class PET:
 
         return True
 
-    def first_available_slot(self) -> (int, int, int):
+    def first_available_slot(self) -> tuple[int, int, int]:
         """ iterates over the sections  and finds the first available timeslot"""
         # TODO to guarantee equity between all promos and sections this should iterate slot by slot rather than
         #  section by section
@@ -167,34 +190,15 @@ class PET:
             # instantiate session object
             possible_session_object = Session(attendance, prof, module, room, session_type)
             if room and self.valid(possible_session_object, day, slot):
-                self.assign(possible_session_object, section, day, slot)
+                assign(possible_session_object, section, day, slot)
                 sessions.pop(i)
                 if self.solve():
                     return True
                 else:
-                    self.unassign(possible_session_object, section, day, slot)
+                    unassign(possible_session_object, section, day, slot)
                     sessions.insert(i, possible_session)
         section.EDT[day][slot].is_full = True
         if self.solve():
             return True
         else:
             return False
-
-    def assign(self, possible_session, section, day, slot):
-
-        section.EDT[day][slot].add_session(possible_session)
-        possible_session.prof.set_busy_on(day, slot)
-        possible_session.room.set_busy_on(day, slot)
-        possible_session.attendance.set_busy_on(day, slot)
-        if possible_session.session_type == SessionType.Cour:
-            section.EDT[day][slot].is_full = True
-        if len(section.EDT[day][slot].sessions) == section.nb_group // 2 + 1:
-            section.EDT[day][slot].is_full = True
-        # pprint(section.EDT)
-
-    def unassign(self, possible_session, section, day, slot):
-        section.EDT[day][slot].sessions.pop()
-        possible_session.prof.set_available_on(day, slot)
-        possible_session.room.set_available_on(day, slot)
-        possible_session.attendance.set_available_on(day, slot)
-        section.EDT[day][slot].is_full = False

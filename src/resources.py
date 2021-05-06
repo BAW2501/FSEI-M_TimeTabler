@@ -103,6 +103,7 @@ class Group(LimitedResource):
         return f'G{self.number}'
 
 
+#
 class Section(LimitedResource):
 
     def __init__(self, section_number: int) -> None:
@@ -112,16 +113,16 @@ class Section(LimitedResource):
                                           for day_index in range(days_per_week)]
         self.list_group: list[Group] = []
         # for example (prof_a,[1,2,3]) means prof_a teaches attendance 1,2,3
-        self.required_sessions: list[(Professor, 'Attendance', Module, SessionType)] = list()
+        self.required_sessions: list[tuple[Professor, 'Attendance', Module, SessionType]] = list()
 
     def add_group(self, gr: Group) -> None:
         self.list_group.append(gr)
 
-    def add_required_session(self, tuple_details: (Professor, 'Attendance', Module, SessionType)) -> None:
+    def add_required_session(self, tuple_details: tuple[Professor, 'Attendance', Module, SessionType]) -> None:
         self.required_sessions.append(tuple_details)
 
-    def add_required_sessions(self, tuple_details: list[(Professor, 'Attendance', Module, SessionType)]) -> None:
-        self.required_sessions.extend(tuple_details)
+    def add_required_sessions(self, tuple_list: list[tuple[Professor, 'Attendance', Module, SessionType]]) -> None:
+        self.required_sessions.extend(tuple_list)
 
     @property
     def nb_group(self) -> int:
