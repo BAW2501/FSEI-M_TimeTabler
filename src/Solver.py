@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
 
 from resources import *
 
@@ -7,8 +8,8 @@ class HardConstraint(ABC):
     # abstract Hard Constraint class
     def __init__(self, section_timetables: list[Section] = None, section_canvases: list[list[Module]] = None) -> None:
         super().__init__()
-        self.section_timetables = section_timetables
-        self.section_canvases = section_canvases
+        self.section_timetables: list[Section] = section_timetables
+        self.section_canvases: list[list[Module]] = section_canvases
 
     @abstractmethod
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
@@ -61,6 +62,23 @@ class ThreeConsecutiveMaxSessions(HardConstraint):
         if any(seance.prof.available[day][slot - 3:slot]):
             return True
         return False
+
+
+class UniqueSessionDaily(HardConstraint):
+
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
+        if slot == 0:
+            return True
+
+        for section in self.section_timetables:
+            if seance.attendance is section or seance.attendance in section.list_group:
+                edt = section
+
+        for slot_object in edt.EDT[day][:slot - 1]:
+            for seance_1 in slot_object.sessions:
+                if seance_1 == seance:
+                    return False
+        return True
 
 
 class TwoCourPerDayMax(HardConstraint):
@@ -122,6 +140,7 @@ class PET:
         self.soft_constraints: list[SoftConstraint] = []
 
     def add_hard_constraint(self, constraint: HardConstraint) -> None:
+        constraint.section_timetables = self.section_list
         self.hard_constraints.append(constraint)
 
     def add_soft_constraint(self, constraint: SoftConstraint) -> None:

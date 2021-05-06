@@ -216,6 +216,16 @@ class Session:
         self.room: Room = s
         self.session_type: SessionType = session_type
 
+    def __eq__(self, o: object) -> bool:
+        if isinstance(o, Session):
+            equal = [self.attendance == o.attendance,
+                     self.prof == o.prof,
+                     self.module == o.module,
+                     self.session_type == o.session_type]
+            return all(equal)
+        else:
+            False
+
     def __repr__(self) -> str:
         return f"{self.room},{self.prof},{self.attendance},{self.module},{self.session_type}"
 

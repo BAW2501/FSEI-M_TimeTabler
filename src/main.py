@@ -123,15 +123,18 @@ if __name__ == '__main__':
     problem_emploi_du_temp.add_hard_constraint(RoomAvailability())
     problem_emploi_du_temp.add_hard_constraint(ThreeConsecutiveMaxSessions())
     problem_emploi_du_temp.add_hard_constraint(TwoCourPerDayMax())
+    # very inefficient to add this
+    problem_emploi_du_temp.add_hard_constraint(UniqueSessionDaily())
     #
+
     if problem_emploi_du_temp.solve():
         end = time.perf_counter()
         print("successfully generated EDT(", number_assignments, " assignments) in",
-              format((end - start) * 1000, ".2f"), "ms")
+             format((end - start) * 1000, ".2f"), "ms")
     else:
         print("nope debug more")
     # promos.reverse()
     start = time.perf_counter()
-    excel_export(list(promos))
+    # excel_export(list(promos))
     end = time.perf_counter()
     print("exported to excel in", format((end - start) * 1000, ".2f"), "ms")
