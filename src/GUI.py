@@ -7,7 +7,8 @@ from openpyxl import load_workbook
 workbook = load_workbook(filename=Path(r"../test/Resources.xlsx"), read_only=True)
 
 rooms_sheet = workbook['Rooms']
-headers = [*rooms_sheet[1]]
+print(*rooms_sheet[1])
+headers = [cell.value for cell in rooms_sheet[1]]
 rows = [room for room in rooms_sheet.iter_rows(min_row=2, values_only=True)]
 
 

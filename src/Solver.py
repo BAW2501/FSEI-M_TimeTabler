@@ -166,16 +166,20 @@ class PET:
             appropriate_type.append(RoomType.amphi.value)
         # appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
         #                                             and room.type_salle in appropriate_type, self.list_of_rooms))
-        appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
-                             and room.is_available_on(day, slot)
-                             and room.type_salle in appropriate_type]
+        #appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
+        #                     and room.is_available_on(day, slot)
+        #                     and room.type_salle in appropriate_type]
+        appropriate_rooms=[]
+        for room in self.list_of_rooms:
+            if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
+                appropriate_rooms.append((room))
+
         if appropriate_rooms:
             return min(appropriate_rooms), LimitedResource()
         else:
             return None, None
 
     def all_assigned(self) -> bool:
-        # TODO this will change after i change the domains
         for sect_sessions in self.sessions_list:
             if len(sect_sessions) != 0:
                 return False
@@ -185,7 +189,7 @@ class PET:
     def first_available_slot(self) -> tuple[int, int, int]:
         """ iterates over the sections  and finds the first available timeslot"""
         # TODO to guarantee equity between all promos and sections this should iterate slot by slot rather than
-        #  section by section
+        #  section by section update it doesn't matter
         for section_index, sect in enumerate(self.section_list):
             for day_index in range(days_per_week):
                 for slot_index in range(timeslots_per_day):

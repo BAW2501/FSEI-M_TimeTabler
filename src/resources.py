@@ -7,7 +7,7 @@ timeslots_per_day = 7
 days_per_week = 5
 
 
-# TODO make a mock up solver function
+
 
 
 class LimitedResource:

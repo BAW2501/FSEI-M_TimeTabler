@@ -43,7 +43,7 @@ def excel_export(promo_list: list[Promotion]):
                                                                                          vertical='center')
                         EDT_sheet.cell(start_session_index, k).value = str(session)
     del export_workbook["template"]
-    export_workbook.save('Department MI.xlsx')
+    export_workbook.save('FSEI_Mosta_EDT.xlsx')
 
 
 def get_data(xlsx):
@@ -135,6 +135,6 @@ if __name__ == '__main__':
         print("nope debug more")
     # promos.reverse()
     start = time.perf_counter()
-    # excel_export(list(promos))
+    excel_export(list(promos))
     end = time.perf_counter()
     print("exported to excel in", format((end - start) * 1000, ".2f"), "ms")
