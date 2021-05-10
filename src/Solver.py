@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from copy import deepcopy
 
 from resources import *
 
@@ -59,7 +58,7 @@ class ThreeConsecutiveMaxSessions(HardConstraint):
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         if slot < 3:
             return True
-        if any(seance.prof.available[day][slot - 3:slot]):
+        if any(seance.prof.available[day][slot - 3:slot]) and any(seance.attendance.available[day][slot - 3:slot]):
             return True
         return False
 
@@ -73,8 +72,9 @@ class UniqueSessionDaily(HardConstraint):
         for section in self.section_timetables:
             if seance.attendance is section or seance.attendance in section.list_group:
                 edt = section
+                break
 
-        for slot_object in edt.EDT[day][:slot - 1]:
+        for slot_object in edt.EDT[day][0:slot - 1]:
             for seance_1 in slot_object.sessions:
                 if seance_1 == seance:
                     return False
@@ -102,7 +102,8 @@ def assign(possible_session, section, day, slot):
     possible_session.attendance.set_busy_on(day, slot)
     if possible_session.session_type == SessionType.Cour:
         section.EDT[day][slot].is_full = True
-    if len(section.EDT[day][slot].sessions) == section.nb_group // 2 + 1:
+    max_session = section.nb_group // 3 + 1 if section.nb_group > 3 else section.nb_group
+    if len(section.EDT[day][slot].sessions) == max_session:
         section.EDT[day][slot].is_full = True
     # pprint(section.EDT)
 
@@ -166,13 +167,12 @@ class PET:
             appropriate_type.append(RoomType.amphi.value)
         # appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
         #                                             and room.type_salle in appropriate_type, self.list_of_rooms))
-        #appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
-        #                     and room.is_available_on(day, slot)
-        #                     and room.type_salle in appropriate_type]
-        appropriate_rooms=[]
-        for room in self.list_of_rooms:
-            if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
-                appropriate_rooms.append((room))
+        appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
+                             and room.is_available_on(day, slot)
+                             and room.type_salle in appropriate_type]
+        # for room in self.list_of_rooms:
+        #     if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
+        #         appropriate_rooms.append(room)
 
         if appropriate_rooms:
             return min(appropriate_rooms), LimitedResource()

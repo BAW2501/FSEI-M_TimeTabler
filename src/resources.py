@@ -7,9 +7,6 @@ timeslots_per_day = 7
 days_per_week = 5
 
 
-
-
-
 class LimitedResource:
     def __init__(self, days: int = days_per_week, slots_per_day: int = timeslots_per_day) -> None:
         super().__init__()
@@ -139,10 +136,12 @@ class Section(LimitedResource):
         return all([group.is_available_on(day, slot_number) for group in self.list_group])
 
     def set_busy_on(self, day: int, slot_number: int) -> None:
+        self.available[day][slot_number] = False
         for group in self.list_group:
             group.set_busy_on(day, slot_number)
 
     def set_available_on(self, day: int, slot_number: int) -> None:
+        self.available[day][slot_number] = True
         for group in self.list_group:
             group.set_available_on(day, slot_number)
 
@@ -223,8 +222,6 @@ class Session:
                      self.module == o.module,
                      self.session_type == o.session_type]
             return all(equal)
-        else:
-            False
 
     def __repr__(self) -> str:
         return f"{self.room},{self.prof},{self.attendance},{self.module},{self.session_type}"

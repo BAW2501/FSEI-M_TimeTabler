@@ -101,7 +101,7 @@ def get_data(xlsx):
                     for group in sect_i.list_group:
                         sect_i.add_required_sessions(
                             [(tp_profs.pop(), group, mod, SessionType.Tp) for _ in range(mod.nb_tp)])
-
+            sect_i.required_sessions.sort(key=lambda s: s[3].value)
     # *room == room_name, room_type, capacity = room
     rooms_list = [(Room(*room)) for room in rooms_sheet.iter_rows(min_row=2, values_only=True)]
     return modules_dict, promos_dict, professors_dict, rooms_list
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     if problem_emploi_du_temp.solve():
         end = time.perf_counter()
         print("successfully generated EDT(", number_assignments, " assignments) in",
-             format((end - start) * 1000, ".2f"), "ms")
+              format((end - start) * 1000, ".2f"), "ms")
     else:
         print("nope debug more")
     # promos.reverse()
