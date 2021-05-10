@@ -21,7 +21,7 @@ class SoftConstraint(ABC):
         super().__init__()
 
     @abstractmethod
-    def satisfied(self, assignment) -> bool:
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         ...
 
 
@@ -150,10 +150,13 @@ class PET:
     def valid(self, seance: Session, day: int, slot: int) -> bool:
         """ check that the timetable is still valid when inserting a new session  """
         # first check it's physically possible
-
         # then check it's actually valid according to the hard constraints
-
         return all([constraint.satisfied(seance, day, slot) for constraint in self.hard_constraints])
+
+    def eval_soft_valid(self, prof, attendance, module, session_type, day, slot) -> int:
+        """will return an int that it's the evaluation of the current task according to soft constraints  """
+        session = Session(attendance, prof, module, LimitedResource(), session_type)
+        return sum([1 for constraint in self.soft_constraints if constraint.satisfied(session, day, slot)])
 
     def best_fit_room(self, session_type: SessionType, effective: int, day, slot) -> tuple[Room, LimitedResource]:
         """ find the smallest room that will fit for the session"""
@@ -204,6 +207,8 @@ class PET:
         section_index, day, slot = self.first_available_slot()
         section = self.section_list[section_index]
         sessions = self.sessions_list[section_index]
+        if self.soft_constraints:
+            sessions.sort(key=lambda s: self.eval_soft_valid(*s, day, slot))
 
         for i, possible_session in enumerate(sessions[:]):
 
@@ -214,7 +219,7 @@ class PET:
             possible_session_object = Session(attendance, prof, module, room, session_type)
             if room and self.valid(possible_session_object, day, slot):
                 assign(possible_session_object, section, day, slot)
-                sessions.pop(i)
+                sessions.remove(possible_session)
                 if self.solve():
                     return True
                 else:
