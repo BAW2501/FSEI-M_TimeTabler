@@ -3,7 +3,7 @@ from functools import lru_cache
 from typing import Union
 
 # this is temporary this will be later taken as class arguments
-timeslots_per_day = 7
+timeslots_per_day = 6
 days_per_week = 5
 
 
@@ -22,6 +22,8 @@ class LimitedResource:
 
     def set_available_on(self, day: int, slot_number: int) -> None:
         self.available[day][slot_number] = True
+
+
 
 
 class RoomType(Enum):
@@ -149,6 +151,14 @@ class Section(LimitedResource):
 Attendance = Union[Group, Section]
 
 
+class DataShow(LimitedResource):
+    """ wrapper around limited resource for data shows does  nothing special in particular """
+
+    def __init__(self,allowed:list[Section], days: int = days_per_week, slots_per_day: int = timeslots_per_day) -> None:
+        super().__init__(days, slots_per_day)
+        self.allowed = allowed
+
+
 class Promotion:
 
     def __init__(self, level: str) -> None:
@@ -189,12 +199,14 @@ class Promotion:
         return None
 
 
-class Department:
-    list_promo: list[Promotion] = []
+class Faculty:
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, promos: list[Promotion], rooms: list[Room], datashows: list[DataShow]) -> None:
         super().__init__()
         self.name: str = name
+        self.list_promo: list[Promotion] = promos
+        self.list_rooms: list[Room] = rooms
+        self.list_datashows: list[DataShow] = datashows
 
     def add_promo(self, promo: Promotion) -> None:
         self.list_promo.append(promo)

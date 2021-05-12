@@ -110,13 +110,19 @@ def get_data(xlsx):
 if __name__ == '__main__':
     start = time.perf_counter()
     modules, promos, professors, rooms = get_data(r"../test/Resources.xlsx")
+    promos = list(promos.values())
+    data_shows = [DataShow(promos[:10]) for _ in range(4)]
+    data_shows.extend([DataShow(promos[13:15]) for _ in range(2)])
+    physic = promos[10:13] + [promos[-1]]
+    data_shows.extend([DataShow(physic) for _ in range(2)])
+    fsei_mosta = Faculty("FSEI-MOSTA", promos, rooms, data_shows)
 
     end = time.perf_counter()
     print("Time for import from excel +:", format((end - start) * 1000, ".2f"), "ms")
     start = time.perf_counter()
-    promos = list(promos.values())
+
     # promos.reverse()
-    problem_emploi_du_temp = PET(promos, rooms)
+    problem_emploi_du_temp = PET(fsei_mosta)
     number_assignments = sum(len(session_list) for session_list in problem_emploi_du_temp.sessions_list)
     problem_emploi_du_temp.add_hard_constraint(ProfessorAvailability())
     problem_emploi_du_temp.add_hard_constraint(StudentAvailability())
