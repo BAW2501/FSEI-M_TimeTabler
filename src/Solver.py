@@ -200,8 +200,6 @@ class PET:
 
     def first_available_slot(self) -> tuple[int, int, int]:
         """ iterates over the sections  and finds the first available timeslot"""
-        # TODO to guarantee equity between all promos and sections this should iterate slot by slot rather than
-        #  section by section update it doesn't matter
         for section_index, sect in enumerate(self.section_list):
             for day_index in range(days_per_week):
                 for slot_index in range(timeslots_per_day):
