@@ -76,7 +76,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <property name="iconSize">
           <size>
@@ -183,7 +183,7 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_3">
                   <item>
-                   <widget class="QPushButton" name="new_project_pushButton_2">
+                   <widget class="QPushButton" name="save_project_pushButton">
                     <property name="contextMenuPolicy">
                      <enum>Qt::NoContextMenu</enum>
                     </property>
@@ -206,7 +206,7 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="new_project_label_2">
+                   <widget class="QLabel" name="save_project_label">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -390,11 +390,12 @@ p, li { white-space: pre-wrap; }
              </property>
              <property name="font">
               <font>
+               <family>Times New Roman</family>
                <pointsize>12</pointsize>
               </font>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>2</number>
              </property>
              <property name="iconSize">
               <size>
@@ -442,29 +443,48 @@ p, li { white-space: pre-wrap; }
                </item>
                <item>
                 <widget class="QTableWidget" name="promo_table">
-                 <column>
-                  <property name="text">
-                   <string>Number</string>
-                  </property>
-                 </column>
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
+                 <property name="textElideMode">
+                  <enum>Qt::ElideMiddle</enum>
+                 </property>
                  <column>
                   <property name="text">
                    <string>Name</string>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
                   </property>
                  </column>
                  <column>
                   <property name="text">
                    <string>Number of Sections</string>
                   </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
                  </column>
                  <column>
                   <property name="text">
                    <string>Number of Groups</string>
                   </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
                  </column>
                  <column>
                   <property name="text">
                    <string>Effective per Group</string>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
                   </property>
                  </column>
                 </widget>
@@ -477,15 +497,19 @@ p, li { white-space: pre-wrap; }
               </attribute>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
-                <widget class="QTableWidget" name="professor_tablewidget">
-                 <property name="columnCount">
-                  <number>2</number>
+                <widget class="QTableWidget" name="professor_table">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
                  </property>
-                 <column>
-                  <property name="text">
-                   <string>Number</string>
-                  </property>
-                 </column>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
+                 <property name="columnCount">
+                  <number>1</number>
+                 </property>
                  <column>
                   <property name="text">
                    <string>Name</string>
@@ -534,15 +558,19 @@ p, li { white-space: pre-wrap; }
               </attribute>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
-                <widget class="QTableWidget" name="room_tablewidget">
-                 <property name="columnCount">
-                  <number>4</number>
+                <widget class="QTableWidget" name="room_table">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
                  </property>
-                 <column>
-                  <property name="text">
-                   <string>Number</string>
-                  </property>
-                 </column>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
+                 <property name="columnCount">
+                  <number>3</number>
+                 </property>
                  <column>
                   <property name="text">
                    <string>Name</string>
@@ -656,12 +684,16 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item row="2" column="0">
-                <widget class="QTableWidget" name="modules_tableWidget">
-                 <column>
-                  <property name="text">
-                   <string>Number</string>
-                  </property>
-                 </column>
+                <widget class="QTableWidget" name="modules_table">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
                  <column>
                   <property name="text">
                    <string>Name</string>
@@ -719,7 +751,16 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QTableWidget" name="modules_tableWidget_2">
+                <widget class="QTableWidget" name="modules_assign_table">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
                  <column>
                   <property name="text">
                    <string>Module</string>
@@ -783,12 +824,16 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QTableWidget" name="tableWidget">
-                 <column>
-                  <property name="text">
-                   <string>Number</string>
-                  </property>
-                 </column>
+                <widget class="QTableWidget" name="datashows_table">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
                  <column>
                   <property name="text">
                    <string>Name</string>
@@ -872,9 +917,9 @@ p, li { white-space: pre-wrap; }
              <widget class="QSpinBox" name="days_per_week_spinBox">
               <property name="geometry">
                <rect>
-                <x>130</x>
+                <x>170</x>
                 <y>60</y>
-                <width>91</width>
+                <width>94</width>
                 <height>22</height>
                </rect>
               </property>
@@ -885,9 +930,9 @@ p, li { white-space: pre-wrap; }
              <widget class="QSpinBox" name="slots_perday_spinBox">
               <property name="geometry">
                <rect>
-                <x>130</x>
+                <x>170</x>
                 <y>140</y>
-                <width>91</width>
+                <width>94</width>
                 <height>22</height>
                </rect>
               </property>
@@ -911,9 +956,9 @@ p, li { white-space: pre-wrap; }
              <widget class="QComboBox" name="starting_day_comboBox">
               <property name="geometry">
                <rect>
-                <x>130</x>
+                <x>170</x>
                 <y>100</y>
-                <width>91</width>
+                <width>94</width>
                 <height>22</height>
                </rect>
               </property>
@@ -967,14 +1012,14 @@ p, li { white-space: pre-wrap; }
              <widget class="QLineEdit" name="slot_duration_lineEdit">
               <property name="geometry">
                <rect>
-                <x>130</x>
+                <x>170</x>
                 <y>180</y>
-                <width>91</width>
+                <width>94</width>
                 <height>20</height>
                </rect>
               </property>
               <property name="text">
-               <string>30</string>
+               <string>60</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -983,9 +1028,9 @@ p, li { white-space: pre-wrap; }
              <widget class="QLabel" name="mins_label">
               <property name="geometry">
                <rect>
-                <x>230</x>
+                <x>270</x>
                 <y>180</y>
-                <width>111</width>
+                <width>81</width>
                 <height>16</height>
                </rect>
               </property>
@@ -1035,7 +1080,7 @@ p, li { white-space: pre-wrap; }
                <string>Student can only attend one session at a time </string>
               </property>
               <property name="text">
-               <string>StudentAvailability</string>
+               <string>Student Availability</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -1054,7 +1099,7 @@ p, li { white-space: pre-wrap; }
                <string>Professor can only teach one session at a time</string>
               </property>
               <property name="text">
-               <string>ProfessorAvailability</string>
+               <string>Professor Availability</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -1076,7 +1121,7 @@ p, li { white-space: pre-wrap; }
                <string>Room can host only one session at a time</string>
               </property>
               <property name="text">
-               <string>RoomAvailability</string>
+               <string>Room Availability</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -1095,7 +1140,7 @@ p, li { white-space: pre-wrap; }
                <string>Professors and students can at most have 3 consecutive sessions</string>
               </property>
               <property name="text">
-               <string>ThreeConsecutiveMaxSessions</string>
+               <string>Three Consecutive Max Sessions</string>
               </property>
              </widget>
              <widget class="QCheckBox" name="twocourderdaymax_checkBox">
@@ -1111,7 +1156,7 @@ p, li { white-space: pre-wrap; }
                <string>For each section there will be at most 2 lectures daily</string>
               </property>
               <property name="text">
-               <string>TwoCourPerDayMax</string>
+               <string>Two Cour Per Day Max</string>
               </property>
              </widget>
              <widget class="QCheckBox" name="uniquesessiondaily_checkBox">
@@ -1127,7 +1172,7 @@ p, li { white-space: pre-wrap; }
                <string>if a session repeats multiple times a week make sure it's not on the same day</string>
               </property>
               <property name="text">
-               <string>UniqueSessionDaily</string>
+               <string>Unique Session Daily</string>
               </property>
              </widget>
             </widget>
@@ -1186,6 +1231,12 @@ p, li { white-space: pre-wrap; }
              <property name="sizeAdjustPolicy">
               <enum>QAbstractScrollArea::AdjustToContents</enum>
              </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectItems</enum>
+             </property>
              <property name="gridStyle">
               <enum>Qt::DashLine</enum>
              </property>
@@ -1214,7 +1265,7 @@ p, li { white-space: pre-wrap; }
               <number>77</number>
              </attribute>
              <attribute name="verticalHeaderStretchLastSection">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <row>
               <property name="text">
@@ -1342,7 +1393,7 @@ p, li { white-space: pre-wrap; }
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
-            <widget class="QFrame" name="top_filler_frame_2">
+            <widget class="QFrame" name="top_filler_frame">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -1402,7 +1453,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item row="0" column="4">
-               <widget class="QPushButton" name="new_project_pushButton_7">
+               <widget class="QPushButton" name="online_help_pushButton">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1460,7 +1511,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item row="0" column="2">
-               <widget class="QPushButton" name="update_pushButton_5">
+               <widget class="QPushButton" name="check_update_pushButton">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1489,7 +1540,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item row="0" column="3">
-               <widget class="QPushButton" name="new_project_pushButton_6">
+               <widget class="QPushButton" name="register_purchase_pushButton">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1556,7 +1607,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="new_project_label_5">
+               <widget class="QLabel" name="check_update_label">
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
@@ -1569,7 +1620,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="new_project_label_6">
+               <widget class="QLabel" name="register_purchase_label">
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
@@ -1582,7 +1633,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="new_project_label_7">
+               <widget class="QLabel" name="online_help_label">
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
