@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>799</width>
-    <height>574</height>
+    <width>1100</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -163,10 +163,10 @@ p, li { white-space: pre-wrap; }
                 <widget class="QFrame" name="save_project_frame">
                  <property name="geometry">
                   <rect>
-                   <x>500</x>
-                   <y>50</y>
-                   <width>140</width>
-                   <height>140</height>
+                   <x>720</x>
+                   <y>90</y>
+                   <width>150</width>
+                   <height>150</height>
                   </rect>
                  </property>
                  <property name="sizePolicy">
@@ -229,10 +229,10 @@ p, li { white-space: pre-wrap; }
                 <widget class="QFrame" name="new_project_frame">
                  <property name="geometry">
                   <rect>
-                   <x>50</x>
-                   <y>50</y>
-                   <width>140</width>
-                   <height>140</height>
+                   <x>120</x>
+                   <y>90</y>
+                   <width>150</width>
+                   <height>150</height>
                   </rect>
                  </property>
                  <property name="sizePolicy">
@@ -295,10 +295,10 @@ p, li { white-space: pre-wrap; }
                 <widget class="QFrame" name="open_project_frame">
                  <property name="geometry">
                   <rect>
-                   <x>280</x>
-                   <y>50</y>
-                   <width>140</width>
-                   <height>140</height>
+                   <x>420</x>
+                   <y>90</y>
+                   <width>150</width>
+                   <height>150</height>
                   </rect>
                  </property>
                  <property name="sizePolicy">
@@ -358,6 +358,19 @@ p, li { white-space: pre-wrap; }
                   </item>
                  </layout>
                 </widget>
+                <widget class="QLabel" name="label">
+                 <property name="geometry">
+                  <rect>
+                   <x>10</x>
+                   <y>8</y>
+                   <width>561</width>
+                   <height>31</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>To get start start a new Project or open an existing one </string>
+                 </property>
+                </widget>
                </widget>
               </item>
              </layout>
@@ -395,7 +408,7 @@ p, li { white-space: pre-wrap; }
               </font>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>4</number>
              </property>
              <property name="iconSize">
               <size>
@@ -405,7 +418,7 @@ p, li { white-space: pre-wrap; }
              </property>
              <widget class="QWidget" name="promotions_tab">
               <attribute name="title">
-               <string>Promotions</string>
+               <string>[1] Promotions</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
@@ -493,7 +506,7 @@ p, li { white-space: pre-wrap; }
              </widget>
              <widget class="QWidget" name="professors_tab">
               <attribute name="title">
-               <string>Professors</string>
+               <string>[2] Professors</string>
               </attribute>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
@@ -554,7 +567,7 @@ p, li { white-space: pre-wrap; }
              </widget>
              <widget class="QWidget" name="facilities_tab">
               <attribute name="title">
-               <string>Facilities</string>
+               <string>[3] Facilities</string>
               </attribute>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
@@ -625,7 +638,7 @@ p, li { white-space: pre-wrap; }
              </widget>
              <widget class="QWidget" name="modules_tab">
               <attribute name="title">
-               <string>Modules</string>
+               <string>[4] Modules</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout">
                <item row="1" column="0">
@@ -678,7 +691,7 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="pick_promo_comboBox"/>
+                   <widget class="QComboBox" name="pick_promo__modules_comboBox"/>
                   </item>
                  </layout>
                 </widget>
@@ -725,27 +738,72 @@ p, li { white-space: pre-wrap; }
              </widget>
              <widget class="QWidget" name="assignements_tab">
               <attribute name="title">
-               <string>Assignements</string>
+               <string>[5] Assignements</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_8">
                <item>
-                <widget class="QFrame" name="pick_promo_frame_2">
+                <widget class="QFrame" name="Assign_controls_frame">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <layout class="QVBoxLayout" name="verticalLayout_14">
                   <item>
-                   <widget class="QLabel" name="pick_promo_label_2">
-                    <property name="text">
-                     <string>Pick a Promotion</string>
+                   <widget class="QFrame" name="promo_pick_assign_frame">
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
                     </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_14">
+                     <item>
+                      <widget class="QLabel" name="assign_pick_promo_label">
+                       <property name="text">
+                        <string>Pick a Promotion</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QComboBox" name="assign_pick_promo_assign_comboBox"/>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="pick_promo_comboBox_2"/>
+                   <widget class="QFrame" name="assignment_control_frame">
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_8">
+                     <item>
+                      <widget class="QPushButton" name="assignment_add_pushbutton">
+                       <property name="text">
+                        <string>Add</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="assignment_edit_pushbutton">
+                       <property name="text">
+                        <string>Edit</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="assignment_remove_pushbutton">
+                       <property name="text">
+                        <string>Remove</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -787,7 +845,7 @@ p, li { white-space: pre-wrap; }
              </widget>
              <widget class="QWidget" name="datashows_tab">
               <attribute name="title">
-               <string>Datashows</string>
+               <string>[6] Datashows</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_9">
                <item>

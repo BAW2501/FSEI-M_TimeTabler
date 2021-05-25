@@ -13,16 +13,22 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.promos = [
-            {"Name": "MI", "Number of Sections": 2, "Number of Groups": 14, "Effective per Group": 25},
-            {"Name": "L2I", "Number of Sections": 1, "Number of Groups": 9, "Effective per Group": 25},
+            {"Name": "MI", "Number of Sections": 2,
+                "Number of Groups": 14, "Effective per Group": 25},
+            {"Name": "L2I", "Number of Sections": 1,
+                "Number of Groups": 9, "Effective per Group": 25},
             {"Name": "L3I", "Number of Sections": 1, "Number of Groups": 7, "Effective per Group": 25}]
 
-        self.profs = ["miroud", "bessaoud", "henni"]
+        self.profs = ["Abid M.", "Bahnes N.", "Benameur", "Benhamed", "Benidris F.Z", "Bensalloua", "Bentaouza C", "Besnassi", "Bessaoud K.", "Betouati", "Bouzebiba", "Delali A.", "Djahafi", "Djebbara R.", "Filali F.", "Habib Zahmani", "Hamami", "Hassaine", "Henni F", "Henni K.", "Hocine N.", "Kaid Slimane", "Kenniche A.", "Khelifa N.", "Khiat", "Labdelli", "Laredj A.", "M. Andasmas M", "M. Belarbi Lakehal", "M. Belhamiti Omar", "M. Benchehida", "M. Benyatou Kamel", "M. Benzidane", "M. Fettouch Houari", "M. Ghezzar Med", "M. Kaid", "M. Kaid Med", "M. Medeghri Ahmed", "M. Menad Abdallah",
+                      "M. Mohammedi Mustapha", "M. Ould Ali M", "M.Ould Ali", "Maghni Sandid Z.", "Mechaoui M. D.G", "Mekemmeche", "Menad", "Meroufel B.", "Midoun M.", "Miroud", "Mlle Ali Merina.H", "Mlle Amina Ferraoun", "Mlle Benaouad", "Mlle Bouzid", "Mlle Dj. Bensikaddour", "Mlle Ferraoun A.", "Mlle Hamou Maamar.M", "Mlle Lakeb Ouda", "Mlle Zelmat Souhila", "Mme Ablaoui", "Mme Belmouhoub-Ould Ali", "Mme Bendahmane Hafida", "Mme Bendehmane H", "Mme Bouabdelli", "Mme Diala.H", "Mme Kaisserli", "Mme Limam", "Mme Saidani", "Mme Tabharit", "Moumen M.", "Moussa M.", "Mr Bouzit H", "Sehaba K.", ]
         self.rooms = [{"Name": "amphi1", "Capacity": 150, "RoomType": 1},
                       {"Name": "amphi4", "Capacity": 300, "RoomType": 1},
                       {"Name": "S1", "Capacity": 30, "RoomType": 2}
-
                       ]
+        self.modules = [[{"Name": "algorith", "abriv": "ASD", "nb_cour": 1, "nb_td": 1, "nb_tp": 1}],
+                        [{"Name": "artificial i", "abriv": "IA",
+                            "nb_cour": 1, "nb_td": 0, "nb_tp": 1}],
+                        [{"Name": "object oriented ", "abriv": "POO", "nb_cour": 1, "nb_td": 0, "nb_tp": 1}]]
 
     def bind(self):
 
@@ -30,10 +36,14 @@ class MainWindow(QMainWindow):
         self.ui.professor_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.room_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.modules_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.modules_assign_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.modules_assign_table.horizontalHeader(
+        ).setSectionResizeMode(QHeaderView.Stretch)
         self.ui.datashows_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.timetable_tableview.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.timetable_tableview.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.timetable_tableview.horizontalHeader(
+        ).setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.timetable_tableview.verticalHeader(
+        ).setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.pick_promo__modules_comboBox.setCurrentIndex(0)
 
         self.ui.promo_add_pushbutton.clicked.connect(self.promo_input)
         self.ui.promo_edit__pushbutton.clicked.connect(self.edit_promo)
@@ -44,11 +54,19 @@ class MainWindow(QMainWindow):
         self.ui.room_add_pushbutton.clicked.connect(self.room_input)
         self.ui.room_edit_pushbutton.clicked.connect(self.edit_room)
         self.ui.room_remove_pushbutton.clicked.connect(self.delete_room)
+        self.ui.module_add_pushbutton.clicked.connect(self.module_input)
+        self.ui.module_edit_pushbutton.clicked.connect(self.edit_module)
+        self.ui.module_remove_pushbutton.clicked.connect(self.delete_module)
+        self.ui.assignment_add_pushbutton.clicked.connect(self.assign_input)
 
+        self.ui.pick_promo__modules_comboBox.currentIndexChanged.connect(
+            self.load_module_data)
 
         self.load_promo_data()
         self.load_prof_data()
         self.load_room_data()
+        self.load_module_data()
+        self.ui.spec_ribbon.currentChanged.connect(self.onChange)
 
     def promo_input(self):
         diag = PromoInputDialog()
@@ -56,14 +74,18 @@ class MainWindow(QMainWindow):
         if diag.exec():
             row = diag.getInputs()
             insert_row_index = self.ui.promo_table.rowCount()
+            self.modules.append([])
+
             self.ui.promo_table.insertRow(insert_row_index)
             for j, v in enumerate(row):
-                self.ui.promo_table.setItem(insert_row_index, j, QTableWidgetItem(str(v)))
+                self.ui.promo_table.setItem(
+                    insert_row_index, j, QTableWidgetItem(str(v)))
             self.promos.append({'Name': row[0], 'Number of Sections': row[1], 'Number of Groups': row[2],
                                 'Effective per Group': row[3]})
 
     def load_promo_data(self):
         self.ui.promo_table.setRowCount(len(self.promos))
+
         for i, promo in enumerate(self.promos):
             for j, v in enumerate(promo.values()):
                 self.ui.promo_table.setItem(i, j, QTableWidgetItem(str(v)))
@@ -75,14 +97,18 @@ class MainWindow(QMainWindow):
             diag = PromoInputDialog()
 
             diag.name.setText(self.ui.promo_table.item(index, 0).text())
-            diag.numberOfSectionsSpinBox.setValue(int(self.ui.promo_table.item(index, 1).text()))
-            diag.numberOfGroupsSpinBox.setValue(int(self.ui.promo_table.item(index, 2).text()))
-            diag.effectivePerGroupSpinBox.setValue(int(self.ui.promo_table.item(index, 3).text()))
+            diag.numberOfSectionsSpinBox.setValue(
+                int(self.ui.promo_table.item(index, 1).text()))
+            diag.numberOfGroupsSpinBox.setValue(
+                int(self.ui.promo_table.item(index, 2).text()))
+            diag.effectivePerGroupSpinBox.setValue(
+                int(self.ui.promo_table.item(index, 3).text()))
 
             diag.setModal(True)
             if diag.exec():
                 for j, v in enumerate(diag.getInputs()):
-                    self.ui.promo_table.setItem(index, j, QTableWidgetItem(str(v)))
+                    self.ui.promo_table.setItem(
+                        index, j, QTableWidgetItem(str(v)))
 
             data = diag.getInputs()
             # pprint(self.promos)
@@ -97,6 +123,7 @@ class MainWindow(QMainWindow):
             index = index[0].row()  # cause single selection
             self.ui.promo_table.removeRow(index)
             self.promos.pop(index)
+            self.modules.pop(index)
         else:
             QMessageBox.about(self, "Error", "Please select a row")
 
@@ -107,7 +134,8 @@ class MainWindow(QMainWindow):
             name = diag.getInputs()
             insert_row_index = self.ui.professor_table.rowCount()
             self.ui.professor_table.insertRow(insert_row_index)
-            self.ui.professor_table.setItem(insert_row_index, 0, QTableWidgetItem(name))
+            self.ui.professor_table.setItem(
+                insert_row_index, 0, QTableWidgetItem(name))
             self.profs.append(name)
             # print(self.profs)
 
@@ -127,7 +155,8 @@ class MainWindow(QMainWindow):
             diag.name.setText(self.ui.professor_table.item(index, 0).text())
             diag.setModal(True)
             if diag.exec():
-                self.ui.professor_table.setItem(index, 0, QTableWidgetItem(diag.getInputs()))
+                self.ui.professor_table.setItem(
+                    index, 0, QTableWidgetItem(diag.getInputs()))
 
             # pprint(self.promos)
 
@@ -160,8 +189,10 @@ class MainWindow(QMainWindow):
             insert_row_index = self.ui.room_table.rowCount()
             self.ui.room_table.insertRow(insert_row_index)
             for j, v in enumerate(row):
-                self.ui.room_table.setItem(insert_row_index, j, QTableWidgetItem(str(v)))
-            self.rooms.append({'Name': row[0], 'Capacity': row[1], 'RoomType': row[2]})
+                self.ui.room_table.setItem(
+                    insert_row_index, j, QTableWidgetItem(str(v)))
+            self.rooms.append(
+                {'Name': row[0], 'Capacity': row[1], 'RoomType': row[2]})
 
     def edit_room(self):
         index = self.ui.room_table.selectedIndexes()
@@ -170,17 +201,21 @@ class MainWindow(QMainWindow):
             diag = RoomInputDialog()
 
             diag.name.setText(self.ui.room_table.item(index, 0).text())
-            diag.capacitySpinBox.setValue(int(self.ui.room_table.item(index, 1).text()))
-            diag.typecomboBox.setCurrentIndex(int(self.ui.room_table.item(index, 2).text()))
+            diag.capacitySpinBox.setValue(
+                int(self.ui.room_table.item(index, 1).text()))
+            diag.typecomboBox.setCurrentIndex(
+                int(self.ui.room_table.item(index, 2).text()))
 
             diag.setModal(True)
             if diag.exec():
                 for j, v in enumerate(diag.getInputs()):
-                    self.ui.room_table.setItem(index, j, QTableWidgetItem(str(v)))
+                    self.ui.room_table.setItem(
+                        index, j, QTableWidgetItem(str(v)))
 
             data = diag.getInputs()
             # pprint(self.promos)
-            self.rooms[index] = {'Name': data[0], 'Capacity': data[1], 'RoomType': data[2]}
+            self.rooms[index] = {'Name': data[0],
+                                 'Capacity': data[1], 'RoomType': data[2]}
         else:
             QMessageBox.about(self, "Error", "Please select a row")
 
@@ -192,6 +227,108 @@ class MainWindow(QMainWindow):
             self.rooms.pop(index)
         else:
             QMessageBox.about(self, "Error", "Please select a row to delete")
+
+    def module_input(self):
+        diag = ModuleInputDialog()
+        diag.setModal(True)
+        if diag.exec():
+            row = diag.getInputs()
+            insert_row_index = self.ui.modules_table.rowCount()
+            self.ui.modules_table.insertRow(insert_row_index)
+            for j, v in enumerate(row):
+                self.ui.modules_table.setItem(
+                    insert_row_index, j, QTableWidgetItem(str(v)))
+            promo_index = self.ui.pick_promo__modules_comboBox.currentIndex()
+            self.modules[promo_index].append(
+                {"Name": row[0], "abriv": row[1], "nb_cour": row[2], "nb_td": row[3], "nb_tp": row[4]})
+
+    def edit_module(self):
+        index = self.ui.modules_table.selectedIndexes()
+        if index:
+            index = index[0].row()  # cause single selection
+            diag = ModuleInputDialog()
+
+            diag.name.setText(self.ui.modules_table.item(index, 0).text())
+            diag.abriv.setText(self.ui.modules_table.item(index, 1).text())
+            diag.numberOfLecturesSpinBox.setValue(
+                int(self.ui.modules_table.item(index, 2).text()))
+            diag.numberOfTDsSpinBox.setValue(
+                int(self.ui.modules_table.item(index, 3).text()))
+            diag.numberOfTPsSpinBox.setValue(
+                int(self.ui.modules_table.item(index, 4).text()))
+
+            diag.setModal(True)
+            if diag.exec():
+                for j, v in enumerate(diag.getInputs()):
+                    self.ui.modules_table.setItem(
+                        index, j, QTableWidgetItem(str(v)))
+
+            data = diag.getInputs()
+            promo_index = self.ui.pick_promo__modules_comboBox.currentIndex()
+
+            self.modules[promo_index][index] = {"Name": data[0], "abriv": data[1], "nb_cour": data[2], "nb_td": data[3],
+                                                "nb_tp": data[4]}
+        else:
+            QMessageBox.about(self, "Error", "Please select a row")
+
+    def delete_module(self):
+        index = self.ui.modules_table.selectedIndexes()
+        if index:
+            index = index[0].row()  # cause single selection
+            self.ui.modules_table.removeRow(index)
+            promo_index = self.ui.pick_promo__modules_comboBox.currentIndex()
+            self.modules[promo_index].pop(index)
+        else:
+            QMessageBox.about(self, "Error", "Please select a row")
+
+    def load_module_data(self):
+        promo_index = self.ui.pick_promo__modules_comboBox.currentIndex()
+        # print(promo_index)
+        self.ui.modules_table.setRowCount(len(self.modules[promo_index]))
+        for i, module in enumerate(self.modules[promo_index]):
+            for j, v in enumerate(module.values()):
+                self.ui.modules_table.setItem(i, j, QTableWidgetItem(str(v)))
+                # print(i,j,str(v))
+
+    def onChange(self, i):
+        # for modules we need promos
+        if i == 3:
+            if len(self.promos) == 0:
+                self.ui.modules_tab.setEnabled(False)
+                self.ui.modules_table.setRowCount(0)
+                self.ui.pick_promo__modules_comboBox.clear()
+                QMessageBox.information(
+                    self, "", "in order to assign modules to promos u must first have promos")
+            else:
+                self.ui.pick_promo__modules_comboBox.clear()
+                for promo in self.promos:
+                    self.ui.pick_promo__modules_comboBox.addItem(promo["Name"])
+                self.ui.modules_tab.setEnabled(True)
+        elif i == 4:
+            if len(self.promos) == 0 or len(self.modules) == 0:
+                self.ui.assignements_tab.setEnabled(False)
+                self.ui.modules_assign_table.setRowCount(0)
+                self.ui.pick_promo_assign_comboBox.clear()
+                QMessageBox.information(self, "",
+                                        "in order to assign modules to promos and modules u must first have promos")
+            else:
+                self.ui.pick_promo_assign_comboBox.clear()
+                for promo in self.promos:
+                    self.ui.pick_promo_assign_comboBox.addItem(promo["Name"])
+                self.ui.assignements_tab.setEnabled(True)
+
+    def assign_input(self):
+        diag = assign_ModuleInputDialog(self.profs)
+        diag.setModal(True)
+        if diag.exec():
+            row = diag.getInputs()
+            index = self.ui.modules_table.selectedIndexes()
+        if index:
+            insert_row_index = index[0].row()  # cause single selection
+            for j, v in enumerate(row):
+                self.ui.modules_assign_table.setItem(
+                    insert_row_index, j, QTableWidgetItem(str(v)))
+            # update assignemnt in self.profs
 
 
 if __name__ == "__main__":

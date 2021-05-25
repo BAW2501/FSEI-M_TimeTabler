@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowJHYZQC.ui'
+## Form generated from reading UI file 'windowvgWNtx.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.2
 ##
@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.NonModal)
-        MainWindow.resize(799, 574)
+        MainWindow.resize(1100, 680)
         icon = QIcon()
         icon.addFile(u"icons/logo.ico", QSize(), QIcon.Normal, QIcon.Off)
         MainWindow.setWindowIcon(icon)
@@ -107,7 +107,7 @@ class Ui_MainWindow(object):
         self.project_buttons_frame.setFrameShadow(QFrame.Raised)
         self.save_project_frame = QFrame(self.project_buttons_frame)
         self.save_project_frame.setObjectName(u"save_project_frame")
-        self.save_project_frame.setGeometry(QRect(500, 50, 140, 140))
+        self.save_project_frame.setGeometry(QRect(720, 90, 150, 150))
         sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
@@ -140,7 +140,7 @@ class Ui_MainWindow(object):
 
         self.new_project_frame = QFrame(self.project_buttons_frame)
         self.new_project_frame.setObjectName(u"new_project_frame")
-        self.new_project_frame.setGeometry(QRect(50, 50, 140, 140))
+        self.new_project_frame.setGeometry(QRect(120, 90, 150, 150))
         sizePolicy1.setHeightForWidth(self.new_project_frame.sizePolicy().hasHeightForWidth())
         self.new_project_frame.setSizePolicy(sizePolicy1)
         self.new_project_frame.setFrameShape(QFrame.StyledPanel)
@@ -170,7 +170,7 @@ class Ui_MainWindow(object):
 
         self.open_project_frame = QFrame(self.project_buttons_frame)
         self.open_project_frame.setObjectName(u"open_project_frame")
-        self.open_project_frame.setGeometry(QRect(280, 50, 140, 140))
+        self.open_project_frame.setGeometry(QRect(420, 90, 150, 150))
         sizePolicy1.setHeightForWidth(self.open_project_frame.sizePolicy().hasHeightForWidth())
         self.open_project_frame.setSizePolicy(sizePolicy1)
         self.open_project_frame.setFrameShape(QFrame.StyledPanel)
@@ -198,6 +198,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.open_project_label)
 
+        self.label = QLabel(self.project_buttons_frame)
+        self.label.setObjectName(u"label")
+        self.label.setGeometry(QRect(10, 8, 561, 31))
 
         self.verticalLayout_12.addWidget(self.project_buttons_frame)
 
@@ -400,10 +403,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_7.addWidget(self.pick_promo_label)
 
-        self.pick_promo_comboBox = QComboBox(self.pick_promo_frame)
-        self.pick_promo_comboBox.setObjectName(u"pick_promo_comboBox")
+        self.pick_promo__modules_comboBox = QComboBox(self.pick_promo_frame)
+        self.pick_promo__modules_comboBox.setObjectName(u"pick_promo__modules_comboBox")
 
-        self.horizontalLayout_7.addWidget(self.pick_promo_comboBox)
+        self.horizontalLayout_7.addWidget(self.pick_promo__modules_comboBox)
 
 
         self.gridLayout.addWidget(self.pick_promo_frame, 0, 0, 1, 1)
@@ -433,24 +436,57 @@ class Ui_MainWindow(object):
         self.assignements_tab.setObjectName(u"assignements_tab")
         self.verticalLayout_8 = QVBoxLayout(self.assignements_tab)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.pick_promo_frame_2 = QFrame(self.assignements_tab)
-        self.pick_promo_frame_2.setObjectName(u"pick_promo_frame_2")
-        self.pick_promo_frame_2.setFrameShape(QFrame.StyledPanel)
-        self.pick_promo_frame_2.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_8 = QHBoxLayout(self.pick_promo_frame_2)
+        self.Assign_controls_frame = QFrame(self.assignements_tab)
+        self.Assign_controls_frame.setObjectName(u"Assign_controls_frame")
+        self.Assign_controls_frame.setFrameShape(QFrame.StyledPanel)
+        self.Assign_controls_frame.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_14 = QVBoxLayout(self.Assign_controls_frame)
+        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
+        self.promo_pick_assign_frame = QFrame(self.Assign_controls_frame)
+        self.promo_pick_assign_frame.setObjectName(u"promo_pick_assign_frame")
+        self.promo_pick_assign_frame.setFrameShape(QFrame.StyledPanel)
+        self.promo_pick_assign_frame.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_14 = QHBoxLayout(self.promo_pick_assign_frame)
+        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
+        self.assign_pick_promo_label = QLabel(self.promo_pick_assign_frame)
+        self.assign_pick_promo_label.setObjectName(u"assign_pick_promo_label")
+
+        self.horizontalLayout_14.addWidget(self.assign_pick_promo_label)
+
+        self.assign_pick_promo_assign_comboBox = QComboBox(self.promo_pick_assign_frame)
+        self.assign_pick_promo_assign_comboBox.setObjectName(u"assign_pick_promo_assign_comboBox")
+
+        self.horizontalLayout_14.addWidget(self.assign_pick_promo_assign_comboBox)
+
+
+        self.verticalLayout_14.addWidget(self.promo_pick_assign_frame)
+
+        self.assignment_control_frame = QFrame(self.Assign_controls_frame)
+        self.assignment_control_frame.setObjectName(u"assignment_control_frame")
+        self.assignment_control_frame.setFrameShape(QFrame.StyledPanel)
+        self.assignment_control_frame.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_8 = QHBoxLayout(self.assignment_control_frame)
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
-        self.pick_promo_label_2 = QLabel(self.pick_promo_frame_2)
-        self.pick_promo_label_2.setObjectName(u"pick_promo_label_2")
+        self.assignment_add_pushbutton = QPushButton(self.assignment_control_frame)
+        self.assignment_add_pushbutton.setObjectName(u"assignment_add_pushbutton")
 
-        self.horizontalLayout_8.addWidget(self.pick_promo_label_2)
+        self.horizontalLayout_8.addWidget(self.assignment_add_pushbutton)
 
-        self.pick_promo_comboBox_2 = QComboBox(self.pick_promo_frame_2)
-        self.pick_promo_comboBox_2.setObjectName(u"pick_promo_comboBox_2")
+        self.assignment_edit_pushbutton = QPushButton(self.assignment_control_frame)
+        self.assignment_edit_pushbutton.setObjectName(u"assignment_edit_pushbutton")
 
-        self.horizontalLayout_8.addWidget(self.pick_promo_comboBox_2)
+        self.horizontalLayout_8.addWidget(self.assignment_edit_pushbutton)
+
+        self.assignment_remove_pushbutton = QPushButton(self.assignment_control_frame)
+        self.assignment_remove_pushbutton.setObjectName(u"assignment_remove_pushbutton")
+
+        self.horizontalLayout_8.addWidget(self.assignment_remove_pushbutton)
 
 
-        self.verticalLayout_8.addWidget(self.pick_promo_frame_2)
+        self.verticalLayout_14.addWidget(self.assignment_control_frame)
+
+
+        self.verticalLayout_8.addWidget(self.Assign_controls_frame)
 
         self.modules_assign_table = QTableWidget(self.assignements_tab)
         if (self.modules_assign_table.columnCount() < 4):
@@ -890,7 +926,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.ribbon.setCurrentIndex(1)
-        self.spec_ribbon.setCurrentIndex(2)
+        self.spec_ribbon.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -911,6 +947,7 @@ class Ui_MainWindow(object):
         self.save_project_label.setText(QCoreApplication.translate("MainWindow", u"Save Project", None))
         self.new_project_label.setText(QCoreApplication.translate("MainWindow", u"New Project", None))
         self.open_project_label.setText(QCoreApplication.translate("MainWindow", u"Open Project", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"To get start start a new Project or open an existing one ", None))
         self.ribbon.setTabText(self.ribbon.indexOf(self.file_tab), QCoreApplication.translate("MainWindow", u"Home", None))
         self.promo_add_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.promo_edit__pushbutton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
@@ -923,13 +960,13 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Number of Groups", None));
         ___qtablewidgetitem3 = self.promo_table.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Effective per Group", None));
-        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.promotions_tab), QCoreApplication.translate("MainWindow", u"Promotions", None))
+        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.promotions_tab), QCoreApplication.translate("MainWindow", u"[1] Promotions", None))
         ___qtablewidgetitem4 = self.professor_table.horizontalHeaderItem(0)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Name", None));
         self.prof_add_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.prof_edit_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.prof_remove_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
-        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.professors_tab), QCoreApplication.translate("MainWindow", u"Professors", None))
+        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.professors_tab), QCoreApplication.translate("MainWindow", u"[2] Professors", None))
         ___qtablewidgetitem5 = self.room_table.horizontalHeaderItem(0)
         ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Name", None));
         ___qtablewidgetitem6 = self.room_table.horizontalHeaderItem(1)
@@ -939,7 +976,7 @@ class Ui_MainWindow(object):
         self.room_add_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.room_edit_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.room_remove_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
-        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.facilities_tab), QCoreApplication.translate("MainWindow", u"Facilities", None))
+        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.facilities_tab), QCoreApplication.translate("MainWindow", u"[3] Facilities", None))
         self.module_add_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.module_edit_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.module_remove_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
@@ -954,8 +991,11 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"Number of TDs", None));
         ___qtablewidgetitem12 = self.modules_table.horizontalHeaderItem(4)
         ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"Number of TPs", None));
-        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.modules_tab), QCoreApplication.translate("MainWindow", u"Modules", None))
-        self.pick_promo_label_2.setText(QCoreApplication.translate("MainWindow", u"Pick a Promotion", None))
+        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.modules_tab), QCoreApplication.translate("MainWindow", u"[4] Modules", None))
+        self.assign_pick_promo_label.setText(QCoreApplication.translate("MainWindow", u"Pick a Promotion", None))
+        self.assignment_add_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        self.assignment_edit_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
+        self.assignment_remove_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
         ___qtablewidgetitem13 = self.modules_assign_table.horizontalHeaderItem(0)
         ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"Module", None));
         ___qtablewidgetitem14 = self.modules_assign_table.horizontalHeaderItem(1)
@@ -964,7 +1004,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"TD Allocation", None));
         ___qtablewidgetitem16 = self.modules_assign_table.horizontalHeaderItem(3)
         ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"TP  Allocation", None));
-        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.assignements_tab), QCoreApplication.translate("MainWindow", u"Assignements", None))
+        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.assignements_tab), QCoreApplication.translate("MainWindow", u"[5] Assignements", None))
         self.datashow_add_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.datashow_edit_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.datashow_remove_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
@@ -972,7 +1012,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"Name", None));
         ___qtablewidgetitem18 = self.datashows_table.horizontalHeaderItem(1)
         ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"Allocation", None));
-        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.datashows_tab), QCoreApplication.translate("MainWindow", u"Datashows", None))
+        self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.datashows_tab), QCoreApplication.translate("MainWindow", u"[6] Datashows", None))
         self.ribbon.setTabText(self.ribbon.indexOf(self.data_tab), QCoreApplication.translate("MainWindow", u"Specification", None))
         self.timetable_label.setText(QCoreApplication.translate("MainWindow", u"TimeTable", None))
         self.days_per_week_label.setText(QCoreApplication.translate("MainWindow", u"Days per week", None))
