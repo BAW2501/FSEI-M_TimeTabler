@@ -14,20 +14,31 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.promos = [
             {"Name": "MI", "Number of Sections": 2,
-                "Number of Groups": 14, "Effective per Group": 25},
+             "Number of Groups": 14, "Effective per Group": 25},
             {"Name": "L2I", "Number of Sections": 1,
-                "Number of Groups": 9, "Effective per Group": 25},
+             "Number of Groups": 9, "Effective per Group": 25},
             {"Name": "L3I", "Number of Sections": 1, "Number of Groups": 7, "Effective per Group": 25}]
 
-        self.profs = ["Abid M.", "Bahnes N.", "Benameur", "Benhamed", "Benidris F.Z", "Bensalloua", "Bentaouza C", "Besnassi", "Bessaoud K.", "Betouati", "Bouzebiba", "Delali A.", "Djahafi", "Djebbara R.", "Filali F.", "Habib Zahmani", "Hamami", "Hassaine", "Henni F", "Henni K.", "Hocine N.", "Kaid Slimane", "Kenniche A.", "Khelifa N.", "Khiat", "Labdelli", "Laredj A.", "M. Andasmas M", "M. Belarbi Lakehal", "M. Belhamiti Omar", "M. Benchehida", "M. Benyatou Kamel", "M. Benzidane", "M. Fettouch Houari", "M. Ghezzar Med", "M. Kaid", "M. Kaid Med", "M. Medeghri Ahmed", "M. Menad Abdallah",
-                      "M. Mohammedi Mustapha", "M. Ould Ali M", "M.Ould Ali", "Maghni Sandid Z.", "Mechaoui M. D.G", "Mekemmeche", "Menad", "Meroufel B.", "Midoun M.", "Miroud", "Mlle Ali Merina.H", "Mlle Amina Ferraoun", "Mlle Benaouad", "Mlle Bouzid", "Mlle Dj. Bensikaddour", "Mlle Ferraoun A.", "Mlle Hamou Maamar.M", "Mlle Lakeb Ouda", "Mlle Zelmat Souhila", "Mme Ablaoui", "Mme Belmouhoub-Ould Ali", "Mme Bendahmane Hafida", "Mme Bendehmane H", "Mme Bouabdelli", "Mme Diala.H", "Mme Kaisserli", "Mme Limam", "Mme Saidani", "Mme Tabharit", "Moumen M.", "Moussa M.", "Mr Bouzit H", "Sehaba K.", ]
+        self.profs = ["Abid M.", "Bahnes N.", "Benameur", "Benhamed", "Benidris F.Z", "Bensalloua", "Bentaouza C",
+                      "Besnassi", "Bessaoud K.", "Betouati", "Bouzebiba", "Delali A.", "Djahafi", "Djebbara R.",
+                      "Filali F.", "Habib Zahmani", "Hamami", "Hassaine", "Henni F", "Henni K.", "Hocine N.",
+                      "Kaid Slimane", "Kenniche A.", "Khelifa N.", "Khiat", "Labdelli", "Laredj A.", "M. Andasmas M",
+                      "M. Belarbi Lakehal", "M. Belhamiti Omar", "M. Benchehida", "M. Benyatou Kamel", "M. Benzidane",
+                      "M. Fettouch Houari", "M. Ghezzar Med", "M. Kaid", "M. Kaid Med", "M. Medeghri Ahmed",
+                      "M. Menad Abdallah", "M. Mohammedi Mustapha", "M. Ould Ali M", "M.Ould Ali", "Maghni Sandid Z.",
+                      "Mechaoui M.D.G", "Mekemmeche", "Menad", "Meroufel B.", "Midoun M.", "Miroud",
+                      "Mlle Ali Merina.H", "Mlle Amina Ferraoun", "Mlle Benaouad", "Mlle Bouzid",
+                      "Mlle Dj. Bensikaddour", "Mlle Ferraoun A.", "Mlle Hamou Maamar.M", "Mlle Lakeb Ouda",
+                      "Mlle Zelmat Souhila", "Mme Ablaoui", "Mme Belmouhoub-Ould Ali", "Mme Bendahmane Hafida",
+                      "Mme Bendehmane H", "Mme Bouabdelli", "Mme Diala.H", "Mme Kaisserli", "Mme Limam", "Mme Saidani",
+                      "Mme Tabharit", "Moumen M.", "Moussa M.", "Mr Bouzit H", "Sehaba K.", ]
         self.rooms = [{"Name": "amphi1", "Capacity": 150, "RoomType": 1},
                       {"Name": "amphi4", "Capacity": 300, "RoomType": 1},
                       {"Name": "S1", "Capacity": 30, "RoomType": 2}
                       ]
         self.modules = [[{"Name": "algorith", "abriv": "ASD", "nb_cour": 1, "nb_td": 1, "nb_tp": 1}],
                         [{"Name": "artificial i", "abriv": "IA",
-                            "nb_cour": 1, "nb_td": 0, "nb_tp": 1}],
+                          "nb_cour": 1, "nb_td": 0, "nb_tp": 1}],
                         [{"Name": "object oriented ", "abriv": "POO", "nb_cour": 1, "nb_td": 0, "nb_tp": 1}]]
 
     def bind(self):
@@ -308,13 +319,13 @@ class MainWindow(QMainWindow):
             if len(self.promos) == 0 or len(self.modules) == 0:
                 self.ui.assignements_tab.setEnabled(False)
                 self.ui.modules_assign_table.setRowCount(0)
-                self.ui.pick_promo_assign_comboBox.clear()
+                self.ui.assign_pick_promo_assign_comboBox.clear()
                 QMessageBox.information(self, "",
                                         "in order to assign modules to promos and modules u must first have promos")
             else:
-                self.ui.pick_promo_assign_comboBox.clear()
+                self.ui.assign_pick_promo_assign_comboBox.clear()
                 for promo in self.promos:
-                    self.ui.pick_promo_assign_comboBox.addItem(promo["Name"])
+                    self.ui.assign_pick_promo_assign_comboBox.addItem(promo["Name"])
                 self.ui.assignements_tab.setEnabled(True)
 
     def assign_input(self):
@@ -323,11 +334,11 @@ class MainWindow(QMainWindow):
         if diag.exec():
             row = diag.getInputs()
             index = self.ui.modules_table.selectedIndexes()
-        if index:
-            insert_row_index = index[0].row()  # cause single selection
-            for j, v in enumerate(row):
-                self.ui.modules_assign_table.setItem(
-                    insert_row_index, j, QTableWidgetItem(str(v)))
+            if index:
+                insert_row_index = index[0].row()  # cause single selection
+                for j, v in enumerate(row):
+                    self.ui.modules_assign_table.setItem(
+                        insert_row_index, j, QTableWidgetItem(str(v)))
             # update assignemnt in self.profs
 
 
