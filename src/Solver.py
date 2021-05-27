@@ -58,9 +58,7 @@ class ThreeConsecutiveMaxSessions(HardConstraint):
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         if slot < 3:
             return True
-        if any(seance.prof.available[day][slot - 3:slot]) and any(seance.attendance.available[day][slot - 3:slot]):
-            return True
-        return False
+        return any(seance.prof.available[day][slot - 3: slot]) and any(seance.attendance.available[day][slot - 3: slot])
 
 
 class UniqueSessionDaily(HardConstraint):
@@ -75,7 +73,7 @@ class UniqueSessionDaily(HardConstraint):
             if seance.attendance is section or seance.attendance in section.list_group:
                 edt = section
                 break
-
+        assert edt is not None
         for slot_object in edt.EDT[day][0:slot]:
             for seance_1 in slot_object.sessions:
                 if seance_1 == seance:
@@ -88,11 +86,9 @@ class TwoCourPerDayMax(HardConstraint):
         if slot < 2 or seance.session_type != SessionType.Cour:
             return True
 
-        cour_count = 0
         attendance: Section = seance.attendance
-        for slot in attendance.EDT[day]:
-            if slot.sessions and slot.sessions[0].session_type == SessionType.Cour:
-                cour_count += 1
+        cour_count = sum(1 for slot in attendance.EDT[day]
+                         if slot.sessions and slot.sessions[0].session_type == SessionType.Cour)
 
         return cour_count < 2
 
@@ -151,14 +147,17 @@ class PET:
         """ check that the timetable is still valid when inserting a new session  """
         # first check it's physically possible
         # then check it's actually valid according to the hard constraints
-        return all([constraint.satisfied(seance, day, slot) for constraint in self.hard_constraints])
+        return all(
+            constraint.satisfied(seance, day, slot)
+            for constraint in self.hard_constraints
+        )
 
     def eval_soft_valid(self, prof, attendance, module, session_type, day, slot) -> int:
         """will return an int that it's the evaluation of the current task according to soft constraints  """
-        session = Session(attendance, prof, module, LimitedResource(), session_type)
-        return sum([1 for constraint in self.soft_constraints if constraint.satisfied(session, day, slot)])
+        session = Session(attendance, prof, module, Room("temp", RoomType.td, 100), session_type)
+        return sum(1 for constraint in self.soft_constraints if constraint.satisfied(session, day, slot))
 
-    def best_fit_room(self,session_type:SessionType,attendannce: Attendance, day, slot) -> tuple[Room, LimitedResource]:
+    def best_fit_room(self, session_type: SessionType, attendannce: Attendance, day, slot) -> tuple[Room, DataShow]:
         """ find the smallest room that will fit for the session"""
         effective = attendannce.effective
         appropriate_type = []
@@ -169,10 +168,9 @@ class PET:
         if session_type == SessionType.Cour:
             appropriate_type.append(RoomType.amphi.value)
             for ds in self.list_of_data_shows:
-                if attendannce in ds.allowed:
-                    if ds.is_available_on(day, slot):
-                        data_show_maybe = ds
-                        break
+                if attendannce in ds.allowed and ds.is_available_on(day, slot):
+                    data_show_maybe = ds
+                    break
 
         # appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
         #                                             and room.type_salle in appropriate_type, self.list_of_rooms))
@@ -182,21 +180,18 @@ class PET:
         # for room in self.list_of_rooms:
         #     if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
         #         appropriate_rooms.append(room)
+
         if appropriate_rooms:
             room = min(appropriate_rooms)
-            if room.type_salle == RoomType.td:
-                return room, data_show_maybe
-            else:
-                return room, LimitedResource()
+            if room.type_salle != RoomType.td:
+                return room, DataShow([])
+            assert data_show_maybe is not None
+            return room, data_show_maybe
         else:
             return None, None
 
     def all_assigned(self) -> bool:
-        for sect_sessions in self.sessions_list:
-            if len(sect_sessions) != 0:
-                return False
-
-        return True
+        return all(len(sect_sessions) == 0 for sect_sessions in self.sessions_list)
 
     def first_available_slot(self) -> tuple[int, int, int]:
         """ iterates over the sections  and finds the first available timeslot"""
@@ -225,15 +220,20 @@ class PET:
             # instantiate session object
             possible_session_object = Session(attendance, prof, module, room, session_type)
             if room and equipment and self.valid(possible_session_object, day, slot):
+                # assign session to the timetable
                 assign(possible_session_object, equipment, section, day, slot)
+                # remove session from pending session list
                 sessions.remove(possible_session)
+                # recursively check if our assignment is valid
                 if self.solve():
+                    # if it is great we're done
                     return True
-                else:
-                    unassign(possible_session_object, equipment, section, day, slot)
-                    sessions.insert(i, possible_session)
+                # if not let's remove the session from the timetable
+                unassign(possible_session_object, equipment, section, day, slot)
+                # and put it back to the pending sessions list
+                sessions.insert(i, possible_session)
+        # so maybe we tried all the possible session and none fit into this slot
+        # let's set this slot as full
         section.EDT[day][slot].is_full = True
-        if self.solve():
-            return True
-        else:
-            return False
+        # and continue trying to solve
+        return bool(self.solve())

@@ -47,9 +47,9 @@ def excel_export(promo_list: list[Promotion]):
 
 
 def get_data(xlsx):
-    modules_dict = dict()
-    promos_dict = dict()
-    professors_dict = dict()
+    modules_dict = {}
+    promos_dict = {}
+    professors_dict = {}
     # using the data in the test file to check the validity of the data model
     # the code looks bad but it's only test code
     workbook = load_workbook(filename=Path(xlsx), read_only=True)

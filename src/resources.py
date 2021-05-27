@@ -24,8 +24,6 @@ class LimitedResource:
         self.available[day][slot_number] = True
 
 
-
-
 class RoomType(Enum):
     amphi = 1
     td = 2
@@ -135,7 +133,7 @@ class Section(LimitedResource):
         return f'section {self.number}'
 
     def is_available_on(self, day: int, slot_number: int) -> bool:
-        return all([group.is_available_on(day, slot_number) for group in self.list_group])
+        return all(group.is_available_on(day, slot_number) for group in self.list_group)
 
     def set_busy_on(self, day: int, slot_number: int) -> None:
         self.available[day][slot_number] = False
@@ -154,7 +152,8 @@ Attendance = Union[Group, Section]
 class DataShow(LimitedResource):
     """ wrapper around limited resource for data shows does  nothing special in particular """
 
-    def __init__(self,allowed:list[Section], days: int = days_per_week, slots_per_day: int = timeslots_per_day) -> None:
+    def __init__(self, allowed: list['Promotion'], days: int = days_per_week,
+                 slots_per_day: int = timeslots_per_day) -> None:
         super().__init__(days, slots_per_day)
         self.allowed = allowed
 
@@ -183,7 +182,7 @@ class Promotion:
 
     @property
     def nb_group(self) -> int:
-        return sum([section.nb_group for section in self.list_section])
+        return sum(section.nb_group for section in self.list_section)
 
     def find_section(self, section_index: int) -> Union[Section, None]:
         for section in self.list_section:
