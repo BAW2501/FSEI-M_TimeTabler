@@ -68,7 +68,7 @@ class UniqueSessionDaily(HardConstraint):
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         if slot == 0 or day == days_per_week - 1:
             return True
-
+        edt = None
         for section in self.section_timetables:
             if seance.attendance is section or seance.attendance in section.list_group:
                 edt = section
@@ -161,6 +161,7 @@ class PET:
         """ find the smallest room that will fit for the session"""
         effective = attendannce.effective
         appropriate_type = []
+        data_show_maybe = None
         if session_type == SessionType.Tp:
             appropriate_type.append(RoomType.tp.value)
         else:
@@ -182,6 +183,7 @@ class PET:
         #         appropriate_rooms.append(room)
 
         if appropriate_rooms:
+            # smallest fit could be first fit here which is faster performance wise
             room = min(appropriate_rooms)
             if room.type_salle != RoomType.td:
                 return room, DataShow([])

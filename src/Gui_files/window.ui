@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1100</width>
-    <height>680</height>
+    <width>862</width>
+    <height>573</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -773,6 +773,28 @@ p, li { white-space: pre-wrap; }
                    </widget>
                   </item>
                   <item>
+                   <widget class="QFrame" name="module_pick_assign_frame">
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_15">
+                     <item>
+                      <widget class="QLabel" name="pick_module_lable">
+                       <property name="text">
+                        <string>Pick a Module</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QComboBox" name="module_picker_comboBox"/>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
                    <widget class="QFrame" name="assignment_control_frame">
                     <property name="frameShape">
                      <enum>QFrame::StyledPanel</enum>
@@ -821,22 +843,17 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <column>
                   <property name="text">
-                   <string>Module</string>
+                   <string>Proffesor</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>Lectures Allocation</string>
+                   <string>Allocated Groups/sections</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>TD Allocation</string>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>TP  Allocation</string>
+                   <string>Type</string>
                   </property>
                  </column>
                 </widget>

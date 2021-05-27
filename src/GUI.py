@@ -40,6 +40,11 @@ class MainWindow(QMainWindow):
                         [{"Name": "artificial i", "abriv": "IA",
                           "nb_cour": 1, "nb_td": 0, "nb_tp": 1}],
                         [{"Name": "object oriented ", "abriv": "POO", "nb_cour": 1, "nb_td": 0, "nb_tp": 1}]]
+        self.module_assignments = [
+            [[{"prof_name": 18, "number": 1, "type": 1}]],
+            [[{"prof_name": 12, "number": 1, "type": 1}]],
+            [[{"prof_name": 0, "number": 1, "type": 1}]]
+        ]
 
     def bind(self):
 
@@ -70,13 +75,17 @@ class MainWindow(QMainWindow):
         self.ui.module_remove_pushbutton.clicked.connect(self.delete_module)
         self.ui.assignment_add_pushbutton.clicked.connect(self.assign_input)
 
-        self.ui.pick_promo__modules_comboBox.currentIndexChanged.connect(
-            self.load_module_data)
+        self.ui.pick_promo__modules_comboBox.currentIndexChanged.connect(self.load_module_data)
+        self.ui.assign_pick_promo_assign_comboBox.currentIndexChanged.connect(self.refresh_modules_combo)
+
+        self.ui.assign_pick_promo_assign_comboBox.currentIndexChanged.connect(self.load_assign_data)
+        self.ui.module_picker_comboBox.currentIndexChanged.connect(self.load_assign_data)
 
         self.load_promo_data()
         self.load_prof_data()
         self.load_room_data()
         self.load_module_data()
+        self.load_assign_data()
         self.ui.spec_ribbon.currentChanged.connect(self.onChange)
 
     def promo_input(self):
@@ -86,6 +95,7 @@ class MainWindow(QMainWindow):
             row = diag.getInputs()
             insert_row_index = self.ui.promo_table.rowCount()
             self.modules.append([])
+            self.module_assignments.append([])
 
             self.ui.promo_table.insertRow(insert_row_index)
             for j, v in enumerate(row):
@@ -135,6 +145,8 @@ class MainWindow(QMainWindow):
             self.ui.promo_table.removeRow(index)
             self.promos.pop(index)
             self.modules.pop(index)
+            self.module_assignments.pop(index)
+
         else:
             QMessageBox.about(self, "Error", "Please select a row")
 
@@ -252,6 +264,7 @@ class MainWindow(QMainWindow):
             promo_index = self.ui.pick_promo__modules_comboBox.currentIndex()
             self.modules[promo_index].append(
                 {"Name": row[0], "abriv": row[1], "nb_cour": row[2], "nb_td": row[3], "nb_tp": row[4]})
+            self.module_assignments[promo_index].append([])
 
     def edit_module(self):
         index = self.ui.modules_table.selectedIndexes()
@@ -289,6 +302,7 @@ class MainWindow(QMainWindow):
             self.ui.modules_table.removeRow(index)
             promo_index = self.ui.pick_promo__modules_comboBox.currentIndex()
             self.modules[promo_index].pop(index)
+            self.module_assignments[promo_index].pop(index)
         else:
             QMessageBox.about(self, "Error", "Please select a row")
 
@@ -320,26 +334,49 @@ class MainWindow(QMainWindow):
                 self.ui.assignements_tab.setEnabled(False)
                 self.ui.modules_assign_table.setRowCount(0)
                 self.ui.assign_pick_promo_assign_comboBox.clear()
+
                 QMessageBox.information(self, "",
                                         "in order to assign modules to promos and modules u must first have promos")
             else:
                 self.ui.assign_pick_promo_assign_comboBox.clear()
+                self.ui.module_picker_comboBox.clear()
                 for promo in self.promos:
                     self.ui.assign_pick_promo_assign_comboBox.addItem(promo["Name"])
+                self.refresh_modules_combo()
                 self.ui.assignements_tab.setEnabled(True)
 
     def assign_input(self):
-        diag = assign_ModuleInputDialog(self.profs)
+
+        diag = AssignModuleInputDialog(self.profs)
         diag.setModal(True)
         if diag.exec():
             row = diag.getInputs()
-            index = self.ui.modules_table.selectedIndexes()
-            if index:
-                insert_row_index = index[0].row()  # cause single selection
-                for j, v in enumerate(row):
-                    self.ui.modules_assign_table.setItem(
-                        insert_row_index, j, QTableWidgetItem(str(v)))
-            # update assignemnt in self.profs
+            insert_row_index = self.ui.modules_assign_table.rowCount()
+            self.ui.modules_assign_table.insertRow(insert_row_index)
+
+            self.ui.modules_assign_table.setItem(insert_row_index, 0, QTableWidgetItem(self.profs[row[0]]))
+            self.ui.modules_assign_table.setItem(insert_row_index, 1, QTableWidgetItem(str(row[1])))
+            self.ui.modules_assign_table.setItem(insert_row_index, 2, QTableWidgetItem(str(row[2])))
+            promo_index = self.ui.assign_pick_promo_assign_comboBox.currentIndex()
+            module_index = self.ui.module_picker_comboBox.currentIndex()
+            self.module_assignments[promo_index][module_index].append(
+                {"prof_name": row[0], "number": row[1], "type": row[2]})
+
+    def refresh_modules_combo(self):
+        promo_index = self.ui.assign_pick_promo_assign_comboBox.currentIndex()
+        self.ui.module_picker_comboBox.clear()
+        for module in self.modules[promo_index]:
+            self.ui.module_picker_comboBox.addItem(module["Name"])
+
+    def load_assign_data(self):
+        promo_index = self.ui.assign_pick_promo_assign_comboBox.currentIndex()
+        module_index = self.ui.module_picker_comboBox.currentIndex()
+        # print(promo_index)
+        self.ui.modules_assign_table.setRowCount(len(self.module_assignments[promo_index][module_index]))
+        for i, task in enumerate(self.module_assignments[promo_index][module_index]):
+            self.ui.modules_assign_table.setItem(i, 0, QTableWidgetItem(self.profs[task['prof_name']]))
+            self.ui.modules_assign_table.setItem(i, 1, QTableWidgetItem(str(task['number'])))
+            self.ui.modules_assign_table.setItem(i, 2, QTableWidgetItem(str(task["type"])))
 
 
 if __name__ == "__main__":

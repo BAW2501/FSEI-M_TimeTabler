@@ -1,4 +1,3 @@
-from PySide2 import QtCore, QtGui
 from PySide2.QtCore import QSortFilterProxyModel, Qt
 from PySide2.QtWidgets import *
 
@@ -32,7 +31,7 @@ class PromoInputDialog(QDialog):
         buttonBox.rejected.connect(self.reject)
 
     def getInputs(self):
-        return self.name.text(), self.numberOfSectionsSpinBox.value(), self.numberOfGroupsSpinBox.value(),\
+        return self.name.text(), self.numberOfSectionsSpinBox.value(), self.numberOfGroupsSpinBox.value(), \
                self.effectivePerGroupSpinBox.value()
 
 
@@ -82,7 +81,7 @@ class RoomInputDialog(QDialog):
         buttonBox.rejected.connect(self.reject)
 
     def getInputs(self):
-        return self.name.text(), self.capacitySpinBox.value(), self.typecomboBox.currentIndex()
+        return self.name.text(), self.capacitySpinBox.value(), self.typecomboBox.currentIndex() + 1
 
 
 class ModuleInputDialog(QDialog):
@@ -118,6 +117,8 @@ class ModuleInputDialog(QDialog):
     def getInputs(self):
         return self.name.text(), self.abriv.text(), self.numberOfLecturesSpinBox.value(), \
                self.numberOfTDsSpinBox.value(), self.numberOfTPsSpinBox.value()
+
+
 class ExtendedComboBox(QComboBox):
     def __init__(self, parent=None):
         super(ExtendedComboBox, self).__init__(parent)
@@ -140,21 +141,18 @@ class ExtendedComboBox(QComboBox):
         self.lineEdit().textEdited.connect(self.pFilterModel.setFilterFixedString)
         self.completer.activated.connect(self.on_completer_activated)
 
-
-    # on selection of an item from the completer, select the corresponding item from combobox 
+    # on selection of an item from the completer, select the corresponding item from combobox
     def on_completer_activated(self, text):
         if text:
             index = self.findText(text)
             self.setCurrentIndex(index)
             self.activated.emit(self.itemText(index))
 
-
-    # on model change, update the models of the filter and completer as well 
+    # on model change, update the models of the filter and completer as well
     def setModel(self, model):
         super(ExtendedComboBox, self).setModel(model)
         self.pFilterModel.setSourceModel(model)
         self.completer.setModel(self.pFilterModel)
-
 
     # on model column change, update the model column of the filter and completer as well
     def setModelColumn(self, column):
@@ -162,25 +160,31 @@ class ExtendedComboBox(QComboBox):
         self.pFilterModel.setFilterKeyColumn(column)
         super(ExtendedComboBox, self).setModelColumn(column)
 
-class assign_ModuleInputDialog(QDialog):
-    def __init__(self,profs, parent=None):
-            super().__init__(parent)
-            self.setWindowTitle("Input")
-            self.layout = QFormLayout(self)
-            self.CardinalitySpinBox = QSpinBox()
-            self.CardinalitySpinBox.setValue(0)
-            self.CardinalitySpinBox.setMinimum(0)
-            self.SelectProfcomboBox = ExtendedComboBox(self)
-            self.SelectProfcomboBox.addItems(profs)
 
-            buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+class AssignModuleInputDialog(QDialog):
+    def __init__(self, profs, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Input")
+        self.layout = QFormLayout(self)
+        self.CardinalitySpinBox = QSpinBox()
+        self.CardinalitySpinBox.setValue(1)
+        self.CardinalitySpinBox.setMinimum(1)
+        self.SelectProfComboBox = ExtendedComboBox(self)
+        self.SelectProfComboBox.addItems(profs)
+        self.type_sessionComboBox = QComboBox(self)
+        self.type_sessionComboBox.addItem("Lecture")
+        self.type_sessionComboBox.addItem("TD")
+        self.type_sessionComboBox.addItem("TP")
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
 
-            self.layout.addRow("Prof ", self.SelectProfcomboBox)
-            self.layout.addRow("Cardinality", self.CardinalitySpinBox)
-            self.layout.addWidget(buttonBox)
+        self.layout.addRow("Prof ", self.SelectProfComboBox)
+        self.layout.addRow("Number of Allocated Groups/sections", self.CardinalitySpinBox)
+        self.layout.addRow("Type of assignment", self.type_sessionComboBox)
+        self.layout.addWidget(buttonBox)
 
-            buttonBox.accepted.connect(self.accept)
-            buttonBox.rejected.connect(self.reject)
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
 
     def getInputs(self):
-        return self.CardinalitySpinBox.value(), self.SelectProfcomboBox.currentIndex()
+        return self.SelectProfComboBox.currentIndex(), self.CardinalitySpinBox.value(), \
+               self.type_sessionComboBox.currentIndex()

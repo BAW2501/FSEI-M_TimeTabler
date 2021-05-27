@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowvgWNtx.ui'
+## Form generated from reading UI file 'windowNaeRmS.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.2
 ##
@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.NonModal)
-        MainWindow.resize(1100, 680)
+        MainWindow.resize(862, 573)
         icon = QIcon()
         icon.addFile(u"icons/logo.ico", QSize(), QIcon.Normal, QIcon.Off)
         MainWindow.setWindowIcon(icon)
@@ -461,6 +461,25 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_14.addWidget(self.promo_pick_assign_frame)
 
+        self.module_pick_assign_frame = QFrame(self.Assign_controls_frame)
+        self.module_pick_assign_frame.setObjectName(u"module_pick_assign_frame")
+        self.module_pick_assign_frame.setFrameShape(QFrame.StyledPanel)
+        self.module_pick_assign_frame.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_15 = QHBoxLayout(self.module_pick_assign_frame)
+        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
+        self.pick_module_lable = QLabel(self.module_pick_assign_frame)
+        self.pick_module_lable.setObjectName(u"pick_module_lable")
+
+        self.horizontalLayout_15.addWidget(self.pick_module_lable)
+
+        self.module_picker_comboBox = QComboBox(self.module_pick_assign_frame)
+        self.module_picker_comboBox.setObjectName(u"module_picker_comboBox")
+
+        self.horizontalLayout_15.addWidget(self.module_picker_comboBox)
+
+
+        self.verticalLayout_14.addWidget(self.module_pick_assign_frame)
+
         self.assignment_control_frame = QFrame(self.Assign_controls_frame)
         self.assignment_control_frame.setObjectName(u"assignment_control_frame")
         self.assignment_control_frame.setFrameShape(QFrame.StyledPanel)
@@ -489,16 +508,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.addWidget(self.Assign_controls_frame)
 
         self.modules_assign_table = QTableWidget(self.assignements_tab)
-        if (self.modules_assign_table.columnCount() < 4):
-            self.modules_assign_table.setColumnCount(4)
+        if (self.modules_assign_table.columnCount() < 3):
+            self.modules_assign_table.setColumnCount(3)
         __qtablewidgetitem13 = QTableWidgetItem()
         self.modules_assign_table.setHorizontalHeaderItem(0, __qtablewidgetitem13)
         __qtablewidgetitem14 = QTableWidgetItem()
         self.modules_assign_table.setHorizontalHeaderItem(1, __qtablewidgetitem14)
         __qtablewidgetitem15 = QTableWidgetItem()
         self.modules_assign_table.setHorizontalHeaderItem(2, __qtablewidgetitem15)
-        __qtablewidgetitem16 = QTableWidgetItem()
-        self.modules_assign_table.setHorizontalHeaderItem(3, __qtablewidgetitem16)
         self.modules_assign_table.setObjectName(u"modules_assign_table")
         self.modules_assign_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.modules_assign_table.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -538,10 +555,10 @@ class Ui_MainWindow(object):
         self.datashows_table = QTableWidget(self.datashows_tab)
         if (self.datashows_table.columnCount() < 2):
             self.datashows_table.setColumnCount(2)
+        __qtablewidgetitem16 = QTableWidgetItem()
+        self.datashows_table.setHorizontalHeaderItem(0, __qtablewidgetitem16)
         __qtablewidgetitem17 = QTableWidgetItem()
-        self.datashows_table.setHorizontalHeaderItem(0, __qtablewidgetitem17)
-        __qtablewidgetitem18 = QTableWidgetItem()
-        self.datashows_table.setHorizontalHeaderItem(1, __qtablewidgetitem18)
+        self.datashows_table.setHorizontalHeaderItem(1, __qtablewidgetitem17)
         self.datashows_table.setObjectName(u"datashows_table")
         self.datashows_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.datashows_table.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -682,35 +699,35 @@ class Ui_MainWindow(object):
         self.timetable_tableview = QTableWidget(self.timetable_tab)
         if (self.timetable_tableview.columnCount() < 7):
             self.timetable_tableview.setColumnCount(7)
+        __qtablewidgetitem18 = QTableWidgetItem()
+        self.timetable_tableview.setHorizontalHeaderItem(0, __qtablewidgetitem18)
         __qtablewidgetitem19 = QTableWidgetItem()
-        self.timetable_tableview.setHorizontalHeaderItem(0, __qtablewidgetitem19)
+        self.timetable_tableview.setHorizontalHeaderItem(1, __qtablewidgetitem19)
         __qtablewidgetitem20 = QTableWidgetItem()
-        self.timetable_tableview.setHorizontalHeaderItem(1, __qtablewidgetitem20)
+        self.timetable_tableview.setHorizontalHeaderItem(2, __qtablewidgetitem20)
         __qtablewidgetitem21 = QTableWidgetItem()
-        self.timetable_tableview.setHorizontalHeaderItem(2, __qtablewidgetitem21)
+        self.timetable_tableview.setHorizontalHeaderItem(3, __qtablewidgetitem21)
         __qtablewidgetitem22 = QTableWidgetItem()
-        self.timetable_tableview.setHorizontalHeaderItem(3, __qtablewidgetitem22)
+        self.timetable_tableview.setHorizontalHeaderItem(4, __qtablewidgetitem22)
         __qtablewidgetitem23 = QTableWidgetItem()
-        self.timetable_tableview.setHorizontalHeaderItem(4, __qtablewidgetitem23)
+        self.timetable_tableview.setHorizontalHeaderItem(5, __qtablewidgetitem23)
         __qtablewidgetitem24 = QTableWidgetItem()
-        self.timetable_tableview.setHorizontalHeaderItem(5, __qtablewidgetitem24)
-        __qtablewidgetitem25 = QTableWidgetItem()
-        self.timetable_tableview.setHorizontalHeaderItem(6, __qtablewidgetitem25)
+        self.timetable_tableview.setHorizontalHeaderItem(6, __qtablewidgetitem24)
         if (self.timetable_tableview.rowCount() < 5):
             self.timetable_tableview.setRowCount(5)
+        __qtablewidgetitem25 = QTableWidgetItem()
+        self.timetable_tableview.setVerticalHeaderItem(0, __qtablewidgetitem25)
         __qtablewidgetitem26 = QTableWidgetItem()
-        self.timetable_tableview.setVerticalHeaderItem(0, __qtablewidgetitem26)
+        self.timetable_tableview.setVerticalHeaderItem(1, __qtablewidgetitem26)
         __qtablewidgetitem27 = QTableWidgetItem()
-        self.timetable_tableview.setVerticalHeaderItem(1, __qtablewidgetitem27)
+        self.timetable_tableview.setVerticalHeaderItem(2, __qtablewidgetitem27)
         __qtablewidgetitem28 = QTableWidgetItem()
-        self.timetable_tableview.setVerticalHeaderItem(2, __qtablewidgetitem28)
+        self.timetable_tableview.setVerticalHeaderItem(3, __qtablewidgetitem28)
         __qtablewidgetitem29 = QTableWidgetItem()
-        self.timetable_tableview.setVerticalHeaderItem(3, __qtablewidgetitem29)
+        self.timetable_tableview.setVerticalHeaderItem(4, __qtablewidgetitem29)
         __qtablewidgetitem30 = QTableWidgetItem()
-        self.timetable_tableview.setVerticalHeaderItem(4, __qtablewidgetitem30)
-        __qtablewidgetitem31 = QTableWidgetItem()
-        __qtablewidgetitem31.setTextAlignment(Qt.AlignCenter);
-        self.timetable_tableview.setItem(0, 1, __qtablewidgetitem31)
+        __qtablewidgetitem30.setTextAlignment(Qt.AlignCenter);
+        self.timetable_tableview.setItem(0, 1, __qtablewidgetitem30)
         self.timetable_tableview.setObjectName(u"timetable_tableview")
         self.timetable_tableview.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.timetable_tableview.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -926,7 +943,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.ribbon.setCurrentIndex(1)
-        self.spec_ribbon.setCurrentIndex(3)
+        self.spec_ribbon.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -993,25 +1010,24 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"Number of TPs", None));
         self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.modules_tab), QCoreApplication.translate("MainWindow", u"[4] Modules", None))
         self.assign_pick_promo_label.setText(QCoreApplication.translate("MainWindow", u"Pick a Promotion", None))
+        self.pick_module_lable.setText(QCoreApplication.translate("MainWindow", u"Pick a Module", None))
         self.assignment_add_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.assignment_edit_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.assignment_remove_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
         ___qtablewidgetitem13 = self.modules_assign_table.horizontalHeaderItem(0)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"Module", None));
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"Proffesor", None));
         ___qtablewidgetitem14 = self.modules_assign_table.horizontalHeaderItem(1)
-        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"Lectures Allocation", None));
+        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"Number of Allocated Groups/sections", None));
         ___qtablewidgetitem15 = self.modules_assign_table.horizontalHeaderItem(2)
-        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"TD Allocation", None));
-        ___qtablewidgetitem16 = self.modules_assign_table.horizontalHeaderItem(3)
-        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"TP  Allocation", None));
+        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"Type", None));
         self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.assignements_tab), QCoreApplication.translate("MainWindow", u"[5] Assignements", None))
         self.datashow_add_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.datashow_edit_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.datashow_remove_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
-        ___qtablewidgetitem17 = self.datashows_table.horizontalHeaderItem(0)
-        ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"Name", None));
-        ___qtablewidgetitem18 = self.datashows_table.horizontalHeaderItem(1)
-        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"Allocation", None));
+        ___qtablewidgetitem16 = self.datashows_table.horizontalHeaderItem(0)
+        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"Name", None));
+        ___qtablewidgetitem17 = self.datashows_table.horizontalHeaderItem(1)
+        ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"Allocation", None));
         self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.datashows_tab), QCoreApplication.translate("MainWindow", u"[6] Datashows", None))
         self.ribbon.setTabText(self.ribbon.indexOf(self.data_tab), QCoreApplication.translate("MainWindow", u"Specification", None))
         self.timetable_label.setText(QCoreApplication.translate("MainWindow", u"TimeTable", None))
@@ -1056,30 +1072,30 @@ class Ui_MainWindow(object):
         self.ribbon.setTabText(self.ribbon.indexOf(self.options_tab), QCoreApplication.translate("MainWindow", u"Options", None))
         self.pick_promo_label_TT.setText(QCoreApplication.translate("MainWindow", u"Pick a Promotion", None))
         self.pick_section_label.setText(QCoreApplication.translate("MainWindow", u"Pick a Section", None))
-        ___qtablewidgetitem19 = self.timetable_tableview.horizontalHeaderItem(0)
-        ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"08:30 -9:30", None));
-        ___qtablewidgetitem20 = self.timetable_tableview.horizontalHeaderItem(1)
-        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"09:30-10:30", None));
-        ___qtablewidgetitem21 = self.timetable_tableview.horizontalHeaderItem(2)
-        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"10:30-11:30", None));
-        ___qtablewidgetitem22 = self.timetable_tableview.horizontalHeaderItem(3)
-        ___qtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"11:30-12:30", None));
-        ___qtablewidgetitem23 = self.timetable_tableview.horizontalHeaderItem(4)
-        ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"12:30-13:30", None));
-        ___qtablewidgetitem24 = self.timetable_tableview.horizontalHeaderItem(5)
-        ___qtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"13:30-14:30", None));
-        ___qtablewidgetitem25 = self.timetable_tableview.horizontalHeaderItem(6)
-        ___qtablewidgetitem25.setText(QCoreApplication.translate("MainWindow", u"14:30-15:30", None));
-        ___qtablewidgetitem26 = self.timetable_tableview.verticalHeaderItem(0)
-        ___qtablewidgetitem26.setText(QCoreApplication.translate("MainWindow", u"Sunday ", None));
-        ___qtablewidgetitem27 = self.timetable_tableview.verticalHeaderItem(1)
-        ___qtablewidgetitem27.setText(QCoreApplication.translate("MainWindow", u"Monday", None));
-        ___qtablewidgetitem28 = self.timetable_tableview.verticalHeaderItem(2)
-        ___qtablewidgetitem28.setText(QCoreApplication.translate("MainWindow", u"Tuesday", None));
-        ___qtablewidgetitem29 = self.timetable_tableview.verticalHeaderItem(3)
-        ___qtablewidgetitem29.setText(QCoreApplication.translate("MainWindow", u"Wednesday ", None));
-        ___qtablewidgetitem30 = self.timetable_tableview.verticalHeaderItem(4)
-        ___qtablewidgetitem30.setText(QCoreApplication.translate("MainWindow", u"Thursday", None));
+        ___qtablewidgetitem18 = self.timetable_tableview.horizontalHeaderItem(0)
+        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"08:30 -9:30", None));
+        ___qtablewidgetitem19 = self.timetable_tableview.horizontalHeaderItem(1)
+        ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"09:30-10:30", None));
+        ___qtablewidgetitem20 = self.timetable_tableview.horizontalHeaderItem(2)
+        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"10:30-11:30", None));
+        ___qtablewidgetitem21 = self.timetable_tableview.horizontalHeaderItem(3)
+        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"11:30-12:30", None));
+        ___qtablewidgetitem22 = self.timetable_tableview.horizontalHeaderItem(4)
+        ___qtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"12:30-13:30", None));
+        ___qtablewidgetitem23 = self.timetable_tableview.horizontalHeaderItem(5)
+        ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"13:30-14:30", None));
+        ___qtablewidgetitem24 = self.timetable_tableview.horizontalHeaderItem(6)
+        ___qtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"14:30-15:30", None));
+        ___qtablewidgetitem25 = self.timetable_tableview.verticalHeaderItem(0)
+        ___qtablewidgetitem25.setText(QCoreApplication.translate("MainWindow", u"Sunday ", None));
+        ___qtablewidgetitem26 = self.timetable_tableview.verticalHeaderItem(1)
+        ___qtablewidgetitem26.setText(QCoreApplication.translate("MainWindow", u"Monday", None));
+        ___qtablewidgetitem27 = self.timetable_tableview.verticalHeaderItem(2)
+        ___qtablewidgetitem27.setText(QCoreApplication.translate("MainWindow", u"Tuesday", None));
+        ___qtablewidgetitem28 = self.timetable_tableview.verticalHeaderItem(3)
+        ___qtablewidgetitem28.setText(QCoreApplication.translate("MainWindow", u"Wednesday ", None));
+        ___qtablewidgetitem29 = self.timetable_tableview.verticalHeaderItem(4)
+        ___qtablewidgetitem29.setText(QCoreApplication.translate("MainWindow", u"Thursday", None));
 
         __sortingEnabled = self.timetable_tableview.isSortingEnabled()
         self.timetable_tableview.setSortingEnabled(False)
