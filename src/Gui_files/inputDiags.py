@@ -188,4 +188,33 @@ class AssignModuleInputDialog(QDialog):
 
     def get_inputs(self):
         return self.SelectProfComboBox.currentIndex(), self.CardinalitySpinBox.value(), \
-               self.type_sessionComboBox.currentIndex()+1
+               self.type_sessionComboBox.currentIndex() + 1
+
+
+class DataShowInputDialog(QDialog):
+    # TODO handle allocated promos being deleted in promo_delete
+    def __init__(self, promos, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Input")
+        self.layout = QFormLayout(self)
+        self.id = QLineEdit(self)
+        self.promoCheckboxes = []
+
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+
+        self.layout.addRow("datashow ID", self.id)
+        for promo in promos:
+            current_box = QCheckBox(self)
+            self.promoCheckboxes.append(current_box)
+            self.layout.addRow(promo["Name"], current_box)
+
+        self.layout.addWidget(buttonBox)
+
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+        self.promoCheckboxes[0].isChecked()
+
+    def get_inputs(self):
+        # print(self.id.text(), [checkbox.isChecked() for checkbox in self.promoCheckboxes])
+        return self.id.text(), [i for i, checkbox in enumerate(self.promoCheckboxes) if checkbox.isChecked()]

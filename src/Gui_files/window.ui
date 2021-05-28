@@ -403,7 +403,7 @@ p, li { white-space: pre-wrap; }
               </font>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>5</number>
              </property>
              <property name="iconSize">
               <size>
@@ -861,7 +861,7 @@ p, li { white-space: pre-wrap; }
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_9">
                <item>
-                <widget class="QFrame" name="datashows_control_frame_2">
+                <widget class="QFrame" name="datashows_control_frame">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -870,21 +870,21 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_9">
                   <item>
-                   <widget class="QPushButton" name="datashow_add_pushbutton_2">
+                   <widget class="QPushButton" name="datashow_add_pushbutton">
                     <property name="text">
                      <string>Add</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="datashow_edit_pushbutton_2">
+                   <widget class="QPushButton" name="datashow_edit_pushbutton">
                     <property name="text">
                      <string>Edit</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="datashow_remove_pushbutton_2">
+                   <widget class="QPushButton" name="datashow_remove_pushbutton">
                     <property name="text">
                      <string>Remove</string>
                     </property>

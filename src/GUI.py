@@ -31,11 +31,9 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.promos = [
-            {"Name": "MI", "Number of Sections": 2,
-             "Number of Groups": 14, "Effective per Group": 25},
-            {"Name": "L2I", "Number of Sections": 1,
-             "Number of Groups": 9, "Effective per Group": 25},
-            {"Name": "L3I", "Number of Sections": 1, "Number of Groups": 7, "Effective per Group": 25}]
+            {"Name": "MI", "Number of Sections": 2, "Number of Groups": 14, "Effective per Group": 25},
+            {"Name": "L2 Info", "Number of Sections": 1, "Number of Groups": 9, "Effective per Group": 25},
+            {"Name": "L3 Info", "Number of Sections": 1, "Number of Groups": 7, "Effective per Group": 25}]
 
         self.profs = ["Abid M.", "Bahnes N.", "Benameur", "Benhamed", "Benidris F.Z", "Bensalloua", "Bentaouza C",
                       "Besnassi", "Bessaoud K.", "Betouati", "Bouzebiba", "Delali A.", "Djahafi", "Djebbara R.",
@@ -54,15 +52,17 @@ class MainWindow(QMainWindow):
                       {"Name": "amphi4", "Capacity": 300, "RoomType": 1},
                       {"Name": "S1", "Capacity": 30, "RoomType": 2}
                       ]
-        self.modules = [[{"Name": "algorith", "abriv": "ASD", "nb_cour": 1, "nb_td": 1, "nb_tp": 1}],
-                        [{"Name": "artificial i", "abriv": "IA",
-                          "nb_cour": 1, "nb_td": 0, "nb_tp": 1}],
-                        [{"Name": "object oriented ", "abriv": "POO", "nb_cour": 1, "nb_td": 0, "nb_tp": 1}]]
+        self.modules = [[{"Name": "Algorithmique et structure de données 1", "abriv": "ASD1", "nb_cour": 1, "nb_td": 1,
+                          "nb_tp": 1}],
+                        [{"Name": " Programmation orienté objet", "abriv": "POO", "nb_cour": 1, "nb_td": 0,
+                          "nb_tp": 1}],
+                        [{"Name": "Intelligence Artificielle", "abriv": "IA", "nb_cour": 1, "nb_td": 0, "nb_tp": 1}]]
         self.module_assignments = [
-            [[{"prof_name": 18, "number": 1, "type": 1}]],
-            [[{"prof_name": 12, "number": 1, "type": 1}]],
-            [[{"prof_name": 0, "number": 1, "type": 1}]]
+            [[{"prof_name": 18, "number": 2, "type": 1}]],
+            [[{"prof_name": 0, "number": 1, "type": 1}]],
+            [[{"prof_name": 11, "number": 1, "type": 1}]]
         ]
+        self.datashows = [{"id": "ds1", "allocated": [0, 1]}]
 
     def bind(self):
 
@@ -94,6 +94,9 @@ class MainWindow(QMainWindow):
         self.ui.assignment_add_pushbutton.clicked.connect(self.assign_input)
         self.ui.assignment_edit_pushbutton.clicked.connect(self.edit_assign_data)
         self.ui.assignment_remove_pushbutton.clicked.connect(self.delete_assign_data)
+        self.ui.datashow_add_pushbutton.clicked.connect(self.datashow_input)
+        self.ui.datashow_edit_pushbutton.clicked.connect(self.edit_datashow)
+        self.ui.datashow_remove_pushbutton.clicked.connect(self.delete_datashow)
 
         self.ui.pick_promo__modules_comboBox.currentIndexChanged.connect(self.load_module_data)
         self.ui.assign_pick_promo_assign_comboBox.currentIndexChanged.connect(self.refresh_modules_combo)
@@ -106,6 +109,7 @@ class MainWindow(QMainWindow):
         self.load_room_data()
         self.load_module_data()
         self.load_assign_data()
+        self.load_datashow_data()
         self.ui.spec_ribbon.currentChanged.connect(self.on_spec_tab_change)
 
     def promo_input(self):
@@ -403,26 +407,27 @@ class MainWindow(QMainWindow):
         promo_index = self.ui.assign_pick_promo_assign_comboBox.currentIndex()
         module_index = self.ui.module_picker_comboBox.currentIndex()
         if index:
-            index = index[0].row()  # cause single selection
-            diag = AssignModuleInputDialog(self.profs)
-            name, val, session_type = self.module_assignments[promo_index][module_index][index].values()
-            session_type -= 1
-
-            diag.SelectProfComboBox.setCurrentIndex(name)
-            diag.CardinalitySpinBox.setValue(val)
-            diag.type_sessionComboBox.setCurrentIndex(session_type)
-            diag.setModal(True)
-            if diag.exec():
-                row = diag.get_inputs()
-                self.ui.modules_assign_table.setItem(index, 0, QTableWidgetItem(self.profs[row[0]]))
-                self.ui.modules_assign_table.setItem(index, 1, QTableWidgetItem(str(row[1])))
-                self.ui.modules_assign_table.setItem(index, 2, QTableWidgetItem(session_type_from_int(row[2])))
-                self.module_assignments[promo_index][module_index][index] = {"prof_name": row[0], "number": row[1],
-                                                                             "type": row[2]}
-
-
+            self._extracted_from_edit_assign_data_6(promo_index, module_index, index)
         else:
             QMessageBox.about(self, "Error", "Please select a row")
+
+    def _extracted_from_edit_assign_data_6(self, promo_index, module_index, index):
+        index = index[0].row()  # cause single selection
+        diag = AssignModuleInputDialog(self.profs)
+        name, val, session_type = self.module_assignments[promo_index][module_index][index].values()
+        session_type -= 1
+
+        diag.SelectProfComboBox.setCurrentIndex(name)
+        diag.CardinalitySpinBox.setValue(val)
+        diag.type_sessionComboBox.setCurrentIndex(session_type)
+        diag.setModal(True)
+        if diag.exec():
+            row = diag.get_inputs()
+            self.ui.modules_assign_table.setItem(index, 0, QTableWidgetItem(self.profs[row[0]]))
+            self.ui.modules_assign_table.setItem(index, 1, QTableWidgetItem(str(row[1])))
+            self.ui.modules_assign_table.setItem(index, 2, QTableWidgetItem(session_type_from_int(row[2])))
+            self.module_assignments[promo_index][module_index][index] = {"prof_name": row[0], "number": row[1],
+                                                                         "type": row[2]}
 
     def delete_assign_data(self):
         index = self.ui.modules_assign_table.selectedIndexes()
@@ -434,6 +439,54 @@ class MainWindow(QMainWindow):
             self.module_assignments[promo_index][module_index].pop(index)
         else:
             QMessageBox.about(self, "Error", "Please select a row")
+
+    def datashow_input(self):
+        diag = DataShowInputDialog(self.promos)
+        diag.setModal(True)
+        if diag.exec():
+            name, allocations = diag.get_inputs()
+            # print(name,allocations)
+            str_allocations = [self.promos[i]["Name"] for i in allocations]
+            insert_row_index = self.ui.datashows_table.rowCount()
+            self.ui.datashows_table.insertRow(insert_row_index)
+            self.ui.datashows_table.setItem(insert_row_index, 0, QTableWidgetItem(name))
+            self.ui.datashows_table.setItem(insert_row_index, 1, QTableWidgetItem(",".join(str_allocations)))
+            self.datashows.append({"id": name, "allocated": allocations})
+
+    def load_datashow_data(self):
+        self.ui.datashows_table.setRowCount(len(self.datashows))
+        for i, ds in enumerate(self.datashows):
+            name, allocations = ds.values()
+            allocations = [self.promos[i]["Name"] for i in allocations]
+            self.ui.datashows_table.setItem(i, 0, QTableWidgetItem(name))
+            self.ui.datashows_table.setItem(i, 1, QTableWidgetItem(",".join(allocations)))
+
+    def edit_datashow(self):
+        index = self.ui.datashows_table.selectedIndexes()
+        if index:
+            index = index[0].row()  # cause single selection
+            diag = DataShowInputDialog(self.promos)
+
+            diag.id.setText(self.datashows[index]["id"])
+            for i in self.datashows[index]["allocated"]:
+                diag.promoCheckboxes[i].setEnabled(True)
+            diag.setModal(True)
+            if diag.exec():
+                name, allocations = diag.get_inputs()
+                str_allocations = [self.promos[i]["Name"] for i in allocations]
+                self.ui.datashows_table.setItem(index, 0, QTableWidgetItem(name))
+                self.ui.datashows_table.setItem(index, 1, QTableWidgetItem(",".join(str_allocations)))
+                self.datashows[index] = {"id": name, "allocated": allocations}
+                #print(self.datashows,index)
+        else:
+            QMessageBox.about(self, "Error", "Please select a row")
+
+    def delete_datashow(self):
+        index = self.ui.datashows_table.selectedIndexes()
+        if index:
+            index = index[0].row()  # cause single selection
+            self.ui.datashows_table.removeRow(index)
+            self.datashows.pop(index)
 
 
 if __name__ == "__main__":

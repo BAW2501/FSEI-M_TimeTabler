@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowsaHlcr.ui'
+## Form generated from reading UI file 'windowivpcUY.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.1.0
 ##
@@ -523,29 +523,29 @@ class Ui_MainWindow(object):
         self.datashows_tab.setObjectName(u"datashows_tab")
         self.verticalLayout_9 = QVBoxLayout(self.datashows_tab)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.datashows_control_frame_2 = QFrame(self.datashows_tab)
-        self.datashows_control_frame_2.setObjectName(u"datashows_control_frame_2")
-        self.datashows_control_frame_2.setFrameShape(QFrame.StyledPanel)
-        self.datashows_control_frame_2.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_9 = QHBoxLayout(self.datashows_control_frame_2)
+        self.datashows_control_frame = QFrame(self.datashows_tab)
+        self.datashows_control_frame.setObjectName(u"datashows_control_frame")
+        self.datashows_control_frame.setFrameShape(QFrame.StyledPanel)
+        self.datashows_control_frame.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_9 = QHBoxLayout(self.datashows_control_frame)
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.datashow_add_pushbutton_2 = QPushButton(self.datashows_control_frame_2)
-        self.datashow_add_pushbutton_2.setObjectName(u"datashow_add_pushbutton_2")
+        self.datashow_add_pushbutton = QPushButton(self.datashows_control_frame)
+        self.datashow_add_pushbutton.setObjectName(u"datashow_add_pushbutton")
 
-        self.horizontalLayout_9.addWidget(self.datashow_add_pushbutton_2)
+        self.horizontalLayout_9.addWidget(self.datashow_add_pushbutton)
 
-        self.datashow_edit_pushbutton_2 = QPushButton(self.datashows_control_frame_2)
-        self.datashow_edit_pushbutton_2.setObjectName(u"datashow_edit_pushbutton_2")
+        self.datashow_edit_pushbutton = QPushButton(self.datashows_control_frame)
+        self.datashow_edit_pushbutton.setObjectName(u"datashow_edit_pushbutton")
 
-        self.horizontalLayout_9.addWidget(self.datashow_edit_pushbutton_2)
+        self.horizontalLayout_9.addWidget(self.datashow_edit_pushbutton)
 
-        self.datashow_remove_pushbutton_2 = QPushButton(self.datashows_control_frame_2)
-        self.datashow_remove_pushbutton_2.setObjectName(u"datashow_remove_pushbutton_2")
+        self.datashow_remove_pushbutton = QPushButton(self.datashows_control_frame)
+        self.datashow_remove_pushbutton.setObjectName(u"datashow_remove_pushbutton")
 
-        self.horizontalLayout_9.addWidget(self.datashow_remove_pushbutton_2)
+        self.horizontalLayout_9.addWidget(self.datashow_remove_pushbutton)
 
 
-        self.verticalLayout_9.addWidget(self.datashows_control_frame_2)
+        self.verticalLayout_9.addWidget(self.datashows_control_frame)
 
         self.datashows_table = QTableWidget(self.datashows_tab)
         if (self.datashows_table.columnCount() < 2):
@@ -944,7 +944,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.ribbon.setCurrentIndex(1)
-        self.spec_ribbon.setCurrentIndex(0)
+        self.spec_ribbon.setCurrentIndex(5)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1022,9 +1022,9 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem15 = self.modules_assign_table.horizontalHeaderItem(2)
         ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"Type", None));
         self.spec_ribbon.setTabText(self.spec_ribbon.indexOf(self.assignements_tab), QCoreApplication.translate("MainWindow", u"[5] Assignements", None))
-        self.datashow_add_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Add", None))
-        self.datashow_edit_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
-        self.datashow_remove_pushbutton_2.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
+        self.datashow_add_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        self.datashow_edit_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
+        self.datashow_remove_pushbutton.setText(QCoreApplication.translate("MainWindow", u"Remove", None))
         ___qtablewidgetitem16 = self.datashows_table.horizontalHeaderItem(0)
         ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"Name", None));
         ___qtablewidgetitem17 = self.datashows_table.horizontalHeaderItem(1)
