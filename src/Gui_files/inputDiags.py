@@ -30,7 +30,7 @@ class PromoInputDialog(QDialog):
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
-    def getInputs(self):
+    def get_inputs(self):
         return self.name.text(), self.numberOfSectionsSpinBox.value(), self.numberOfGroupsSpinBox.value(), \
                self.effectivePerGroupSpinBox.value()
 
@@ -51,7 +51,7 @@ class ProfInputDialog(QDialog):
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
-    def getInputs(self):
+    def get_inputs(self):
         return self.name.text()
 
 
@@ -80,7 +80,7 @@ class RoomInputDialog(QDialog):
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
-    def getInputs(self):
+    def get_inputs(self):
         return self.name.text(), self.capacitySpinBox.value(), self.typecomboBox.currentIndex() + 1
 
 
@@ -114,7 +114,7 @@ class ModuleInputDialog(QDialog):
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
-    def getInputs(self):
+    def get_inputs(self):
         return self.name.text(), self.abriv.text(), self.numberOfLecturesSpinBox.value(), \
                self.numberOfTDsSpinBox.value(), self.numberOfTPsSpinBox.value()
 
@@ -138,6 +138,7 @@ class ExtendedComboBox(QComboBox):
         self.setCompleter(self.completer)
 
         # connect signals
+        # report this as a linting problem for pyside6
         self.lineEdit().textEdited.connect(self.pFilterModel.setFilterFixedString)
         self.completer.activated.connect(self.on_completer_activated)
 
@@ -185,6 +186,6 @@ class AssignModuleInputDialog(QDialog):
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
-    def getInputs(self):
+    def get_inputs(self):
         return self.SelectProfComboBox.currentIndex(), self.CardinalitySpinBox.value(), \
-               self.type_sessionComboBox.currentIndex()
+               self.type_sessionComboBox.currentIndex()+1

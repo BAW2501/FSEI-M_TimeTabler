@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowxddPMG.ui'
+## Form generated from reading UI file 'windowsaHlcr.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.1.0
 ##
@@ -944,7 +944,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.ribbon.setCurrentIndex(1)
-        self.spec_ribbon.setCurrentIndex(3)
+        self.spec_ribbon.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

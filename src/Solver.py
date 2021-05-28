@@ -157,7 +157,8 @@ class PET:
         session = Session(attendance, prof, module, Room("temp", RoomType.td, 100), session_type)
         return sum(1 for constraint in self.soft_constraints if constraint.satisfied(session, day, slot))
 
-    def best_fit_room(self, session_type: SessionType, attendannce: Attendance, day, slot) -> tuple[Room, DataShow]:
+    def best_fit_room(self, session_type: SessionType, attendannce: Attendance, day, slot) -> Union[
+        tuple[Room, DataShow], tuple[None, None]]:
         """ find the smallest room that will fit for the session"""
         effective = attendannce.effective
         appropriate_type = []
