@@ -59,7 +59,6 @@
          </property>
          <property name="font">
           <font>
-           <family>Times New Roman</family>
            <pointsize>14</pointsize>
           </font>
          </property>
@@ -76,7 +75,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="iconSize">
           <size>
@@ -118,9 +117,7 @@
                   <widget class="QLabel" name="intro_title_label">
                    <property name="font">
                     <font>
-                     <family>Times New Roman</family>
                      <pointsize>15</pointsize>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -133,7 +130,6 @@
                   <widget class="QLabel" name="into_text_label">
                    <property name="font">
                     <font>
-                     <family>Times New Roman</family>
                      <pointsize>10</pointsize>
                     </font>
                    </property>
@@ -403,12 +399,11 @@ p, li { white-space: pre-wrap; }
              </property>
              <property name="font">
               <font>
-               <family>Times New Roman</family>
                <pointsize>12</pointsize>
               </font>
              </property>
              <property name="currentIndex">
-              <number>4</number>
+              <number>0</number>
              </property>
              <property name="iconSize">
               <size>
@@ -848,7 +843,7 @@ p, li { white-space: pre-wrap; }
                  </column>
                  <column>
                   <property name="text">
-                   <string>Allocated Groups/sections</string>
+                   <string>Number of Allocated Groups/sections</string>
                   </property>
                  </column>
                  <column>
@@ -948,15 +943,14 @@ p, li { white-space: pre-wrap; }
               <property name="geometry">
                <rect>
                 <x>20</x>
-                <y>25</y>
+                <y>20</y>
                 <width>121</width>
                 <height>21</height>
                </rect>
               </property>
               <property name="font">
                <font>
-                <family>Times New Roman</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -968,8 +962,8 @@ p, li { white-space: pre-wrap; }
                <rect>
                 <x>20</x>
                 <y>60</y>
-                <width>111</width>
-                <height>16</height>
+                <width>150</width>
+                <height>25</height>
                </rect>
               </property>
               <property name="text">
@@ -981,8 +975,8 @@ p, li { white-space: pre-wrap; }
                <rect>
                 <x>20</x>
                 <y>140</y>
-                <width>141</width>
-                <height>16</height>
+                <width>161</width>
+                <height>25</height>
                </rect>
               </property>
               <property name="text">
@@ -992,27 +986,45 @@ p, li { white-space: pre-wrap; }
              <widget class="QSpinBox" name="days_per_week_spinBox">
               <property name="geometry">
                <rect>
-                <x>170</x>
+                <x>180</x>
                 <y>60</y>
-                <width>94</width>
-                <height>22</height>
+                <width>105</width>
+                <height>25</height>
                </rect>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>7</number>
+              </property>
+              <property name="value">
+               <number>5</number>
               </property>
              </widget>
              <widget class="QSpinBox" name="slots_perday_spinBox">
               <property name="geometry">
                <rect>
-                <x>170</x>
+                <x>180</x>
                 <y>140</y>
-                <width>94</width>
-                <height>22</height>
+                <width>105</width>
+                <height>25</height>
                </rect>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>8</number>
+              </property>
+              <property name="value">
+               <number>6</number>
               </property>
              </widget>
              <widget class="QLabel" name="starting_day_label">
@@ -1020,8 +1032,8 @@ p, li { white-space: pre-wrap; }
                <rect>
                 <x>20</x>
                 <y>100</y>
-                <width>121</width>
-                <height>16</height>
+                <width>120</width>
+                <height>25</height>
                </rect>
               </property>
               <property name="text">
@@ -1031,10 +1043,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QComboBox" name="starting_day_comboBox">
               <property name="geometry">
                <rect>
-                <x>170</x>
+                <x>180</x>
                 <y>100</y>
-                <width>94</width>
-                <height>22</height>
+                <width>105</width>
+                <height>25</height>
                </rect>
               </property>
               <property name="layoutDirection">
@@ -1076,8 +1088,8 @@ p, li { white-space: pre-wrap; }
                <rect>
                 <x>20</x>
                 <y>180</y>
-                <width>171</width>
-                <height>16</height>
+                <width>150</width>
+                <height>25</height>
                </rect>
               </property>
               <property name="text">
@@ -1087,10 +1099,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QLineEdit" name="slot_duration_lineEdit">
               <property name="geometry">
                <rect>
-                <x>170</x>
+                <x>180</x>
                 <y>180</y>
-                <width>94</width>
-                <height>20</height>
+                <width>105</width>
+                <height>25</height>
                </rect>
               </property>
               <property name="text">
@@ -1103,10 +1115,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QLabel" name="mins_label">
               <property name="geometry">
                <rect>
-                <x>270</x>
-                <y>180</y>
-                <width>81</width>
-                <height>16</height>
+                <x>290</x>
+                <y>183</y>
+                <width>71</width>
+                <height>20</height>
                </rect>
               </property>
               <property name="text">
@@ -1126,10 +1138,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QLabel" name="constraints_label">
               <property name="geometry">
                <rect>
-                <x>10</x>
-                <y>10</y>
+                <x>20</x>
+                <y>20</y>
                 <width>201</width>
-                <height>16</height>
+                <height>20</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -1145,10 +1157,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QCheckBox" name="studentavailability_checkBox">
               <property name="geometry">
                <rect>
-                <x>10</x>
-                <y>58</y>
+                <x>20</x>
+                <y>80</y>
                 <width>291</width>
-                <height>17</height>
+                <height>20</height>
                </rect>
               </property>
               <property name="toolTip">
@@ -1164,10 +1176,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QCheckBox" name="professoravailability_checkBox">
               <property name="geometry">
                <rect>
-                <x>10</x>
-                <y>35</y>
+                <x>20</x>
+                <y>55</y>
                 <width>231</width>
-                <height>17</height>
+                <height>20</height>
                </rect>
               </property>
               <property name="toolTip">
@@ -1186,10 +1198,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QCheckBox" name="roomavailability_checkBox">
               <property name="geometry">
                <rect>
-                <x>10</x>
-                <y>81</y>
+                <x>20</x>
+                <y>105</y>
                 <width>311</width>
-                <height>17</height>
+                <height>20</height>
                </rect>
               </property>
               <property name="toolTip">
@@ -1205,10 +1217,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QCheckBox" name="threeconsecutivemaxsessions_checkBox">
               <property name="geometry">
                <rect>
-                <x>10</x>
-                <y>104</y>
+                <x>20</x>
+                <y>130</y>
                 <width>331</width>
-                <height>17</height>
+                <height>20</height>
                </rect>
               </property>
               <property name="toolTip">
@@ -1221,10 +1233,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QCheckBox" name="twocourderdaymax_checkBox">
               <property name="geometry">
                <rect>
-                <x>10</x>
-                <y>127</y>
+                <x>20</x>
+                <y>155</y>
                 <width>261</width>
-                <height>17</height>
+                <height>20</height>
                </rect>
               </property>
               <property name="toolTip">
@@ -1237,10 +1249,10 @@ p, li { white-space: pre-wrap; }
              <widget class="QCheckBox" name="uniquesessiondaily_checkBox">
               <property name="geometry">
                <rect>
-                <x>10</x>
-                <y>150</y>
+                <x>20</x>
+                <y>180</y>
                 <width>271</width>
-                <height>17</height>
+                <height>20</height>
                </rect>
               </property>
               <property name="toolTip">

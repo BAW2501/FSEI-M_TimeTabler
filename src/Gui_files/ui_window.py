@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowNaeRmS.ui'
+## Form generated from reading UI file 'windowxddPMG.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.2
+## Created by: Qt User Interface Compiler version 6.1.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 
 class Ui_MainWindow(object):
@@ -52,7 +52,6 @@ class Ui_MainWindow(object):
         self.ribbon.setMinimumSize(QSize(0, 0))
         self.ribbon.setMaximumSize(QSize(16777215, 16777215))
         font = QFont()
-        font.setFamily(u"Times New Roman")
         font.setPointSize(14)
         self.ribbon.setFont(font)
         self.ribbon.setTabletTracking(False)
@@ -80,10 +79,8 @@ class Ui_MainWindow(object):
         self.intro_title_label = QLabel(self.into)
         self.intro_title_label.setObjectName(u"intro_title_label")
         font1 = QFont()
-        font1.setFamily(u"Times New Roman")
         font1.setPointSize(15)
         font1.setBold(True)
-        font1.setWeight(75)
         self.intro_title_label.setFont(font1)
 
         self.verticalLayout_13.addWidget(self.intro_title_label)
@@ -91,7 +88,6 @@ class Ui_MainWindow(object):
         self.into_text_label = QLabel(self.into)
         self.into_text_label.setObjectName(u"into_text_label")
         font2 = QFont()
-        font2.setFamily(u"Times New Roman")
         font2.setPointSize(10)
         self.into_text_label.setFont(font2)
         self.into_text_label.setWordWrap(True)
@@ -220,7 +216,6 @@ class Ui_MainWindow(object):
         self.spec_ribbon.setSizePolicy(sizePolicy)
         self.spec_ribbon.setMinimumSize(QSize(0, 100))
         font3 = QFont()
-        font3.setFamily(u"Times New Roman")
         font3.setPointSize(12)
         self.spec_ribbon.setFont(font3)
         self.spec_ribbon.setIconSize(QSize(32, 32))
@@ -583,25 +578,31 @@ class Ui_MainWindow(object):
         self.timetable_options_frame.setFrameShadow(QFrame.Raised)
         self.timetable_label = QLabel(self.timetable_options_frame)
         self.timetable_label.setObjectName(u"timetable_label")
-        self.timetable_label.setGeometry(QRect(20, 25, 121, 21))
-        self.timetable_label.setFont(font3)
+        self.timetable_label.setGeometry(QRect(20, 20, 121, 21))
+        self.timetable_label.setFont(font)
         self.days_per_week_label = QLabel(self.timetable_options_frame)
         self.days_per_week_label.setObjectName(u"days_per_week_label")
-        self.days_per_week_label.setGeometry(QRect(20, 60, 111, 16))
+        self.days_per_week_label.setGeometry(QRect(20, 60, 150, 25))
         self.slots_perday_label = QLabel(self.timetable_options_frame)
         self.slots_perday_label.setObjectName(u"slots_perday_label")
-        self.slots_perday_label.setGeometry(QRect(20, 140, 141, 16))
+        self.slots_perday_label.setGeometry(QRect(20, 140, 161, 25))
         self.days_per_week_spinBox = QSpinBox(self.timetable_options_frame)
         self.days_per_week_spinBox.setObjectName(u"days_per_week_spinBox")
-        self.days_per_week_spinBox.setGeometry(QRect(170, 60, 94, 22))
+        self.days_per_week_spinBox.setGeometry(QRect(180, 60, 105, 25))
         self.days_per_week_spinBox.setAlignment(Qt.AlignCenter)
+        self.days_per_week_spinBox.setMinimum(1)
+        self.days_per_week_spinBox.setMaximum(7)
+        self.days_per_week_spinBox.setValue(5)
         self.slots_perday_spinBox = QSpinBox(self.timetable_options_frame)
         self.slots_perday_spinBox.setObjectName(u"slots_perday_spinBox")
-        self.slots_perday_spinBox.setGeometry(QRect(170, 140, 94, 22))
+        self.slots_perday_spinBox.setGeometry(QRect(180, 140, 105, 25))
         self.slots_perday_spinBox.setAlignment(Qt.AlignCenter)
+        self.slots_perday_spinBox.setMinimum(1)
+        self.slots_perday_spinBox.setMaximum(8)
+        self.slots_perday_spinBox.setValue(6)
         self.starting_day_label = QLabel(self.timetable_options_frame)
         self.starting_day_label.setObjectName(u"starting_day_label")
-        self.starting_day_label.setGeometry(QRect(20, 100, 121, 16))
+        self.starting_day_label.setGeometry(QRect(20, 100, 120, 25))
         self.starting_day_comboBox = QComboBox(self.timetable_options_frame)
         self.starting_day_comboBox.addItem("")
         self.starting_day_comboBox.addItem("")
@@ -610,18 +611,18 @@ class Ui_MainWindow(object):
         self.starting_day_comboBox.addItem("")
         self.starting_day_comboBox.addItem("")
         self.starting_day_comboBox.setObjectName(u"starting_day_comboBox")
-        self.starting_day_comboBox.setGeometry(QRect(170, 100, 94, 22))
+        self.starting_day_comboBox.setGeometry(QRect(180, 100, 105, 25))
         self.starting_day_comboBox.setLayoutDirection(Qt.LeftToRight)
         self.slot_duration_label = QLabel(self.timetable_options_frame)
         self.slot_duration_label.setObjectName(u"slot_duration_label")
-        self.slot_duration_label.setGeometry(QRect(20, 180, 171, 16))
+        self.slot_duration_label.setGeometry(QRect(20, 180, 150, 25))
         self.slot_duration_lineEdit = QLineEdit(self.timetable_options_frame)
         self.slot_duration_lineEdit.setObjectName(u"slot_duration_lineEdit")
-        self.slot_duration_lineEdit.setGeometry(QRect(170, 180, 94, 20))
+        self.slot_duration_lineEdit.setGeometry(QRect(180, 180, 105, 25))
         self.slot_duration_lineEdit.setAlignment(Qt.AlignCenter)
         self.mins_label = QLabel(self.timetable_options_frame)
         self.mins_label.setObjectName(u"mins_label")
-        self.mins_label.setGeometry(QRect(270, 180, 81, 16))
+        self.mins_label.setGeometry(QRect(290, 183, 71, 20))
 
         self.horizontalLayout_10.addWidget(self.timetable_options_frame)
 
@@ -631,31 +632,31 @@ class Ui_MainWindow(object):
         self.Constraints.setFrameShadow(QFrame.Raised)
         self.constraints_label = QLabel(self.Constraints)
         self.constraints_label.setObjectName(u"constraints_label")
-        self.constraints_label.setGeometry(QRect(10, 10, 201, 16))
+        self.constraints_label.setGeometry(QRect(20, 20, 201, 20))
         sizePolicy1.setHeightForWidth(self.constraints_label.sizePolicy().hasHeightForWidth())
         self.constraints_label.setSizePolicy(sizePolicy1)
         self.studentavailability_checkBox = QCheckBox(self.Constraints)
         self.studentavailability_checkBox.setObjectName(u"studentavailability_checkBox")
-        self.studentavailability_checkBox.setGeometry(QRect(10, 58, 291, 17))
+        self.studentavailability_checkBox.setGeometry(QRect(20, 80, 291, 20))
         self.studentavailability_checkBox.setChecked(True)
         self.professoravailability_checkBox = QCheckBox(self.Constraints)
         self.professoravailability_checkBox.setObjectName(u"professoravailability_checkBox")
-        self.professoravailability_checkBox.setGeometry(QRect(10, 35, 231, 17))
+        self.professoravailability_checkBox.setGeometry(QRect(20, 55, 231, 20))
         self.professoravailability_checkBox.setChecked(True)
         self.professoravailability_checkBox.setTristate(False)
         self.roomavailability_checkBox = QCheckBox(self.Constraints)
         self.roomavailability_checkBox.setObjectName(u"roomavailability_checkBox")
-        self.roomavailability_checkBox.setGeometry(QRect(10, 81, 311, 17))
+        self.roomavailability_checkBox.setGeometry(QRect(20, 105, 311, 20))
         self.roomavailability_checkBox.setChecked(True)
         self.threeconsecutivemaxsessions_checkBox = QCheckBox(self.Constraints)
         self.threeconsecutivemaxsessions_checkBox.setObjectName(u"threeconsecutivemaxsessions_checkBox")
-        self.threeconsecutivemaxsessions_checkBox.setGeometry(QRect(10, 104, 331, 17))
+        self.threeconsecutivemaxsessions_checkBox.setGeometry(QRect(20, 130, 331, 20))
         self.twocourderdaymax_checkBox = QCheckBox(self.Constraints)
         self.twocourderdaymax_checkBox.setObjectName(u"twocourderdaymax_checkBox")
-        self.twocourderdaymax_checkBox.setGeometry(QRect(10, 127, 261, 17))
+        self.twocourderdaymax_checkBox.setGeometry(QRect(20, 155, 261, 20))
         self.uniquesessiondaily_checkBox = QCheckBox(self.Constraints)
         self.uniquesessiondaily_checkBox.setObjectName(u"uniquesessiondaily_checkBox")
-        self.uniquesessiondaily_checkBox.setGeometry(QRect(10, 150, 271, 17))
+        self.uniquesessiondaily_checkBox.setGeometry(QRect(20, 180, 271, 20))
 
         self.horizontalLayout_10.addWidget(self.Constraints)
 
@@ -943,7 +944,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.ribbon.setCurrentIndex(1)
-        self.spec_ribbon.setCurrentIndex(4)
+        self.spec_ribbon.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
