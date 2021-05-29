@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowivpcUY.ui'
+## Form generated from reading UI file 'windowJynGyY.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.1.0
 ##
@@ -616,13 +616,16 @@ class Ui_MainWindow(object):
         self.slot_duration_label = QLabel(self.timetable_options_frame)
         self.slot_duration_label.setObjectName(u"slot_duration_label")
         self.slot_duration_label.setGeometry(QRect(20, 180, 150, 25))
-        self.slot_duration_lineEdit = QLineEdit(self.timetable_options_frame)
-        self.slot_duration_lineEdit.setObjectName(u"slot_duration_lineEdit")
-        self.slot_duration_lineEdit.setGeometry(QRect(180, 180, 105, 25))
-        self.slot_duration_lineEdit.setAlignment(Qt.AlignCenter)
         self.mins_label = QLabel(self.timetable_options_frame)
         self.mins_label.setObjectName(u"mins_label")
         self.mins_label.setGeometry(QRect(290, 183, 71, 20))
+        self.slot_duration_spinBox = QSpinBox(self.timetable_options_frame)
+        self.slot_duration_spinBox.setObjectName(u"slot_duration_spinBox")
+        self.slot_duration_spinBox.setGeometry(QRect(180, 180, 105, 25))
+        self.slot_duration_spinBox.setAlignment(Qt.AlignCenter)
+        self.slot_duration_spinBox.setMinimum(45)
+        self.slot_duration_spinBox.setMaximum(300)
+        self.slot_duration_spinBox.setValue(60)
 
         self.horizontalLayout_10.addWidget(self.timetable_options_frame)
 
@@ -943,7 +946,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.ribbon.setCurrentIndex(1)
+        self.ribbon.setCurrentIndex(2)
         self.spec_ribbon.setCurrentIndex(5)
 
 
@@ -1043,7 +1046,6 @@ class Ui_MainWindow(object):
         self.starting_day_comboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"Saturday", None))
 
         self.slot_duration_label.setText(QCoreApplication.translate("MainWindow", u"Slot duration", None))
-        self.slot_duration_lineEdit.setText(QCoreApplication.translate("MainWindow", u"60", None))
         self.mins_label.setText(QCoreApplication.translate("MainWindow", u"Mins", None))
         self.constraints_label.setText(QCoreApplication.translate("MainWindow", u"Constraints", None))
 #if QT_CONFIG(tooltip)

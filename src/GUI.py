@@ -63,6 +63,11 @@ class MainWindow(QMainWindow):
             [[{"prof_name": 11, "number": 1, "type": 1}]]
         ]
         self.datashows = [{"id": "ds1", "allocated": [0, 1]}]
+        self.number_of_days_per_week_input = 5
+        self.number_of_slots_per_day_input = 7
+        self.slot_duration_input = 60
+        self.starting_day_input = 1
+        self.selected_constraints = [True, True, True, False, False, False]
 
     def bind(self):
 
@@ -103,6 +108,17 @@ class MainWindow(QMainWindow):
 
         self.ui.assign_pick_promo_assign_comboBox.currentIndexChanged.connect(self.load_assign_data)
         self.ui.module_picker_comboBox.currentIndexChanged.connect(self.load_assign_data)
+
+        self.ui.days_per_week_spinBox.valueChanged.connect(self.update_options)
+        self.ui.slots_perday_spinBox.valueChanged.connect(self.update_options)
+        self.ui.slot_duration_spinBox.valueChanged.connect(self.update_options)
+        self.ui.starting_day_comboBox.currentIndexChanged.connect(self.update_options)
+        self.ui.professoravailability_checkBox.stateChanged.connect(self.update_options)
+        self.ui.studentavailability_checkBox.stateChanged.connect(self.update_options)
+        self.ui.roomavailability_checkBox.stateChanged.connect(self.update_options)
+        self.ui.threeconsecutivemaxsessions_checkBox.stateChanged.connect(self.update_options)
+        self.ui.twocourderdaymax_checkBox.stateChanged.connect(self.update_options)
+        self.ui.uniquesessiondaily_checkBox.stateChanged.connect(self.update_options)
 
         self.load_promo_data()
         self.load_prof_data()
@@ -170,6 +186,9 @@ class MainWindow(QMainWindow):
             self.promos.pop(index)
             self.modules.pop(index)
             self.module_assignments.pop(index)
+            for ds in self.datashows:
+                ds["allocated"].remove(index)
+            self.load_datashow_data()
 
         else:
             QMessageBox.about(self, "Error", "Please select a row")
@@ -353,13 +372,13 @@ class MainWindow(QMainWindow):
                     self.ui.pick_promo__modules_comboBox.addItem(promo["Name"])
                 self.ui.modules_tab.setEnabled(True)
         elif i == 4:
-            if len(self.promos) == 0 or len(self.modules) == 0:
+            if len(self.promos) == 0 or any(len(modules) == 0 for modules in self.modules) or len(self.profs) == 0:
                 self.ui.assignements_tab.setEnabled(False)
                 self.ui.modules_assign_table.setRowCount(0)
                 self.ui.assign_pick_promo_assign_comboBox.clear()
 
-                QMessageBox.information(self, "",
-                                        "in order to assign modules to promos and modules u must first have promos")
+                QMessageBox.information(self, "", "in order to assign modules to promos and modules u must first have"
+                                                  " promos and each promo must have at least one module")
             else:
                 self.ui.assign_pick_promo_assign_comboBox.clear()
                 self.ui.module_picker_comboBox.clear()
@@ -367,6 +386,14 @@ class MainWindow(QMainWindow):
                     self.ui.assign_pick_promo_assign_comboBox.addItem(promo["Name"])
                 self.refresh_modules_combo()
                 self.ui.assignements_tab.setEnabled(True)
+        elif i == 5:
+            if len(self.promos) == 0:
+                self.ui.datashows_tab.setEnabled(False)
+                self.ui.datashows_table.setRowCount(0)
+                QMessageBox.information(self, "", "in order to add datashows to promos  u must first have at least one"
+                                                  " promo")
+            else:
+                self.ui.datashows_tab.setEnabled(True)
 
     def assign_input(self):
 
@@ -477,9 +504,23 @@ class MainWindow(QMainWindow):
                 self.ui.datashows_table.setItem(index, 0, QTableWidgetItem(name))
                 self.ui.datashows_table.setItem(index, 1, QTableWidgetItem(",".join(str_allocations)))
                 self.datashows[index] = {"id": name, "allocated": allocations}
-                #print(self.datashows,index)
+                # print(self.datashows,index)
         else:
             QMessageBox.about(self, "Error", "Please select a row")
+
+    def update_options(self):
+        # this should be done asynchronously for each option but i'm lazy
+        self.number_of_days_per_week_input = self.ui.days_per_week_spinBox.value()
+        self.number_of_slots_per_day_input = self.ui.slots_perday_spinBox.value()
+        self.slot_duration_input = self.ui.slot_duration_spinBox.value()
+        self.starting_day_input = self.ui.starting_day_comboBox.currentIndex()
+        self.selected_constraints = [self.ui.professoravailability_checkBox.isChecked(),
+                                     self.ui.studentavailability_checkBox.isChecked(),
+                                     self.ui.roomavailability_checkBox.isChecked(),
+                                     self.ui.threeconsecutivemaxsessions_checkBox.isChecked(),
+                                     self.ui.twocourderdaymax_checkBox.isChecked(),
+                                     self.ui.uniquesessiondaily_checkBox.isChecked()]
+
 
     def delete_datashow(self):
         index = self.ui.datashows_table.selectedIndexes()
