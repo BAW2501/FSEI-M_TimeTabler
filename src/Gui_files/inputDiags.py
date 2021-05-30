@@ -213,7 +213,7 @@ class DataShowInputDialog(QDialog):
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
-        self.promoCheckboxes[0].isChecked()
+        # self.promoCheckboxes[0].isChecked()
 
     def get_inputs(self):
         # print(self.id.text(), [checkbox.isChecked() for checkbox in self.promoCheckboxes])

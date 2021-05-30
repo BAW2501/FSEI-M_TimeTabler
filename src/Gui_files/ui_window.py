@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowJynGyY.ui'
+## Form generated from reading UI file 'windowykDPhA.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.1.0
 ##
@@ -668,7 +668,7 @@ class Ui_MainWindow(object):
         self.ribbon.addTab(self.options_tab, icon6, "")
         self.timetable_tab = QWidget()
         self.timetable_tab.setObjectName(u"timetable_tab")
-        self.timetable_tab.setEnabled(False)
+        self.timetable_tab.setEnabled(True)
         self.verticalLayout_15 = QVBoxLayout(self.timetable_tab)
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
         self.pick_promo_section = QFrame(self.timetable_tab)
@@ -703,31 +703,45 @@ class Ui_MainWindow(object):
         self.timetable_tableview = QTableWidget(self.timetable_tab)
         if (self.timetable_tableview.columnCount() < 7):
             self.timetable_tableview.setColumnCount(7)
+        font4 = QFont()
+        font4.setPointSize(8)
         __qtablewidgetitem18 = QTableWidgetItem()
+        __qtablewidgetitem18.setFont(font4);
         self.timetable_tableview.setHorizontalHeaderItem(0, __qtablewidgetitem18)
         __qtablewidgetitem19 = QTableWidgetItem()
+        __qtablewidgetitem19.setFont(font4);
         self.timetable_tableview.setHorizontalHeaderItem(1, __qtablewidgetitem19)
         __qtablewidgetitem20 = QTableWidgetItem()
+        __qtablewidgetitem20.setFont(font4);
         self.timetable_tableview.setHorizontalHeaderItem(2, __qtablewidgetitem20)
         __qtablewidgetitem21 = QTableWidgetItem()
+        __qtablewidgetitem21.setFont(font4);
         self.timetable_tableview.setHorizontalHeaderItem(3, __qtablewidgetitem21)
         __qtablewidgetitem22 = QTableWidgetItem()
+        __qtablewidgetitem22.setFont(font4);
         self.timetable_tableview.setHorizontalHeaderItem(4, __qtablewidgetitem22)
         __qtablewidgetitem23 = QTableWidgetItem()
+        __qtablewidgetitem23.setFont(font4);
         self.timetable_tableview.setHorizontalHeaderItem(5, __qtablewidgetitem23)
         __qtablewidgetitem24 = QTableWidgetItem()
+        __qtablewidgetitem24.setFont(font4);
         self.timetable_tableview.setHorizontalHeaderItem(6, __qtablewidgetitem24)
         if (self.timetable_tableview.rowCount() < 5):
             self.timetable_tableview.setRowCount(5)
         __qtablewidgetitem25 = QTableWidgetItem()
+        __qtablewidgetitem25.setFont(font4);
         self.timetable_tableview.setVerticalHeaderItem(0, __qtablewidgetitem25)
         __qtablewidgetitem26 = QTableWidgetItem()
+        __qtablewidgetitem26.setFont(font4);
         self.timetable_tableview.setVerticalHeaderItem(1, __qtablewidgetitem26)
         __qtablewidgetitem27 = QTableWidgetItem()
+        __qtablewidgetitem27.setFont(font4);
         self.timetable_tableview.setVerticalHeaderItem(2, __qtablewidgetitem27)
         __qtablewidgetitem28 = QTableWidgetItem()
+        __qtablewidgetitem28.setFont(font4);
         self.timetable_tableview.setVerticalHeaderItem(3, __qtablewidgetitem28)
         __qtablewidgetitem29 = QTableWidgetItem()
+        __qtablewidgetitem29.setFont(font4);
         self.timetable_tableview.setVerticalHeaderItem(4, __qtablewidgetitem29)
         __qtablewidgetitem30 = QTableWidgetItem()
         __qtablewidgetitem30.setTextAlignment(Qt.AlignCenter);
@@ -735,6 +749,7 @@ class Ui_MainWindow(object):
         self.timetable_tableview.setObjectName(u"timetable_tableview")
         self.timetable_tableview.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.timetable_tableview.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.timetable_tableview.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.timetable_tableview.setSelectionMode(QAbstractItemView.SingleSelection)
         self.timetable_tableview.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.timetable_tableview.setGridStyle(Qt.DashLine)
@@ -771,6 +786,7 @@ class Ui_MainWindow(object):
 
         self.export_excel_pushButton = QPushButton(self.buttons_frame)
         self.export_excel_pushButton.setObjectName(u"export_excel_pushButton")
+        self.export_excel_pushButton.setEnabled(False)
 
         self.horizontalLayout_13.addWidget(self.export_excel_pushButton)
 
@@ -947,7 +963,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.ribbon.setCurrentIndex(2)
-        self.spec_ribbon.setCurrentIndex(5)
+        self.spec_ribbon.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

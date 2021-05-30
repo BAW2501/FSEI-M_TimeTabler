@@ -235,7 +235,7 @@ class PET:
                 unassign(possible_session_object, equipment, section, day, slot)
                 # and put it back to the pending sessions list
                 sessions.insert(i, possible_session)
-        # so maybe we tried all the possible session and none fit into this slot
+        # so maybe we tried all the possible sessions and none fit into this slot
         # let's set this slot as full
         section.EDT[day][slot].is_full = True
         # and continue trying to solve

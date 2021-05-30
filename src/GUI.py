@@ -67,7 +67,13 @@ class MainWindow(QMainWindow):
         self.number_of_slots_per_day_input = 7
         self.slot_duration_input = 60
         self.starting_day_input = 1
-        self.selected_constraints = [True, True, True, False, False, False]
+        self.professor_availability_constraint_checked = True
+        self.student_availability_constraint_checked = True
+
+        self.room_availability_constraint_checked = True
+        self.three_consecutive_sessions_constraint_checked = False
+        self.two_cour_per_day_max_constraint_checked = False
+        self.unique_session_daily_constraint_checked = False
 
     def bind(self):
 
@@ -109,6 +115,8 @@ class MainWindow(QMainWindow):
         self.ui.assign_pick_promo_assign_comboBox.currentIndexChanged.connect(self.load_assign_data)
         self.ui.module_picker_comboBox.currentIndexChanged.connect(self.load_assign_data)
 
+        self.ui.pick_promo_comboBox_TT.currentIndexChanged.connect(self.refresh_section_combo)
+
         self.ui.days_per_week_spinBox.valueChanged.connect(self.update_options)
         self.ui.slots_perday_spinBox.valueChanged.connect(self.update_options)
         self.ui.slot_duration_spinBox.valueChanged.connect(self.update_options)
@@ -127,6 +135,9 @@ class MainWindow(QMainWindow):
         self.load_assign_data()
         self.load_datashow_data()
         self.ui.spec_ribbon.currentChanged.connect(self.on_spec_tab_change)
+        self.ui.ribbon.currentChanged.connect(self.on_ribbon_tab_change)
+        # self.ui.verticalLayout_15.removeWidget(self.ui.timetable_tableview)
+        # self.ui.verticalLayout_15.addWidget(self.ui.timetable_tableview)
 
     def promo_input(self):
         diag = PromoInputDialog()
@@ -187,7 +198,9 @@ class MainWindow(QMainWindow):
             self.modules.pop(index)
             self.module_assignments.pop(index)
             for ds in self.datashows:
-                ds["allocated"].remove(index)
+                # updating indexes upon removal
+                ds["allocated"] = [x if x < index else x - 1 for x in ds["allocated"] if x != index]
+
             self.load_datashow_data()
 
         else:
@@ -390,10 +403,58 @@ class MainWindow(QMainWindow):
             if len(self.promos) == 0:
                 self.ui.datashows_tab.setEnabled(False)
                 self.ui.datashows_table.setRowCount(0)
-                QMessageBox.information(self, "", "in order to add datashows to promos  u must first have at least one"
+                QMessageBox.information(self, "", "in order to add data shows to promos  u must first have at least one"
                                                   " promo")
             else:
                 self.ui.datashows_tab.setEnabled(True)
+
+    def on_ribbon_tab_change(self, i):
+        if i == self.ui.ribbon.indexOf(self.ui.timetable_tab):
+            there_is_promos = len(self.promos) != 0
+            there_is_profs = len(self.profs) != 0
+            there_is_rooms = len(self.rooms) != 0
+            there_is_modules_for_each_promo = [len(modules_of_a_promo) != 0 for modules_of_a_promo in self.modules]
+            there_is_assignments_for_each_module_for_each_promo = [len(assign) != 0
+                                                                   for promo_assignments in self.module_assignments
+                                                                   for assign in promo_assignments]
+            conditions_to_generate = [
+                there_is_promos,
+                there_is_profs,
+                there_is_rooms,
+                *there_is_modules_for_each_promo,
+                *there_is_assignments_for_each_module_for_each_promo
+            ]
+            if all(conditions_to_generate):
+                self.ui.timetable_tab.setEnabled(True)
+                self.ui.pick_promo_comboBox_TT.clear()
+                for promo in self.promos:
+                    self.ui.pick_promo_comboBox_TT.addItem(promo["Name"])
+                self.refresh_section_combo()
+
+            else:
+                # print(conditions_to_generate)
+                self.ui.timetable_tab.setEnabled(False)
+                msg_str = ""
+                if not there_is_promos:
+                    msg_str += "there are no promos\n"
+                if not there_is_profs:
+                    msg_str += "there are no profs\n"
+                if not there_is_rooms:
+                    msg_str += "there are no rooms\n"
+                if not all(there_is_modules_for_each_promo):
+                    msg_str += "some or all of the promos are missing modules\n"
+                if not all(there_is_assignments_for_each_module_for_each_promo):
+                    msg_str += "some or all modules are missing prof assignments\n"
+
+                QMessageBox.information(self, "", msg_str)
+        elif i == 4:
+            QMessageBox.information(self, "", "statistics incoming")
+
+    def refresh_section_combo(self):
+        promo_index = self.ui.pick_promo_comboBox_TT.currentIndex()
+        sections_range = range(1, self.promos[promo_index]["Number of Sections"] + 1)
+        self.ui.pick_section_comboBox.clear()
+        self.ui.pick_section_comboBox.addItems([str(section_index) for section_index in sections_range])
 
     def assign_input(self):
 
@@ -514,13 +575,13 @@ class MainWindow(QMainWindow):
         self.number_of_slots_per_day_input = self.ui.slots_perday_spinBox.value()
         self.slot_duration_input = self.ui.slot_duration_spinBox.value()
         self.starting_day_input = self.ui.starting_day_comboBox.currentIndex()
-        self.selected_constraints = [self.ui.professoravailability_checkBox.isChecked(),
-                                     self.ui.studentavailability_checkBox.isChecked(),
-                                     self.ui.roomavailability_checkBox.isChecked(),
-                                     self.ui.threeconsecutivemaxsessions_checkBox.isChecked(),
-                                     self.ui.twocourderdaymax_checkBox.isChecked(),
-                                     self.ui.uniquesessiondaily_checkBox.isChecked()]
+        self.professor_availability_constraint_checked = self.ui.professoravailability_checkBox.isChecked()
+        self.student_availability_constraint_checked = self.ui.studentavailability_checkBox.isChecked()
 
+        self.room_availability_constraint_checked = self.ui.roomavailability_checkBox.isChecked()
+        self.three_consecutive_sessions_constraint_checked = self.ui.threeconsecutivemaxsessions_checkBox.isChecked()
+        self.two_cour_per_day_max_constraint_checked = self.ui.twocourderdaymax_checkBox.isChecked()
+        self.unique_session_daily_constraint_checked = self.ui.uniquesessiondaily_checkBox.isChecked()
 
     def delete_datashow(self):
         index = self.ui.datashows_table.selectedIndexes()

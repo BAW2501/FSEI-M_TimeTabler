@@ -403,7 +403,7 @@ p, li { white-space: pre-wrap; }
               </font>
              </property>
              <property name="currentIndex">
-              <number>5</number>
+              <number>4</number>
              </property>
              <property name="iconSize">
               <size>
@@ -1274,7 +1274,7 @@ p, li { white-space: pre-wrap; }
          </widget>
          <widget class="QWidget" name="timetable_tab">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <attribute name="icon">
            <iconset>
@@ -1324,6 +1324,9 @@ p, li { white-space: pre-wrap; }
              <property name="sizeAdjustPolicy">
               <enum>QAbstractScrollArea::AdjustToContents</enum>
              </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <property name="selectionMode">
               <enum>QAbstractItemView::SingleSelection</enum>
              </property>
@@ -1364,60 +1367,120 @@ p, li { white-space: pre-wrap; }
               <property name="text">
                <string>Sunday </string>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
              </row>
              <row>
               <property name="text">
                <string>Monday</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
               </property>
              </row>
              <row>
               <property name="text">
                <string>Tuesday</string>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
              </row>
              <row>
               <property name="text">
                <string>Wednesday </string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
               </property>
              </row>
              <row>
               <property name="text">
                <string>Thursday</string>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
              </row>
              <column>
               <property name="text">
                <string>08:30 -9:30</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
               </property>
              </column>
              <column>
               <property name="text">
                <string>09:30-10:30</string>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
              </column>
              <column>
               <property name="text">
                <string>10:30-11:30</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
               </property>
              </column>
              <column>
               <property name="text">
                <string>11:30-12:30</string>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
              </column>
              <column>
               <property name="text">
                <string>12:30-13:30</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
               </property>
              </column>
              <column>
               <property name="text">
                <string>13:30-14:30</string>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
              </column>
              <column>
               <property name="text">
                <string>14:30-15:30</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
               </property>
              </column>
              <item row="0" column="1">
@@ -1466,6 +1529,9 @@ p, li { white-space: pre-wrap; }
               </item>
               <item>
                <widget class="QPushButton" name="export_excel_pushButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Export Timetables to Excel</string>
                 </property>
