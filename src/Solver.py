@@ -176,12 +176,14 @@ class PET:
 
         # appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
         #                                             and room.type_salle in appropriate_type, self.list_of_rooms))
-        appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
-                             and room.is_available_on(day, slot)
-                             and room.type_salle in appropriate_type]
-        # for room in self.list_of_rooms:
-        #     if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
-        #         appropriate_rooms.append(room)
+        # appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
+        #                      and room.is_available_on(day, slot)
+        #                      and room.type_salle in appropriate_type]
+        appropriate_rooms=[]
+        for room in self.list_of_rooms:
+            #print( room.type_salle , appropriate_type)
+            if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
+                appropriate_rooms.append(room)
 
         if appropriate_rooms:
             # smallest fit could be first fit here which is faster performance wise

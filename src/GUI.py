@@ -52,8 +52,17 @@ class MainWindow(QMainWindow):
                       "Mme Bendehmane H", "Mme Bouabdelli", "Mme Diala.H", "Mme Kaisserli", "Mme Limam", "Mme Saidani",
                       "Mme Tabharit", "Moumen M.", "Moussa M.", "Mr Bouzit H", "Sehaba K.", ]
         self.rooms = [{"Name": "amphi1", "Capacity": 150, "RoomType": 1},
+                      {"Name": "amphi2", "Capacity": 150, "RoomType": 1},
+                      {"Name": "amphi3", "Capacity": 150, "RoomType": 1},
                       {"Name": "amphi4", "Capacity": 300, "RoomType": 1},
-                      {"Name": "S1", "Capacity": 30, "RoomType": 2}
+                      {"Name": "S1", "Capacity": 30, "RoomType": 2},
+                      {"Name": "S2", "Capacity": 30, "RoomType": 2},
+                      {"Name": "S3", "Capacity": 30, "RoomType": 2},
+                      {"Name": "S4", "Capacity": 30, "RoomType": 2},
+                      {"Name": "S5", "Capacity": 30, "RoomType": 2},
+                      {"Name": "S6", "Capacity": 30, "RoomType": 2},
+                      {"Name": "S7", "Capacity": 30, "RoomType": 2},
+                      {"Name": "S8", "Capacity": 30, "RoomType": 2},
                       ]
         self.modules = [[{"Name": "Algorithmique et structure de données 1", "abriv": "ASD1", "nb_cour": 1, "nb_td": 1,
                           "nb_tp": 1}],
@@ -483,6 +492,10 @@ class MainWindow(QMainWindow):
         if self.unique_session_daily_constraint_checked:
             problem_emploi_du_temp.add_hard_constraint(UniqueSessionDaily())
 
+        if problem_emploi_du_temp.solve():
+            pprint(promo[0].list_section[0].EDT)
+        else:
+            print("messed up somewhere")
 
 
     def refresh_section_combo(self):
@@ -660,7 +673,7 @@ class MainWindow(QMainWindow):
                 self.generate_td_sessions(canvas, module_index, promo_index, promo_list)
                 self.generate_tp_sessions(canvas, module_index, promo_index, promo_list)
         # making a list of all the rooms
-        rooms_list = [Room(room["Name"], RoomType(room["RoomType"]), room["Capacity"]) for room in self.rooms]
+        rooms_list = [Room(room["Name"], room["RoomType"], room["Capacity"]) for room in self.rooms]
         # making a list of all the data-shows
         data_shows_list = [DataShow([promo_list[i] for ds in self.datashows for i in ds["allocated"]])]
         # finally return it all

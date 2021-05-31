@@ -38,11 +38,11 @@ class SessionType(Enum):
 
 class Room(LimitedResource):
 
-    def __init__(self, name: str, type_room: RoomType, cap: int) -> None:
+    def __init__(self, name: str, type_room: int, cap: int) -> None:
         super().__init__()
         self.name: str = name
         self.capacity: int = cap
-        self.type_salle: RoomType = type_room
+        self.type_salle: int = type_room
 
     def __repr__(self) -> str:
         return self.name
