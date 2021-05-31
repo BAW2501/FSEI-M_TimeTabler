@@ -200,7 +200,8 @@ class Promotion:
 
 class Faculty:
 
-    def __init__(self, name: str, promos: list[Promotion], rooms: list[Room], datashows: list[DataShow]) -> None:
+    def __init__(self, name: str, promos: list[Promotion] = None, rooms: list[Room] = None,
+                 datashows: list[DataShow] = None) -> None:
         super().__init__()
         self.name: str = name
         self.list_promo: list[Promotion] = promos

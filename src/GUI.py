@@ -4,6 +4,7 @@ import sys
 
 from Gui_files.inputDiags import *
 from Gui_files.ui_window import *
+from resources import *
 
 
 def session_type_from_int(task):
@@ -74,6 +75,7 @@ class MainWindow(QMainWindow):
         self.three_consecutive_sessions_constraint_checked = False
         self.two_cour_per_day_max_constraint_checked = False
         self.unique_session_daily_constraint_checked = False
+        self.faculty = Faculty("FSEI-MOSTA")
 
     def bind(self):
 
@@ -116,6 +118,7 @@ class MainWindow(QMainWindow):
         self.ui.module_picker_comboBox.currentIndexChanged.connect(self.load_assign_data)
 
         self.ui.pick_promo_comboBox_TT.currentIndexChanged.connect(self.refresh_section_combo)
+        self.ui.timetable_tableview.doubleClicked.connect(self.timetable_input)
 
         self.ui.days_per_week_spinBox.valueChanged.connect(self.update_options)
         self.ui.slots_perday_spinBox.valueChanged.connect(self.update_options)
@@ -250,7 +253,14 @@ class MainWindow(QMainWindow):
             index = index[0].row()  # cause single selection
             self.ui.professor_table.removeRow(index)
             self.profs.pop(index)
-            # print(self.profs)
+            for i, promo_canvas in enumerate(self.module_assignments):
+                for j, module in enumerate(promo_canvas):
+                    promo_canvas[j] = [assign for assign in promo_canvas[j] if assign["prof_name"] != index]
+                    for assign in promo_canvas[j]:
+                        if assign["prof_name"] > index:
+                            assign["prof_name"] -= 1
+
+            print(self.module_assignments)
         else:
             QMessageBox.about(self, "Error", "Please select a row")
 
@@ -589,6 +599,90 @@ class MainWindow(QMainWindow):
             index = index[0].row()  # cause single selection
             self.ui.datashows_table.removeRow(index)
             self.datashows.pop(index)
+
+    def timetable_input(self, mi):
+        row = mi.row()
+        column = mi.column()
+        print(row, column)
+
+    def build_data_model(self):
+        # making all the promo objects
+        promo_list = [Promotion(p["Name"]) for p in self.promos]
+        # adding sections to each of the promos
+        for i, promo in enumerate(promo_list):
+            promo.list_section = [Section(i + 1) for i in range(self.promos[i]["Number of Sections"])]
+        # giving each section an close to even split of groups
+        for promo_index, promo in enumerate(promo_list):
+            number_of_sections = self.promos[promo_index]["Number of Sections"]
+            Number_of_Groups = self.promos[promo_index]["Number of Groups"]
+            group_effective = self.promos[promo_index]["Effective per Group"]
+
+            groups_in_promo = [Group(i + 1, group_effective) for i in range(Number_of_Groups)]
+            # fancy ceiling function nothing to see here
+            groups_per_section = Number_of_Groups // number_of_sections + bool(Number_of_Groups % number_of_sections)
+            for i in range(0, Number_of_Groups, groups_per_section):
+                promo.list_section[i].list_group = groups_in_promo[i:i + groups_per_section]
+
+        # making a list of modules and making a list of assignments
+        list_canvases = []
+        for promo_index, promo_canvas in enumerate(self.modules):
+            canvas = [Module(*module.values()) for module in promo_canvas]
+            list_canvases.append(canvas)
+            for module_index, module in enumerate(canvas):
+                self.generate_cour_sessions(canvas, module_index, promo_index, promo_list)
+                self.generate_td_sessions(canvas, module_index, promo_index, promo_list)
+                self.generate_tp_sessions(canvas, module_index, promo_index, promo_list)
+        rooms_list = [(Room(*room.values())) for room in self.rooms if name,]
+
+    def generate_tp_sessions(self, canvas, module_index, promo_index, promo_list):
+        assignments = self.module_assignments[promo_index][module_index]
+        tp_assign = [assign for assign in assignments if assign["type"] == SessionType.Tp.value]
+        profs = []
+        sessions_per_week = 0
+        for assignment in tp_assign:
+            name = self.profs[assignment["prof_name"]]
+            sections_taught = assignment["number"]
+            sessions_per_week = canvas[module_index].nb_tp
+            profs = [Professor(name) for _ in range(sections_taught * sessions_per_week)]
+        for sect in promo_list[promo_index].list_section:
+            for group in sect.list_group:
+                sect.add_required_sessions(
+                    [(profs.pop(0), group, canvas[module_index], SessionType.Tp) for _ in
+                     range(sessions_per_week)])
+        assert len(profs) == 0
+
+    def generate_td_sessions(self, canvas, module_index, promo_index, promo_list):
+        assignments = self.module_assignments[promo_index][module_index]
+        td_assign = [assign for assign in assignments if assign["type"] == SessionType.Td.value]
+        profs = []
+        sessions_per_week = 0
+        for assignment in td_assign:
+            name = self.profs[assignment["prof_name"]]
+            sections_taught = assignment["number"]
+            sessions_per_week = canvas[module_index].nb_td
+            profs = [Professor(name) for _ in range(sections_taught * sessions_per_week)]
+        for sect in promo_list[promo_index].list_section:
+            for group in sect.list_group:
+                sect.add_required_sessions(
+                    [(profs.pop(0), group, canvas[module_index], SessionType.Td) for _ in
+                     range(sessions_per_week)])
+        assert len(profs) == 0
+
+    def generate_cour_sessions(self, canvas, module_index, promo_index, promo_list):
+        assignments = self.module_assignments[promo_index][module_index]
+        cour_assign = [assign for assign in assignments if assign["type"] == SessionType.Cour.value]
+
+        profs = []
+        sessions_per_week = 0
+        for assignment in cour_assign:
+            name = self.profs[assignment["prof_name"]]
+            sections_taught = assignment["number"]
+            sessions_per_week = canvas[module_index].nb_cour
+            profs = [Professor(name) for _ in range(sections_taught * sessions_per_week)]
+        for sect in promo_list[promo_index].list_section:
+            sect.add_required_sessions([(profs.pop(0), sect, canvas[module_index], SessionType.Cour) for _ in
+                                        range(sessions_per_week)])
+        assert len(profs) == 0
 
 
 if __name__ == "__main__":
