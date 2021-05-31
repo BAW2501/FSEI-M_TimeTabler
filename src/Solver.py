@@ -179,9 +179,9 @@ class PET:
         appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
                              and room.type_salle in appropriate_type]
         if appropriate_rooms:
-            appropriate_rooms = [ room for room in appropriate_rooms if room.is_available_on(day, slot)]
-        else :
-            raise Exception("no room of type "+RoomType(appropriate_type[0]).name)
+            appropriate_rooms = [room for room in appropriate_rooms if room.is_available_on(day, slot)]
+        else:
+            raise Exception("no room of type " + RoomType(appropriate_type[0]).name)
         # for room in self.list_of_rooms:
         #     if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
         #         appropriate_rooms.append(room)
@@ -203,8 +203,8 @@ class PET:
         """ iterates over the sections  and finds the first available timeslot"""
         for section_index, sect in enumerate(self.section_list):
             if sect.required_sessions:
-                for day_index,day in enumerate(sect.EDT):
-                    for slot_index,slot in enumerate(day):
+                for day_index, day in enumerate(sect.EDT):
+                    for slot_index, slot in enumerate(day):
                         if not sect.EDT[day_index][slot_index].is_full:
                             return section_index, day_index, slot_index
 

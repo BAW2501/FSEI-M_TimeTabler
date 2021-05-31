@@ -490,7 +490,7 @@ class MainWindow(QMainWindow):
         self.faculty.list_rooms = room
         self.faculty.list_datashows = ds
         Professor.cache_clear()
-        del self.problem_emploi_du_temp
+        # TODO MAKE EDIT FLAG HERE
         self.problem_emploi_du_temp = PET(self.faculty)
         # print(sum(len(session_list) for session_list in problem_emploi_du_temp.sessions_list))
         if self.professor_availability_constraint_checked:
@@ -677,8 +677,10 @@ class MainWindow(QMainWindow):
     def timetable_input(self, mi):
         row = mi.row()
         column = mi.column()
-        print(row, column)
-        diag = SessionSetterInputDialog()
+        # print(row, column)
+        promo_index = self.ui.pick_promo_comboBox_TT.currentIndex()
+        section_index = self.ui.pick_section_comboBox.currentIndex()
+        diag = SessionSetterInputDialog(self.problem_emploi_du_temp,self.faculty,promo_index,section_index,row,column)
         diag.setModal(True)
         if diag.exec():
             pass

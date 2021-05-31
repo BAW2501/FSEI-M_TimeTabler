@@ -222,29 +222,38 @@ class DataShowInputDialog(QDialog):
 
 class SessionSetterInputDialog(QDialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, problem_emploi_du_temp, faculty, promo_index, section_index, day_index, slot_index, parent=None):
         super().__init__(parent)
+        self.promo_index = promo_index
+        self.section_index = section_index
+        self.day_index = day_index
+        self.slot_index = slot_index
+        self.faculty = faculty
+        from src.Solver import PET
+        self.p_EDT: PET = problem_emploi_du_temp
         self.setWindowTitle("Input")
-        self.resize(524,380)
+        self.resize(524, 380)
         self.verticalLayout_2 = QVBoxLayout(self)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.tableWidget = QTableWidget(self)
-        if self.tableWidget.columnCount() < 5:
-            self.tableWidget.setColumnCount(5)
+        self.session_table = QTableWidget(self)
+        self.session_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.session_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        if self.session_table.columnCount() < 5:
+            self.session_table.setColumnCount(5)
         __qtablewidgetitem = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.session_table.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.session_table.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        self.session_table.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         __qtablewidgetitem3 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        self.session_table.setHorizontalHeaderItem(3, __qtablewidgetitem3)
         __qtablewidgetitem4 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
-        self.tableWidget.setObjectName(u"tableWidget")
-        self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.session_table.setHorizontalHeaderItem(4, __qtablewidgetitem4)
+        self.session_table.setObjectName(u"tableWidget")
+        self.session_table.setSelectionMode(QAbstractItemView.SingleSelection)
 
-        self.verticalLayout_2.addWidget(self.tableWidget)
+        self.verticalLayout_2.addWidget(self.session_table)
 
         self.frame = QFrame(self)
         self.frame.setObjectName(u"frame")
@@ -275,18 +284,41 @@ class SessionSetterInputDialog(QDialog):
         self.verticalLayout.addWidget(self.buttonBox)
 
         self.verticalLayout_2.addWidget(self.frame)
-        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem = self.session_table.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText("Module")
-        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1 = self.session_table.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText("Type")
-        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2 = self.session_table.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText("Attendance")
-        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem3 = self.session_table.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText("Place")
-        ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
+        ___qtablewidgetitem4 = self.session_table.horizontalHeaderItem(4)
         ___qtablewidgetitem4.setText("Professor")
         self.pushButton_3.setText("Add")
         self.pushButton.setText("Edit")
         self.pushButton_2.setText("Remove")
+        self.session_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.load_session_data()
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
+
+    def load_session_data(self):
+        sect_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
+        slot_clicked = self.p_EDT.section_list[sect_index].EDT[self.day_index][self.slot_index]
+        self.session_table.setRowCount(len(slot_clicked.sessions))
+
+        for i, session in enumerate(slot_clicked.sessions):
+            self.session_table.setItem(i, 0, QTableWidgetItem(str(session.module)))
+            self.session_table.setItem(i, 1, QTableWidgetItem(session_type_from_int(session.session_type.value)))
+            self.session_table.setItem(i, 2, QTableWidgetItem(str(session.attendance)))
+            self.session_table.setItem(i, 3, QTableWidgetItem(str(session.room)))
+            self.session_table.setItem(i, 4, QTableWidgetItem(str(session.prof)))
+
+
+def session_type_from_int(task):
+    if task == 1:
+        return "Lecture"
+    elif task == 2:
+        return "TD"
+    else:
+        return "TP"
