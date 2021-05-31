@@ -131,7 +131,7 @@ class ExtendedComboBox(QComboBox):
         self.pFilterModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.pFilterModel.setSourceModel(self.model())
 
-        # add a completer, which uses the filter model
+        # add 3 completer, which uses the filter model
         self.completer = QCompleter(self.pFilterModel, self)
         # always show all (filtered) completions
         self.completer.setCompletionMode(QCompleter.UnfilteredPopupCompletion)
@@ -192,7 +192,6 @@ class AssignModuleInputDialog(QDialog):
 
 
 class DataShowInputDialog(QDialog):
-    # TODO handle allocated promos being deleted in promo_delete
 
     def __init__(self, promos, parent=None):
         super().__init__(parent)
@@ -219,3 +218,75 @@ class DataShowInputDialog(QDialog):
     def get_inputs(self):
         # print(self.id.text(), [checkbox.isChecked() for checkbox in self.promoCheckboxes])
         return self.id.text(), [i for i, checkbox in enumerate(self.promoCheckboxes) if checkbox.isChecked()]
+
+
+class SessionSetterInputDialog(QDialog):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Input")
+        self.resize(524,380)
+        self.verticalLayout_2 = QVBoxLayout(self)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.tableWidget = QTableWidget(self)
+        if self.tableWidget.columnCount() < 5:
+            self.tableWidget.setColumnCount(5)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
+        self.tableWidget.setObjectName(u"tableWidget")
+        self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
+
+        self.verticalLayout_2.addWidget(self.tableWidget)
+
+        self.frame = QFrame(self)
+        self.frame.setObjectName(u"frame")
+        self.frame.setFrameShape(QFrame.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Raised)
+        self.verticalLayout = QVBoxLayout(self.frame)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.pushButton_3 = QPushButton(self.frame)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+
+        self.verticalLayout.addWidget(self.pushButton_3)
+
+        self.pushButton = QPushButton(self.frame)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.verticalLayout.addWidget(self.pushButton)
+
+        self.pushButton_2 = QPushButton(self.frame)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+
+        self.verticalLayout.addWidget(self.pushButton_2)
+
+        self.buttonBox = QDialogButtonBox(self.frame)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+
+        self.verticalLayout.addWidget(self.buttonBox)
+
+        self.verticalLayout_2.addWidget(self.frame)
+        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText("Module")
+        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText("Type")
+        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText("Attendance")
+        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText("Place")
+        ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
+        ___qtablewidgetitem4.setText("Professor")
+        self.pushButton_3.setText("Add")
+        self.pushButton.setText("Edit")
+        self.pushButton_2.setText("Remove")
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)

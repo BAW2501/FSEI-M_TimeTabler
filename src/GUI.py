@@ -678,6 +678,17 @@ class MainWindow(QMainWindow):
         row = mi.row()
         column = mi.column()
         print(row, column)
+        diag = SessionSetterInputDialog()
+        diag.setModal(True)
+        if diag.exec():
+            pass
+            # # print(name,allocations)
+            # str_allocations = [self.promos[i]["Name"] for i in allocations]
+            # insert_row_index = self.ui.datashows_table.rowCount()
+            # self.ui.datashows_table.insertRow(insert_row_index)
+            # self.ui.datashows_table.setItem(insert_row_index, 0, QTableWidgetItem(name))
+            # self.ui.datashows_table.setItem(insert_row_index, 1, QTableWidgetItem(",".join(str_allocations)))
+            # self.datashows.append({"id": name, "allocated": allocations})
 
     def build_data_model(self):
         # making all the promo objects
