@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+from pprint import pprint
 
 from Gui_files.inputDiags import *
 from Gui_files.ui_window import *
@@ -83,13 +84,10 @@ class MainWindow(QMainWindow):
         self.ui.professor_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.room_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.modules_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.modules_assign_table.horizontalHeader(
-        ).setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.modules_assign_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.datashows_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.timetable_tableview.horizontalHeader(
-        ).setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.timetable_tableview.verticalHeader(
-        ).setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.timetable_tableview.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.timetable_tableview.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.pick_promo__modules_comboBox.setCurrentIndex(0)
 
         self.ui.promo_add_pushbutton.clicked.connect(self.promo_input)
@@ -437,9 +435,10 @@ class MainWindow(QMainWindow):
             if all(conditions_to_generate):
                 self.ui.timetable_tab.setEnabled(True)
                 self.ui.pick_promo_comboBox_TT.clear()
-                for promo in self.promos:
-                    self.ui.pick_promo_comboBox_TT.addItem(promo["Name"])
+                self.ui.pick_promo_comboBox_TT.addItems([promo["Name"] for promo in self.promos])
                 self.refresh_section_combo()
+                self.update_faculty_data()
+                pprint(self.faculty.list_promo[0].canvas)
 
             else:
                 # print(conditions_to_generate)
@@ -459,6 +458,12 @@ class MainWindow(QMainWindow):
                 QMessageBox.information(self, "", msg_str)
         elif i == 4:
             QMessageBox.information(self, "", "statistics incoming")
+
+    def update_faculty_data(self):
+        promo, room, ds = self.build_data_model()
+        self.faculty.list_promo = promo
+        self.faculty.list_rooms = room
+        self.faculty.list_datashows = ds
 
     def refresh_section_combo(self):
         promo_index = self.ui.pick_promo_comboBox_TT.currentIndex()
@@ -621,18 +626,25 @@ class MainWindow(QMainWindow):
             # fancy ceiling function nothing to see here
             groups_per_section = Number_of_Groups // number_of_sections + bool(Number_of_Groups % number_of_sections)
             for i in range(0, Number_of_Groups, groups_per_section):
-                promo.list_section[i].list_group = groups_in_promo[i:i + groups_per_section]
+                valid_index = i // groups_per_section
+                promo.list_section[valid_index].list_group = groups_in_promo[i:i + groups_per_section]
 
         # making a list of modules and making a list of assignments
         list_canvases = []
         for promo_index, promo_canvas in enumerate(self.modules):
             canvas = [Module(*module.values()) for module in promo_canvas]
             list_canvases.append(canvas)
+            promo_list[promo_index].canvas=canvas
             for module_index, module in enumerate(canvas):
                 self.generate_cour_sessions(canvas, module_index, promo_index, promo_list)
                 self.generate_td_sessions(canvas, module_index, promo_index, promo_list)
                 self.generate_tp_sessions(canvas, module_index, promo_index, promo_list)
-        rooms_list = [(Room(*room.values())) for room in self.rooms if name,]
+        # making a list of all the rooms
+        rooms_list = [Room(room["Name"], RoomType(room["RoomType"]), room["Capacity"]) for room in self.rooms]
+        # making a list of all the data-shows
+        data_shows_list = [DataShow([promo_list[i] for ds in self.datashows for i in ds["allocated"]])]
+        # finally return it all
+        return promo_list, rooms_list, data_shows_list
 
     def generate_tp_sessions(self, canvas, module_index, promo_index, promo_list):
         assignments = self.module_assignments[promo_index][module_index]
