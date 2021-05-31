@@ -193,6 +193,7 @@ class AssignModuleInputDialog(QDialog):
 
 class DataShowInputDialog(QDialog):
     # TODO handle allocated promos being deleted in promo_delete
+
     def __init__(self, promos, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Input")

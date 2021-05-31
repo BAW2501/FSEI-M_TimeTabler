@@ -705,3 +705,17 @@ if __name__ == "__main__":
     window.show()
 
     sys.exit(app.exec())
+
+    # TODO programmatically and dynamically build self.ui.timetable_tableview from data
+    # TODO make method to populate self.ui.timetable_tableview
+    # TODO make session added diag for manual session setting
+    # TODO make timetable buttons clickable
+    # TODO parse excel data to normal gui data for testing
+    # TODO make timetable data persistent by setting a changed data flag
+    # TODO make all data serializable and savable into a file
+    # TODO define project file xml for saving (maybe json instead of xml)
+    # TODO make open,edit,save project methods and connect them to the home tab
+
+    # TODO OPTIONAL FEATURE custom sessions adding after TT generation
+    # TODO OPTIONAL FEATURE generate professor TT in excel export
+    # TODO OPTIONAL FEATURE add Professor soft ²unavailable times for preference
