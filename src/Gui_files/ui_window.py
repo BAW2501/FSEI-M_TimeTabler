@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowykDPhA.ui'
+## Form generated from reading UI file 'windowkjufaJ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.1.0
 ##
@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.NonModal)
-        MainWindow.resize(862, 573)
+        MainWindow.resize(840, 567)
         icon = QIcon()
         icon.addFile(u"icons/logo.ico", QSize(), QIcon.Normal, QIcon.Off)
         MainWindow.setWindowIcon(icon)
@@ -103,7 +103,7 @@ class Ui_MainWindow(object):
         self.project_buttons_frame.setFrameShadow(QFrame.Raised)
         self.save_project_frame = QFrame(self.project_buttons_frame)
         self.save_project_frame.setObjectName(u"save_project_frame")
-        self.save_project_frame.setGeometry(QRect(720, 90, 150, 150))
+        self.save_project_frame.setGeometry(QRect(460, 50, 150, 150))
         sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
@@ -136,7 +136,7 @@ class Ui_MainWindow(object):
 
         self.new_project_frame = QFrame(self.project_buttons_frame)
         self.new_project_frame.setObjectName(u"new_project_frame")
-        self.new_project_frame.setGeometry(QRect(120, 90, 150, 150))
+        self.new_project_frame.setGeometry(QRect(50, 50, 150, 150))
         sizePolicy1.setHeightForWidth(self.new_project_frame.sizePolicy().hasHeightForWidth())
         self.new_project_frame.setSizePolicy(sizePolicy1)
         self.new_project_frame.setFrameShape(QFrame.StyledPanel)
@@ -166,7 +166,7 @@ class Ui_MainWindow(object):
 
         self.open_project_frame = QFrame(self.project_buttons_frame)
         self.open_project_frame.setObjectName(u"open_project_frame")
-        self.open_project_frame.setGeometry(QRect(420, 90, 150, 150))
+        self.open_project_frame.setGeometry(QRect(260, 50, 150, 150))
         sizePolicy1.setHeightForWidth(self.open_project_frame.sizePolicy().hasHeightForWidth())
         self.open_project_frame.setSizePolicy(sizePolicy1)
         self.open_project_frame.setFrameShape(QFrame.StyledPanel)
@@ -962,8 +962,8 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.ribbon.setCurrentIndex(2)
-        self.spec_ribbon.setCurrentIndex(4)
+        self.ribbon.setCurrentIndex(0)
+        self.spec_ribbon.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

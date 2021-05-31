@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from pprint import pprint
 
 from Gui_files.inputDiags import *
 from Gui_files.ui_window import *
@@ -139,6 +138,7 @@ class MainWindow(QMainWindow):
         self.ui.ribbon.currentChanged.connect(self.on_ribbon_tab_change)
         # self.ui.verticalLayout_15.removeWidget(self.ui.timetable_tableview)
         # self.ui.verticalLayout_15.addWidget(self.ui.timetable_tableview)
+        #self.ui.export_excel_pushButton.acti
 
     def promo_input(self):
         diag = PromoInputDialog()
@@ -438,7 +438,6 @@ class MainWindow(QMainWindow):
                 self.ui.pick_promo_comboBox_TT.addItems([promo["Name"] for promo in self.promos])
                 self.refresh_section_combo()
                 self.update_faculty_data()
-                pprint(self.faculty.list_promo[0].canvas)
 
             else:
                 # print(conditions_to_generate)
@@ -457,7 +456,7 @@ class MainWindow(QMainWindow):
 
                 QMessageBox.information(self, "", msg_str)
         elif i == 4:
-            QMessageBox.information(self, "", "statistics incoming")
+            print("debug message")
 
     def update_faculty_data(self):
         promo, room, ds = self.build_data_model()
@@ -634,7 +633,7 @@ class MainWindow(QMainWindow):
         for promo_index, promo_canvas in enumerate(self.modules):
             canvas = [Module(*module.values()) for module in promo_canvas]
             list_canvases.append(canvas)
-            promo_list[promo_index].canvas=canvas
+            promo_list[promo_index].canvas = canvas
             for module_index, module in enumerate(canvas):
                 self.generate_cour_sessions(canvas, module_index, promo_index, promo_list)
                 self.generate_td_sessions(canvas, module_index, promo_index, promo_list)
