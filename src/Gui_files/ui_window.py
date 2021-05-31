@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowLXkIPo.ui'
+## Form generated from reading UI file 'windowUhQKaa.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.1.0
 ##
@@ -610,6 +610,7 @@ class Ui_MainWindow(object):
         self.starting_day_comboBox.addItem("")
         self.starting_day_comboBox.addItem("")
         self.starting_day_comboBox.addItem("")
+        self.starting_day_comboBox.addItem("")
         self.starting_day_comboBox.setObjectName(u"starting_day_comboBox")
         self.starting_day_comboBox.setGeometry(QRect(180, 100, 105, 25))
         self.starting_day_comboBox.setLayoutDirection(Qt.LeftToRight)
@@ -726,8 +727,8 @@ class Ui_MainWindow(object):
         __qtablewidgetitem24 = QTableWidgetItem()
         __qtablewidgetitem24.setFont(font4);
         self.timetable_tableview.setHorizontalHeaderItem(6, __qtablewidgetitem24)
-        if (self.timetable_tableview.rowCount() < 5):
-            self.timetable_tableview.setRowCount(5)
+        if (self.timetable_tableview.rowCount() < 7):
+            self.timetable_tableview.setRowCount(7)
         __qtablewidgetitem25 = QTableWidgetItem()
         __qtablewidgetitem25.setFont(font4);
         self.timetable_tableview.setVerticalHeaderItem(0, __qtablewidgetitem25)
@@ -745,110 +746,116 @@ class Ui_MainWindow(object):
         self.timetable_tableview.setVerticalHeaderItem(4, __qtablewidgetitem29)
         __qtablewidgetitem30 = QTableWidgetItem()
         __qtablewidgetitem30.setFont(font4);
-        self.timetable_tableview.setItem(0, 0, __qtablewidgetitem30)
+        self.timetable_tableview.setVerticalHeaderItem(5, __qtablewidgetitem30)
         __qtablewidgetitem31 = QTableWidgetItem()
-        __qtablewidgetitem31.setTextAlignment(Qt.AlignCenter);
         __qtablewidgetitem31.setFont(font4);
-        self.timetable_tableview.setItem(0, 1, __qtablewidgetitem31)
+        self.timetable_tableview.setVerticalHeaderItem(6, __qtablewidgetitem31)
         __qtablewidgetitem32 = QTableWidgetItem()
         __qtablewidgetitem32.setFont(font4);
-        self.timetable_tableview.setItem(0, 2, __qtablewidgetitem32)
+        self.timetable_tableview.setItem(0, 0, __qtablewidgetitem32)
         __qtablewidgetitem33 = QTableWidgetItem()
+        __qtablewidgetitem33.setTextAlignment(Qt.AlignCenter);
         __qtablewidgetitem33.setFont(font4);
-        self.timetable_tableview.setItem(0, 3, __qtablewidgetitem33)
+        self.timetable_tableview.setItem(0, 1, __qtablewidgetitem33)
         __qtablewidgetitem34 = QTableWidgetItem()
         __qtablewidgetitem34.setFont(font4);
-        self.timetable_tableview.setItem(0, 4, __qtablewidgetitem34)
+        self.timetable_tableview.setItem(0, 2, __qtablewidgetitem34)
         __qtablewidgetitem35 = QTableWidgetItem()
         __qtablewidgetitem35.setFont(font4);
-        self.timetable_tableview.setItem(0, 5, __qtablewidgetitem35)
+        self.timetable_tableview.setItem(0, 3, __qtablewidgetitem35)
         __qtablewidgetitem36 = QTableWidgetItem()
         __qtablewidgetitem36.setFont(font4);
-        self.timetable_tableview.setItem(0, 6, __qtablewidgetitem36)
+        self.timetable_tableview.setItem(0, 4, __qtablewidgetitem36)
         __qtablewidgetitem37 = QTableWidgetItem()
         __qtablewidgetitem37.setFont(font4);
-        self.timetable_tableview.setItem(1, 0, __qtablewidgetitem37)
+        self.timetable_tableview.setItem(0, 5, __qtablewidgetitem37)
         __qtablewidgetitem38 = QTableWidgetItem()
         __qtablewidgetitem38.setFont(font4);
-        self.timetable_tableview.setItem(1, 1, __qtablewidgetitem38)
+        self.timetable_tableview.setItem(0, 6, __qtablewidgetitem38)
         __qtablewidgetitem39 = QTableWidgetItem()
         __qtablewidgetitem39.setFont(font4);
-        self.timetable_tableview.setItem(1, 2, __qtablewidgetitem39)
+        self.timetable_tableview.setItem(1, 0, __qtablewidgetitem39)
         __qtablewidgetitem40 = QTableWidgetItem()
         __qtablewidgetitem40.setFont(font4);
-        self.timetable_tableview.setItem(1, 3, __qtablewidgetitem40)
+        self.timetable_tableview.setItem(1, 1, __qtablewidgetitem40)
         __qtablewidgetitem41 = QTableWidgetItem()
         __qtablewidgetitem41.setFont(font4);
-        self.timetable_tableview.setItem(1, 4, __qtablewidgetitem41)
+        self.timetable_tableview.setItem(1, 2, __qtablewidgetitem41)
         __qtablewidgetitem42 = QTableWidgetItem()
         __qtablewidgetitem42.setFont(font4);
-        self.timetable_tableview.setItem(1, 5, __qtablewidgetitem42)
+        self.timetable_tableview.setItem(1, 3, __qtablewidgetitem42)
         __qtablewidgetitem43 = QTableWidgetItem()
         __qtablewidgetitem43.setFont(font4);
-        self.timetable_tableview.setItem(1, 6, __qtablewidgetitem43)
+        self.timetable_tableview.setItem(1, 4, __qtablewidgetitem43)
         __qtablewidgetitem44 = QTableWidgetItem()
         __qtablewidgetitem44.setFont(font4);
-        self.timetable_tableview.setItem(2, 0, __qtablewidgetitem44)
+        self.timetable_tableview.setItem(1, 5, __qtablewidgetitem44)
         __qtablewidgetitem45 = QTableWidgetItem()
         __qtablewidgetitem45.setFont(font4);
-        self.timetable_tableview.setItem(2, 1, __qtablewidgetitem45)
+        self.timetable_tableview.setItem(1, 6, __qtablewidgetitem45)
         __qtablewidgetitem46 = QTableWidgetItem()
         __qtablewidgetitem46.setFont(font4);
-        self.timetable_tableview.setItem(2, 2, __qtablewidgetitem46)
+        self.timetable_tableview.setItem(2, 0, __qtablewidgetitem46)
         __qtablewidgetitem47 = QTableWidgetItem()
         __qtablewidgetitem47.setFont(font4);
-        self.timetable_tableview.setItem(2, 3, __qtablewidgetitem47)
+        self.timetable_tableview.setItem(2, 1, __qtablewidgetitem47)
         __qtablewidgetitem48 = QTableWidgetItem()
         __qtablewidgetitem48.setFont(font4);
-        self.timetable_tableview.setItem(2, 4, __qtablewidgetitem48)
+        self.timetable_tableview.setItem(2, 2, __qtablewidgetitem48)
         __qtablewidgetitem49 = QTableWidgetItem()
         __qtablewidgetitem49.setFont(font4);
-        self.timetable_tableview.setItem(2, 5, __qtablewidgetitem49)
+        self.timetable_tableview.setItem(2, 3, __qtablewidgetitem49)
         __qtablewidgetitem50 = QTableWidgetItem()
         __qtablewidgetitem50.setFont(font4);
-        self.timetable_tableview.setItem(2, 6, __qtablewidgetitem50)
+        self.timetable_tableview.setItem(2, 4, __qtablewidgetitem50)
         __qtablewidgetitem51 = QTableWidgetItem()
         __qtablewidgetitem51.setFont(font4);
-        self.timetable_tableview.setItem(3, 0, __qtablewidgetitem51)
+        self.timetable_tableview.setItem(2, 5, __qtablewidgetitem51)
         __qtablewidgetitem52 = QTableWidgetItem()
         __qtablewidgetitem52.setFont(font4);
-        self.timetable_tableview.setItem(3, 1, __qtablewidgetitem52)
+        self.timetable_tableview.setItem(2, 6, __qtablewidgetitem52)
         __qtablewidgetitem53 = QTableWidgetItem()
         __qtablewidgetitem53.setFont(font4);
-        self.timetable_tableview.setItem(3, 2, __qtablewidgetitem53)
+        self.timetable_tableview.setItem(3, 0, __qtablewidgetitem53)
         __qtablewidgetitem54 = QTableWidgetItem()
         __qtablewidgetitem54.setFont(font4);
-        self.timetable_tableview.setItem(3, 3, __qtablewidgetitem54)
+        self.timetable_tableview.setItem(3, 1, __qtablewidgetitem54)
         __qtablewidgetitem55 = QTableWidgetItem()
         __qtablewidgetitem55.setFont(font4);
-        self.timetable_tableview.setItem(3, 4, __qtablewidgetitem55)
+        self.timetable_tableview.setItem(3, 2, __qtablewidgetitem55)
         __qtablewidgetitem56 = QTableWidgetItem()
         __qtablewidgetitem56.setFont(font4);
-        self.timetable_tableview.setItem(3, 5, __qtablewidgetitem56)
+        self.timetable_tableview.setItem(3, 3, __qtablewidgetitem56)
         __qtablewidgetitem57 = QTableWidgetItem()
         __qtablewidgetitem57.setFont(font4);
-        self.timetable_tableview.setItem(3, 6, __qtablewidgetitem57)
+        self.timetable_tableview.setItem(3, 4, __qtablewidgetitem57)
         __qtablewidgetitem58 = QTableWidgetItem()
         __qtablewidgetitem58.setFont(font4);
-        self.timetable_tableview.setItem(4, 0, __qtablewidgetitem58)
+        self.timetable_tableview.setItem(3, 5, __qtablewidgetitem58)
         __qtablewidgetitem59 = QTableWidgetItem()
         __qtablewidgetitem59.setFont(font4);
-        self.timetable_tableview.setItem(4, 1, __qtablewidgetitem59)
+        self.timetable_tableview.setItem(3, 6, __qtablewidgetitem59)
         __qtablewidgetitem60 = QTableWidgetItem()
         __qtablewidgetitem60.setFont(font4);
-        self.timetable_tableview.setItem(4, 2, __qtablewidgetitem60)
+        self.timetable_tableview.setItem(4, 0, __qtablewidgetitem60)
         __qtablewidgetitem61 = QTableWidgetItem()
         __qtablewidgetitem61.setFont(font4);
-        self.timetable_tableview.setItem(4, 3, __qtablewidgetitem61)
+        self.timetable_tableview.setItem(4, 1, __qtablewidgetitem61)
         __qtablewidgetitem62 = QTableWidgetItem()
         __qtablewidgetitem62.setFont(font4);
-        self.timetable_tableview.setItem(4, 4, __qtablewidgetitem62)
+        self.timetable_tableview.setItem(4, 2, __qtablewidgetitem62)
         __qtablewidgetitem63 = QTableWidgetItem()
         __qtablewidgetitem63.setFont(font4);
-        self.timetable_tableview.setItem(4, 5, __qtablewidgetitem63)
+        self.timetable_tableview.setItem(4, 3, __qtablewidgetitem63)
         __qtablewidgetitem64 = QTableWidgetItem()
         __qtablewidgetitem64.setFont(font4);
-        self.timetable_tableview.setItem(4, 6, __qtablewidgetitem64)
+        self.timetable_tableview.setItem(4, 4, __qtablewidgetitem64)
+        __qtablewidgetitem65 = QTableWidgetItem()
+        __qtablewidgetitem65.setFont(font4);
+        self.timetable_tableview.setItem(4, 5, __qtablewidgetitem65)
+        __qtablewidgetitem66 = QTableWidgetItem()
+        __qtablewidgetitem66.setFont(font4);
+        self.timetable_tableview.setItem(4, 6, __qtablewidgetitem66)
         self.timetable_tableview.setObjectName(u"timetable_tableview")
         self.timetable_tableview.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.timetable_tableview.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -1065,7 +1072,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.ribbon.setCurrentIndex(3)
+        self.ribbon.setCurrentIndex(0)
         self.spec_ribbon.setCurrentIndex(0)
 
 
@@ -1162,7 +1169,8 @@ class Ui_MainWindow(object):
         self.starting_day_comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"Tuesday", None))
         self.starting_day_comboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"Wednesday", None))
         self.starting_day_comboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"Thursday", None))
-        self.starting_day_comboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"Saturday", None))
+        self.starting_day_comboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"Friday", None))
+        self.starting_day_comboBox.setItemText(6, QCoreApplication.translate("MainWindow", u"Saturday", None))
 
         self.slot_duration_label.setText(QCoreApplication.translate("MainWindow", u"Slot duration", None))
         self.mins_label.setText(QCoreApplication.translate("MainWindow", u"Mins", None))
@@ -1218,6 +1226,10 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem28.setText(QCoreApplication.translate("MainWindow", u"Wednesday ", None));
         ___qtablewidgetitem29 = self.timetable_tableview.verticalHeaderItem(4)
         ___qtablewidgetitem29.setText(QCoreApplication.translate("MainWindow", u"Thursday", None));
+        ___qtablewidgetitem30 = self.timetable_tableview.verticalHeaderItem(5)
+        ___qtablewidgetitem30.setText(QCoreApplication.translate("MainWindow", u"Friday", None));
+        ___qtablewidgetitem31 = self.timetable_tableview.verticalHeaderItem(6)
+        ___qtablewidgetitem31.setText(QCoreApplication.translate("MainWindow", u"Saturday", None));
 
         __sortingEnabled = self.timetable_tableview.isSortingEnabled()
         self.timetable_tableview.setSortingEnabled(False)

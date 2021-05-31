@@ -75,7 +75,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="iconSize">
           <size>
@@ -1079,6 +1079,11 @@ p, li { white-space: pre-wrap; }
               </item>
               <item>
                <property name="text">
+                <string>Friday</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>Saturday</string>
                </property>
               </item>
@@ -1406,6 +1411,26 @@ p, li { white-space: pre-wrap; }
              <row>
               <property name="text">
                <string>Thursday</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Friday</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Saturday</string>
               </property>
               <property name="font">
                <font>

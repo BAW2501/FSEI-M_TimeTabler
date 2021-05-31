@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import sys
 
@@ -74,7 +75,8 @@ class MainWindow(QMainWindow):
         self.module_assignments = [
             [[{"prof_name": 18, "number": 2, "type": 1}]],
             [[{"prof_name": 0, "number": 1, "type": 1}]],
-            [[{"prof_name": 11, "number": 1, "type": 1}, {"prof_name": 11, "number": 3, "type": 3}, {"prof_name": 21, "number": 4, "type": 3}]]
+            [[{"prof_name": 11, "number": 1, "type": 1}, {"prof_name": 11, "number": 3, "type": 3},
+              {"prof_name": 21, "number": 4, "type": 3}]]
         ]
         self.datashows = [{"id": "ds1", "allocated": [0, 1]}]
         self.number_of_days_per_week_input = 5
@@ -513,6 +515,7 @@ class MainWindow(QMainWindow):
         sections_range = range(1, self.promos[promo_index]["Number of Sections"] + 1)
         self.ui.pick_section_comboBox.clear()
         self.ui.pick_section_comboBox.addItems([str(section_index) for section_index in sections_range])
+        self.ui.pick_section_comboBox.setCurrentIndex(0)
 
     def assign_input(self):
 
@@ -627,10 +630,28 @@ class MainWindow(QMainWindow):
         else:
             QMessageBox.about(self, "Error", "Please select a row")
 
+    def generate_days_slots(self):
+        days_str = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        start = datetime.datetime(100, 1, 1, 8, 30, 0)
+        starting_index = self.ui.starting_day_comboBox.currentIndex()
+        slot_duration = self.ui.slot_duration_spinBox.value()
+        slots_len = self.ui.slots_perday_spinBox.value()
+
+        result_days = [days_str[(i + starting_index) % len(days_str)] for i in range(len(days_str))]
+        result_slots = []
+        for _ in range(1, slots_len + 1):
+            end = start + datetime.timedelta(minutes=slot_duration)
+            result_slots.append(start.strftime('%H:%M') + " - " + end.strftime('%H:%M'))
+            start = end
+        return result_days, result_slots
+
     def update_options(self):
         # this should be done asynchronously for each option but i'm lazy
         self.number_of_days_per_week_input = self.ui.days_per_week_spinBox.value()
         self.number_of_slots_per_day_input = self.ui.slots_perday_spinBox.value()
+        self.ui.timetable_tableview.setRowCount(self.number_of_days_per_week_input)
+        self.ui.timetable_tableview.setColumnCount(self.number_of_slots_per_day_input)
+        self.ui.timetable_tableview.setHorizontalHeaderLabels([])
         self.slot_duration_input = self.ui.slot_duration_spinBox.value()
         self.starting_day_input = self.ui.starting_day_comboBox.currentIndex()
         self.professor_availability_constraint_checked = self.ui.professoravailability_checkBox.isChecked()
@@ -740,21 +761,27 @@ class MainWindow(QMainWindow):
         assert len(profs) == 0
 
     def load_timetable_data(self):
-        #self.ui.timetable_tableview.clear()
+        # self.ui.timetable_tableview.clear()
         promo_index = self.ui.pick_promo_comboBox_TT.currentIndex()
         section_index = self.ui.pick_section_comboBox.currentIndex()
-        print(promo_index, section_index)
+        section_index = 0 if section_index < 0 else section_index
+        #print(promo_index, section_index)
         font = QFont()
         font.setPointSize(7)
+        self.ui.timetable_tableview.setRowCount(self.number_of_days_per_week_input)
+        self.ui.timetable_tableview.setColumnCount(self.number_of_slots_per_day_input)
+        vertical_headers, horizontal_headers = self.generate_days_slots()
+        self.ui.timetable_tableview.setVerticalHeaderLabels(vertical_headers)
+        self.ui.timetable_tableview.setHorizontalHeaderLabels(horizontal_headers)
         if self.faculty.list_promo and self.problem_emploi_du_temp:
             timetable_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:promo_index]) + section_index
             timetable_needed = self.problem_emploi_du_temp.section_list[timetable_index].EDT
             for i, day in enumerate(timetable_needed):
                 for j, slot in enumerate(day):
-                    cell_str = "\n".join([str(session) for session in slot.sessions])
-                    item =QTableWidgetItem(cell_str)
+                    cell_str = "\n".join(str(session) for session in slot.sessions)
+                    item = QTableWidgetItem(cell_str)
                     item.setFont(font)
-                    self.ui.timetable_tableview.setItem(i, j,item )
+                    self.ui.timetable_tableview.setItem(i, j, item)
 
 
 if __name__ == "__main__":
@@ -767,12 +794,8 @@ if __name__ == "__main__":
 
     sys.exit(app.exec())
 
-    # TODO programmatically and dynamically build self.ui.timetable_tableview from data
-    # TODO make method to populate self.ui.timetable_tableview
     # TODO make session added diag for manual session setting
-    # TODO make timetable buttons clickable
     # TODO parse excel data to normal gui data for testing
-    # TODO make timetable data persistent by setting a changed data flag
     # TODO make all data serializable and savable into a file
     # TODO define project file xml for saving (maybe json instead of xml)
     # TODO make open,edit,save project methods and connect them to the home tab
