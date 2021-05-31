@@ -154,7 +154,7 @@ class PET:
 
     def eval_soft_valid(self, prof, attendance, module, session_type, day, slot) -> int:
         """will return an int that it's the evaluation of the current task according to soft constraints  """
-        session = Session(attendance, prof, module, Room("temp", RoomType.td, 100), session_type)
+        session = Session(attendance, prof, module, Room("temp", RoomType.td.value, 100), session_type)
         return sum(1 for constraint in self.soft_constraints if constraint.satisfied(session, day, slot))
 
     def best_fit_room(self, session_type: SessionType, attendannce: Attendance, day, slot) -> Union[
@@ -176,14 +176,15 @@ class PET:
 
         # appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
         #                                             and room.type_salle in appropriate_type, self.list_of_rooms))
-        # appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
-        #                      and room.is_available_on(day, slot)
-        #                      and room.type_salle in appropriate_type]
-        appropriate_rooms=[]
-        for room in self.list_of_rooms:
-            #print( room.type_salle , appropriate_type)
-            if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
-                appropriate_rooms.append(room)
+        appropriate_rooms = [room for room in self.list_of_rooms if room.capacity >= effective
+                             and room.type_salle in appropriate_type]
+        if appropriate_rooms:
+            appropriate_rooms = [ room for room in appropriate_rooms if room.is_available_on(day, slot)]
+        else :
+            raise Exception("no room of type "+RoomType(appropriate_type[0]).name)
+        # for room in self.list_of_rooms:
+        #     if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
+        #         appropriate_rooms.append(room)
 
         if appropriate_rooms:
             # smallest fit could be first fit here which is faster performance wise
@@ -203,7 +204,7 @@ class PET:
         for section_index, sect in enumerate(self.section_list):
             for day_index in range(days_per_week):
                 for slot_index in range(timeslots_per_day):
-                    if not sect.EDT[day_index][slot_index].is_full:
+                    if not sect.EDT[day_index][slot_index].is_full and sect.required_sessions:
                         return section_index, day_index, slot_index
 
         raise Exception("not enough timeslots to assign all sessions")

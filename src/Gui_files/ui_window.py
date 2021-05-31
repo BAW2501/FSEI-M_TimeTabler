@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'windowkjufaJ.ui'
+## Form generated from reading UI file 'windowLXkIPo.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.1.0
 ##
@@ -744,8 +744,111 @@ class Ui_MainWindow(object):
         __qtablewidgetitem29.setFont(font4);
         self.timetable_tableview.setVerticalHeaderItem(4, __qtablewidgetitem29)
         __qtablewidgetitem30 = QTableWidgetItem()
-        __qtablewidgetitem30.setTextAlignment(Qt.AlignCenter);
-        self.timetable_tableview.setItem(0, 1, __qtablewidgetitem30)
+        __qtablewidgetitem30.setFont(font4);
+        self.timetable_tableview.setItem(0, 0, __qtablewidgetitem30)
+        __qtablewidgetitem31 = QTableWidgetItem()
+        __qtablewidgetitem31.setTextAlignment(Qt.AlignCenter);
+        __qtablewidgetitem31.setFont(font4);
+        self.timetable_tableview.setItem(0, 1, __qtablewidgetitem31)
+        __qtablewidgetitem32 = QTableWidgetItem()
+        __qtablewidgetitem32.setFont(font4);
+        self.timetable_tableview.setItem(0, 2, __qtablewidgetitem32)
+        __qtablewidgetitem33 = QTableWidgetItem()
+        __qtablewidgetitem33.setFont(font4);
+        self.timetable_tableview.setItem(0, 3, __qtablewidgetitem33)
+        __qtablewidgetitem34 = QTableWidgetItem()
+        __qtablewidgetitem34.setFont(font4);
+        self.timetable_tableview.setItem(0, 4, __qtablewidgetitem34)
+        __qtablewidgetitem35 = QTableWidgetItem()
+        __qtablewidgetitem35.setFont(font4);
+        self.timetable_tableview.setItem(0, 5, __qtablewidgetitem35)
+        __qtablewidgetitem36 = QTableWidgetItem()
+        __qtablewidgetitem36.setFont(font4);
+        self.timetable_tableview.setItem(0, 6, __qtablewidgetitem36)
+        __qtablewidgetitem37 = QTableWidgetItem()
+        __qtablewidgetitem37.setFont(font4);
+        self.timetable_tableview.setItem(1, 0, __qtablewidgetitem37)
+        __qtablewidgetitem38 = QTableWidgetItem()
+        __qtablewidgetitem38.setFont(font4);
+        self.timetable_tableview.setItem(1, 1, __qtablewidgetitem38)
+        __qtablewidgetitem39 = QTableWidgetItem()
+        __qtablewidgetitem39.setFont(font4);
+        self.timetable_tableview.setItem(1, 2, __qtablewidgetitem39)
+        __qtablewidgetitem40 = QTableWidgetItem()
+        __qtablewidgetitem40.setFont(font4);
+        self.timetable_tableview.setItem(1, 3, __qtablewidgetitem40)
+        __qtablewidgetitem41 = QTableWidgetItem()
+        __qtablewidgetitem41.setFont(font4);
+        self.timetable_tableview.setItem(1, 4, __qtablewidgetitem41)
+        __qtablewidgetitem42 = QTableWidgetItem()
+        __qtablewidgetitem42.setFont(font4);
+        self.timetable_tableview.setItem(1, 5, __qtablewidgetitem42)
+        __qtablewidgetitem43 = QTableWidgetItem()
+        __qtablewidgetitem43.setFont(font4);
+        self.timetable_tableview.setItem(1, 6, __qtablewidgetitem43)
+        __qtablewidgetitem44 = QTableWidgetItem()
+        __qtablewidgetitem44.setFont(font4);
+        self.timetable_tableview.setItem(2, 0, __qtablewidgetitem44)
+        __qtablewidgetitem45 = QTableWidgetItem()
+        __qtablewidgetitem45.setFont(font4);
+        self.timetable_tableview.setItem(2, 1, __qtablewidgetitem45)
+        __qtablewidgetitem46 = QTableWidgetItem()
+        __qtablewidgetitem46.setFont(font4);
+        self.timetable_tableview.setItem(2, 2, __qtablewidgetitem46)
+        __qtablewidgetitem47 = QTableWidgetItem()
+        __qtablewidgetitem47.setFont(font4);
+        self.timetable_tableview.setItem(2, 3, __qtablewidgetitem47)
+        __qtablewidgetitem48 = QTableWidgetItem()
+        __qtablewidgetitem48.setFont(font4);
+        self.timetable_tableview.setItem(2, 4, __qtablewidgetitem48)
+        __qtablewidgetitem49 = QTableWidgetItem()
+        __qtablewidgetitem49.setFont(font4);
+        self.timetable_tableview.setItem(2, 5, __qtablewidgetitem49)
+        __qtablewidgetitem50 = QTableWidgetItem()
+        __qtablewidgetitem50.setFont(font4);
+        self.timetable_tableview.setItem(2, 6, __qtablewidgetitem50)
+        __qtablewidgetitem51 = QTableWidgetItem()
+        __qtablewidgetitem51.setFont(font4);
+        self.timetable_tableview.setItem(3, 0, __qtablewidgetitem51)
+        __qtablewidgetitem52 = QTableWidgetItem()
+        __qtablewidgetitem52.setFont(font4);
+        self.timetable_tableview.setItem(3, 1, __qtablewidgetitem52)
+        __qtablewidgetitem53 = QTableWidgetItem()
+        __qtablewidgetitem53.setFont(font4);
+        self.timetable_tableview.setItem(3, 2, __qtablewidgetitem53)
+        __qtablewidgetitem54 = QTableWidgetItem()
+        __qtablewidgetitem54.setFont(font4);
+        self.timetable_tableview.setItem(3, 3, __qtablewidgetitem54)
+        __qtablewidgetitem55 = QTableWidgetItem()
+        __qtablewidgetitem55.setFont(font4);
+        self.timetable_tableview.setItem(3, 4, __qtablewidgetitem55)
+        __qtablewidgetitem56 = QTableWidgetItem()
+        __qtablewidgetitem56.setFont(font4);
+        self.timetable_tableview.setItem(3, 5, __qtablewidgetitem56)
+        __qtablewidgetitem57 = QTableWidgetItem()
+        __qtablewidgetitem57.setFont(font4);
+        self.timetable_tableview.setItem(3, 6, __qtablewidgetitem57)
+        __qtablewidgetitem58 = QTableWidgetItem()
+        __qtablewidgetitem58.setFont(font4);
+        self.timetable_tableview.setItem(4, 0, __qtablewidgetitem58)
+        __qtablewidgetitem59 = QTableWidgetItem()
+        __qtablewidgetitem59.setFont(font4);
+        self.timetable_tableview.setItem(4, 1, __qtablewidgetitem59)
+        __qtablewidgetitem60 = QTableWidgetItem()
+        __qtablewidgetitem60.setFont(font4);
+        self.timetable_tableview.setItem(4, 2, __qtablewidgetitem60)
+        __qtablewidgetitem61 = QTableWidgetItem()
+        __qtablewidgetitem61.setFont(font4);
+        self.timetable_tableview.setItem(4, 3, __qtablewidgetitem61)
+        __qtablewidgetitem62 = QTableWidgetItem()
+        __qtablewidgetitem62.setFont(font4);
+        self.timetable_tableview.setItem(4, 4, __qtablewidgetitem62)
+        __qtablewidgetitem63 = QTableWidgetItem()
+        __qtablewidgetitem63.setFont(font4);
+        self.timetable_tableview.setItem(4, 5, __qtablewidgetitem63)
+        __qtablewidgetitem64 = QTableWidgetItem()
+        __qtablewidgetitem64.setFont(font4);
+        self.timetable_tableview.setItem(4, 6, __qtablewidgetitem64)
         self.timetable_tableview.setObjectName(u"timetable_tableview")
         self.timetable_tableview.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.timetable_tableview.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -767,7 +870,7 @@ class Ui_MainWindow(object):
 
         self.buttons_frame = QFrame(self.timetable_tab)
         self.buttons_frame.setObjectName(u"buttons_frame")
-        self.buttons_frame.setEnabled(False)
+        self.buttons_frame.setEnabled(True)
         sizePolicy2 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
@@ -780,13 +883,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
         self.generate_pushButton = QPushButton(self.buttons_frame)
         self.generate_pushButton.setObjectName(u"generate_pushButton")
-        self.generate_pushButton.setEnabled(False)
+        self.generate_pushButton.setEnabled(True)
 
         self.horizontalLayout_13.addWidget(self.generate_pushButton)
 
         self.export_excel_pushButton = QPushButton(self.buttons_frame)
         self.export_excel_pushButton.setObjectName(u"export_excel_pushButton")
-        self.export_excel_pushButton.setEnabled(False)
+        self.export_excel_pushButton.setEnabled(True)
 
         self.horizontalLayout_13.addWidget(self.export_excel_pushButton)
 
@@ -962,7 +1065,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.ribbon.setCurrentIndex(0)
+        self.ribbon.setCurrentIndex(3)
         self.spec_ribbon.setCurrentIndex(0)
 
 

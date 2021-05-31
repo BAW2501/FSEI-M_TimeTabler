@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from pprint import pprint
 
+import resources
 from Gui_files.inputDiags import *
 from Gui_files.ui_window import *
 from src.Solver import *
-import resources
 
 
 def session_type_from_int(task):
@@ -63,6 +62,9 @@ class MainWindow(QMainWindow):
                       {"Name": "S6", "Capacity": 30, "RoomType": 2},
                       {"Name": "S7", "Capacity": 30, "RoomType": 2},
                       {"Name": "S8", "Capacity": 30, "RoomType": 2},
+                      {"Name": "M1", "Capacity": 30, "RoomType": 3},
+                      {"Name": "M2", "Capacity": 30, "RoomType": 3},
+                      {"Name": "M3", "Capacity": 30, "RoomType": 3},
                       ]
         self.modules = [[{"Name": "Algorithmique et structure de données 1", "abriv": "ASD1", "nb_cour": 1, "nb_td": 1,
                           "nb_tp": 1}],
@@ -72,7 +74,7 @@ class MainWindow(QMainWindow):
         self.module_assignments = [
             [[{"prof_name": 18, "number": 2, "type": 1}]],
             [[{"prof_name": 0, "number": 1, "type": 1}]],
-            [[{"prof_name": 11, "number": 1, "type": 1}]]
+            [[{"prof_name": 11, "number": 1, "type": 1}, {"prof_name": 11, "number": 3, "type": 3}, {"prof_name": 21, "number": 4, "type": 3}]]
         ]
         self.datashows = [{"id": "ds1", "allocated": [0, 1]}]
         self.number_of_days_per_week_input = 5
@@ -87,6 +89,7 @@ class MainWindow(QMainWindow):
         self.two_cour_per_day_max_constraint_checked = False
         self.unique_session_daily_constraint_checked = False
         self.faculty = Faculty("FSEI-MOSTA")
+        self.problem_emploi_du_temp = None
 
     def bind(self):
 
@@ -127,6 +130,8 @@ class MainWindow(QMainWindow):
 
         self.ui.pick_promo_comboBox_TT.currentIndexChanged.connect(self.refresh_section_combo)
         self.ui.timetable_tableview.doubleClicked.connect(self.timetable_input)
+        self.ui.pick_section_comboBox.currentIndexChanged.connect(self.load_timetable_data)
+        self.ui.pick_promo_comboBox_TT.currentIndexChanged.connect(self.load_timetable_data)
 
         self.ui.days_per_week_spinBox.valueChanged.connect(self.update_options)
         self.ui.slots_perday_spinBox.valueChanged.connect(self.update_options)
@@ -147,9 +152,11 @@ class MainWindow(QMainWindow):
         self.load_datashow_data()
         self.ui.spec_ribbon.currentChanged.connect(self.on_spec_tab_change)
         self.ui.ribbon.currentChanged.connect(self.on_ribbon_tab_change)
+
         # self.ui.verticalLayout_15.removeWidget(self.ui.timetable_tableview)
         # self.ui.verticalLayout_15.addWidget(self.ui.timetable_tableview)
-        # self.ui.export_excel_pushButton.acti
+        self.ui.generate_pushButton.setEnabled(True)
+        self.ui.generate_pushButton.clicked.connect(self.generate_timetable)
 
     def promo_input(self):
         diag = PromoInputDialog()
@@ -477,26 +484,29 @@ class MainWindow(QMainWindow):
         self.faculty.list_promo = promo
         self.faculty.list_rooms = room
         self.faculty.list_datashows = ds
-        problem_emploi_du_temp = PET(self.faculty)
+        self.problem_emploi_du_temp = PET(self.faculty)
         # print(sum(len(session_list) for session_list in problem_emploi_du_temp.sessions_list))
         if self.professor_availability_constraint_checked:
-            problem_emploi_du_temp.add_hard_constraint(ProfessorAvailability())
+            self.problem_emploi_du_temp.add_hard_constraint(ProfessorAvailability())
         if self.student_availability_constraint_checked:
-            problem_emploi_du_temp.add_hard_constraint(StudentAvailability())
+            self.problem_emploi_du_temp.add_hard_constraint(StudentAvailability())
         if self.room_availability_constraint_checked:
-            problem_emploi_du_temp.add_hard_constraint(RoomAvailability())
+            self.problem_emploi_du_temp.add_hard_constraint(RoomAvailability())
         if self.three_consecutive_sessions_constraint_checked:
-            problem_emploi_du_temp.add_hard_constraint(ThreeConsecutiveMaxSessions())
+            self.problem_emploi_du_temp.add_hard_constraint(ThreeConsecutiveMaxSessions())
         if self.two_cour_per_day_max_constraint_checked:
-            problem_emploi_du_temp.add_hard_constraint(TwoCourPerDayMax())
+            self.problem_emploi_du_temp.add_hard_constraint(TwoCourPerDayMax())
         if self.unique_session_daily_constraint_checked:
-            problem_emploi_du_temp.add_hard_constraint(UniqueSessionDaily())
+            self.problem_emploi_du_temp.add_hard_constraint(UniqueSessionDaily())
 
-        if problem_emploi_du_temp.solve():
-            pprint(promo[0].list_section[0].EDT)
-        else:
-            print("messed up somewhere")
-
+    def generate_timetable(self):
+        try:
+            if self.problem_emploi_du_temp.solve():
+                self.load_timetable_data()
+            else:
+                print("messed up somewhere")
+        except Exception as e:
+            QMessageBox.about(self, "Error", str(e))
 
     def refresh_section_combo(self):
         promo_index = self.ui.pick_promo_comboBox_TT.currentIndex()
@@ -688,7 +698,7 @@ class MainWindow(QMainWindow):
             name = self.profs[assignment["prof_name"]]
             sections_taught = assignment["number"]
             sessions_per_week = canvas[module_index].nb_tp
-            profs = [Professor(name) for _ in range(sections_taught * sessions_per_week)]
+            profs.extend([Professor(name) for _ in range(sections_taught * sessions_per_week)])
         for sect in promo_list[promo_index].list_section:
             for group in sect.list_group:
                 sect.add_required_sessions(
@@ -705,7 +715,7 @@ class MainWindow(QMainWindow):
             name = self.profs[assignment["prof_name"]]
             sections_taught = assignment["number"]
             sessions_per_week = canvas[module_index].nb_td
-            profs = [Professor(name) for _ in range(sections_taught * sessions_per_week)]
+            profs.extend([Professor(name) for _ in range(sections_taught * sessions_per_week)])
         for sect in promo_list[promo_index].list_section:
             for group in sect.list_group:
                 sect.add_required_sessions(
@@ -723,11 +733,28 @@ class MainWindow(QMainWindow):
             name = self.profs[assignment["prof_name"]]
             sections_taught = assignment["number"]
             sessions_per_week = canvas[module_index].nb_cour
-            profs = [Professor(name) for _ in range(sections_taught * sessions_per_week)]
+            profs.extend([Professor(name) for _ in range(sections_taught * sessions_per_week)])
         for sect in promo_list[promo_index].list_section:
             sect.add_required_sessions([(profs.pop(0), sect, canvas[module_index], SessionType.Cour) for _ in
                                         range(sessions_per_week)])
         assert len(profs) == 0
+
+    def load_timetable_data(self):
+        #self.ui.timetable_tableview.clear()
+        promo_index = self.ui.pick_promo_comboBox_TT.currentIndex()
+        section_index = self.ui.pick_section_comboBox.currentIndex()
+        print(promo_index, section_index)
+        font = QFont()
+        font.setPointSize(7)
+        if self.faculty.list_promo and self.problem_emploi_du_temp:
+            timetable_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:promo_index]) + section_index
+            timetable_needed = self.problem_emploi_du_temp.section_list[timetable_index].EDT
+            for i, day in enumerate(timetable_needed):
+                for j, slot in enumerate(day):
+                    cell_str = "\n".join([str(session) for session in slot.sessions])
+                    item =QTableWidgetItem(cell_str)
+                    item.setFont(font)
+                    self.ui.timetable_tableview.setItem(i, j,item )
 
 
 if __name__ == "__main__":
