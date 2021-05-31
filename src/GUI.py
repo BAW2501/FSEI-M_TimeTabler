@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+from pprint import pprint
 
 from Gui_files.inputDiags import *
 from Gui_files.ui_window import *
-from resources import *
+from src.Solver import *
+import resources
 
 
 def session_type_from_int(task):
@@ -138,7 +140,7 @@ class MainWindow(QMainWindow):
         self.ui.ribbon.currentChanged.connect(self.on_ribbon_tab_change)
         # self.ui.verticalLayout_15.removeWidget(self.ui.timetable_tableview)
         # self.ui.verticalLayout_15.addWidget(self.ui.timetable_tableview)
-        #self.ui.export_excel_pushButton.acti
+        # self.ui.export_excel_pushButton.acti
 
     def promo_input(self):
         diag = PromoInputDialog()
@@ -253,10 +255,10 @@ class MainWindow(QMainWindow):
             self.profs.pop(index)
             for i, promo_canvas in enumerate(self.module_assignments):
                 for j, module in enumerate(promo_canvas):
-                    promo_canvas[j] = [assign for assign in promo_canvas[j] if assign["prof_name"] != index]
-                    for assign in promo_canvas[j]:
-                        if assign["prof_name"] > index:
-                            assign["prof_name"] -= 1
+                    promo_canvas[j] = [assignment for assignment in promo_canvas[j] if assignment["prof_name"] != index]
+                    for assignment in promo_canvas[j]:
+                        if assignment["prof_name"] > index:
+                            assignment["prof_name"] -= 1
 
             print(self.module_assignments)
         else:
@@ -422,9 +424,9 @@ class MainWindow(QMainWindow):
             there_is_profs = len(self.profs) != 0
             there_is_rooms = len(self.rooms) != 0
             there_is_modules_for_each_promo = [len(modules_of_a_promo) != 0 for modules_of_a_promo in self.modules]
-            there_is_assignments_for_each_module_for_each_promo = [len(assign) != 0
+            there_is_assignments_for_each_module_for_each_promo = [len(assignment) != 0
                                                                    for promo_assignments in self.module_assignments
-                                                                   for assign in promo_assignments]
+                                                                   for assignment in promo_assignments]
             conditions_to_generate = [
                 there_is_promos,
                 there_is_profs,
@@ -459,10 +461,29 @@ class MainWindow(QMainWindow):
             print("debug message")
 
     def update_faculty_data(self):
+        resources.timeslots_per_day = self.number_of_slots_per_day_input
+        resources.days_per_week = self.number_of_days_per_week_input
+
         promo, room, ds = self.build_data_model()
         self.faculty.list_promo = promo
         self.faculty.list_rooms = room
         self.faculty.list_datashows = ds
+        problem_emploi_du_temp = PET(self.faculty)
+        # print(sum(len(session_list) for session_list in problem_emploi_du_temp.sessions_list))
+        if self.professor_availability_constraint_checked:
+            problem_emploi_du_temp.add_hard_constraint(ProfessorAvailability())
+        if self.student_availability_constraint_checked:
+            problem_emploi_du_temp.add_hard_constraint(StudentAvailability())
+        if self.room_availability_constraint_checked:
+            problem_emploi_du_temp.add_hard_constraint(RoomAvailability())
+        if self.three_consecutive_sessions_constraint_checked:
+            problem_emploi_du_temp.add_hard_constraint(ThreeConsecutiveMaxSessions())
+        if self.two_cour_per_day_max_constraint_checked:
+            problem_emploi_du_temp.add_hard_constraint(TwoCourPerDayMax())
+        if self.unique_session_daily_constraint_checked:
+            problem_emploi_du_temp.add_hard_constraint(UniqueSessionDaily())
+
+
 
     def refresh_section_combo(self):
         promo_index = self.ui.pick_promo_comboBox_TT.currentIndex()
@@ -647,7 +668,7 @@ class MainWindow(QMainWindow):
 
     def generate_tp_sessions(self, canvas, module_index, promo_index, promo_list):
         assignments = self.module_assignments[promo_index][module_index]
-        tp_assign = [assign for assign in assignments if assign["type"] == SessionType.Tp.value]
+        tp_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Tp.value]
         profs = []
         sessions_per_week = 0
         for assignment in tp_assign:
@@ -664,7 +685,7 @@ class MainWindow(QMainWindow):
 
     def generate_td_sessions(self, canvas, module_index, promo_index, promo_list):
         assignments = self.module_assignments[promo_index][module_index]
-        td_assign = [assign for assign in assignments if assign["type"] == SessionType.Td.value]
+        td_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Td.value]
         profs = []
         sessions_per_week = 0
         for assignment in td_assign:
@@ -681,7 +702,7 @@ class MainWindow(QMainWindow):
 
     def generate_cour_sessions(self, canvas, module_index, promo_index, promo_list):
         assignments = self.module_assignments[promo_index][module_index]
-        cour_assign = [assign for assign in assignments if assign["type"] == SessionType.Cour.value]
+        cour_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Cour.value]
 
         profs = []
         sessions_per_week = 0
@@ -718,4 +739,4 @@ if __name__ == "__main__":
 
     # TODO OPTIONAL FEATURE custom sessions adding after TT generation
     # TODO OPTIONAL FEATURE generate professor TT in excel export
-    # TODO OPTIONAL FEATURE add Professor soft ²unavailable times for preference
+    # TODO OPTIONAL FEATURE add Professor soft unavailable times for preference

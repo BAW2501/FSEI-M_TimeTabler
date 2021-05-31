@@ -12,7 +12,7 @@ class LimitedResource:
         super().__init__()
         self.days: int = days
         self.slots_per_day: int = slots_per_day
-        self.available: list = [[True for _ in range(slots_per_day)] for _ in range(days)]
+        self.available: list = [[True for _ in range(timeslots_per_day)] for _ in range(days_per_week)]
 
     def is_available_on(self, day: int, slot_number: int) -> bool:
         return self.available[day][slot_number]
