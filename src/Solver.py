@@ -203,8 +203,8 @@ class PET:
         """ iterates over the sections  and finds the first available timeslot"""
         for section_index, sect in enumerate(self.section_list):
             if sect.required_sessions:
-                for day_index in range(days_per_week):
-                    for slot_index in range(timeslots_per_day):
+                for day_index,day in enumerate(sect.EDT):
+                    for slot_index,slot in enumerate(day):
                         if not sect.EDT[day_index][slot_index].is_full:
                             return section_index, day_index, slot_index
 
