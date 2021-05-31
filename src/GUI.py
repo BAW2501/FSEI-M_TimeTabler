@@ -36,7 +36,8 @@ class MainWindow(QMainWindow):
         self.promos = [
             {"Name": "MI", "Number of Sections": 2, "Number of Groups": 14, "Effective per Group": 25},
             {"Name": "L2 Info", "Number of Sections": 1, "Number of Groups": 9, "Effective per Group": 25},
-            {"Name": "L3 Info", "Number of Sections": 1, "Number of Groups": 7, "Effective per Group": 25}]
+            {"Name": "L3 Info", "Number of Sections": 1, "Number of Groups": 7, "Effective per Group": 25},
+            {"Name": "M1 ReSys", "Number of Sections": 1, "Number of Groups": 1, "Effective per Group": 25}, ]
 
         self.profs = ["Abid M.", "Bahnes N.", "Benameur", "Benhamed", "Benidris F.Z", "Bensalloua", "Bentaouza C",
                       "Besnassi", "Bessaoud K.", "Betouati", "Bouzebiba", "Delali A.", "Djahafi", "Djebbara R.",
@@ -71,12 +72,14 @@ class MainWindow(QMainWindow):
                           "nb_tp": 1}],
                         [{"Name": " Programmation orienté objet", "abriv": "POO", "nb_cour": 1, "nb_td": 0,
                           "nb_tp": 1}],
-                        [{"Name": "Intelligence Artificielle", "abriv": "IA", "nb_cour": 1, "nb_td": 0, "nb_tp": 1}]]
+                        [{"Name": "Intelligence Artificielle", "abriv": "IA", "nb_cour": 1, "nb_td": 0, "nb_tp": 1}],
+                        [{"Name": "routage", "abriv": "routage", "nb_cour": 1, "nb_td": 0, "nb_tp": 0}]]
         self.module_assignments = [
             [[{"prof_name": 18, "number": 2, "type": 1}]],
             [[{"prof_name": 0, "number": 1, "type": 1}]],
             [[{"prof_name": 11, "number": 1, "type": 1}, {"prof_name": 11, "number": 3, "type": 3},
-              {"prof_name": 21, "number": 4, "type": 3}]]
+              {"prof_name": 21, "number": 4, "type": 3}]],
+            [[{"prof_name": 25, "number": 1, "type": 1}]],
         ]
         self.datashows = [{"id": "ds1", "allocated": [0, 1]}]
         self.number_of_days_per_week_input = 5
@@ -486,6 +489,8 @@ class MainWindow(QMainWindow):
         self.faculty.list_promo = promo
         self.faculty.list_rooms = room
         self.faculty.list_datashows = ds
+        Professor.cache_clear()
+        del self.problem_emploi_du_temp
         self.problem_emploi_du_temp = PET(self.faculty)
         # print(sum(len(session_list) for session_list in problem_emploi_du_temp.sessions_list))
         if self.professor_availability_constraint_checked:
@@ -765,14 +770,17 @@ class MainWindow(QMainWindow):
         promo_index = self.ui.pick_promo_comboBox_TT.currentIndex()
         section_index = self.ui.pick_section_comboBox.currentIndex()
         section_index = 0 if section_index < 0 else section_index
-        #print(promo_index, section_index)
+        # print(promo_index, section_index)
         font = QFont()
-        font.setPointSize(7)
+        font.setPointSize(8)
         self.ui.timetable_tableview.setRowCount(self.number_of_days_per_week_input)
         self.ui.timetable_tableview.setColumnCount(self.number_of_slots_per_day_input)
         vertical_headers, horizontal_headers = self.generate_days_slots()
         self.ui.timetable_tableview.setVerticalHeaderLabels(vertical_headers)
         self.ui.timetable_tableview.setHorizontalHeaderLabels(horizontal_headers)
+        self.ui.timetable_tableview.horizontalHeader().setFont(font)
+        self.ui.timetable_tableview.verticalHeader().setFont(font)
+        font.setPointSize(7)
         if self.faculty.list_promo and self.problem_emploi_du_temp:
             timetable_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:promo_index]) + section_index
             timetable_needed = self.problem_emploi_du_temp.section_list[timetable_index].EDT

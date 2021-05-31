@@ -202,10 +202,11 @@ class PET:
     def first_available_slot(self) -> tuple[int, int, int]:
         """ iterates over the sections  and finds the first available timeslot"""
         for section_index, sect in enumerate(self.section_list):
-            for day_index in range(days_per_week):
-                for slot_index in range(timeslots_per_day):
-                    if not sect.EDT[day_index][slot_index].is_full and sect.required_sessions:
-                        return section_index, day_index, slot_index
+            if sect.required_sessions:
+                for day_index in range(days_per_week):
+                    for slot_index in range(timeslots_per_day):
+                        if not sect.EDT[day_index][slot_index].is_full:
+                            return section_index, day_index, slot_index
 
         raise Exception("not enough timeslots to assign all sessions")
 
