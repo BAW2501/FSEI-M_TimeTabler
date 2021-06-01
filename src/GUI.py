@@ -683,7 +683,7 @@ class MainWindow(QMainWindow):
         diag = SessionSetterInputDialog(self.problem_emploi_du_temp,self.faculty,promo_index,section_index,row,column)
         diag.setModal(True)
         if diag.exec():
-            pass
+            self.load_timetable_data()
             # # print(name,allocations)
             # str_allocations = [self.promos[i]["Name"] for i in allocations]
             # insert_row_index = self.ui.datashows_table.rowCount()

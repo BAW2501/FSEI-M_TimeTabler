@@ -1,6 +1,8 @@
 from PySide6.QtCore import QSortFilterProxyModel, Qt
 from PySide6.QtWidgets import *
 
+from src.resources import Session
+
 
 class PromoInputDialog(QDialog):
 
@@ -232,6 +234,7 @@ class SessionSetterInputDialog(QDialog):
         self.faculty = faculty
         from src.Solver import PET
         self.p_EDT: PET = problem_emploi_du_temp
+        self.manually_added = []
         self.setWindowTitle("Input")
         self.resize(524, 380)
         self.verticalLayout_2 = QVBoxLayout(self)
@@ -322,8 +325,12 @@ class SessionSetterInputDialog(QDialog):
                                 self.p_EDT.sessions_list[sect_index])
         diag.setModal(True)
         if diag.exec():
-            pass
-            # name = diag.get_inputs()
+            possible_session, room = diag.get_inputs()
+            prof, attendance, module, session_type = possible_session
+            possible_session_object = Session(attendance, prof, module, room, session_type)
+            assign(possible_session_object,None,self.p_EDT.section_list[self.section_index])
+
+
             # insert_row_index = self.ui.professor_table.rowCount()
             # self.ui.professor_table.insertRow(insert_row_index)
             # self.ui.professor_table.setItem(
@@ -344,11 +351,10 @@ class SessionAddDialog(QDialog):
         self.p_EDT: PET = problem_emploi_du_temp
         self.setWindowTitle("Add")
         self.layout = QFormLayout(self)
-        self.CardinalitySpinBox = QSpinBox()
-        self.CardinalitySpinBox.setValue(1)
-        self.CardinalitySpinBox.setMinimum(1)
         self.SessionSelectComboBox = ExtendedComboBox(self)
-        self.SessionSelectComboBox.addItems([str(session) for session in sessions])
+        # TODO make session an object before validating it
+        self.SessionSelectComboBox.addItems(
+            [str(session) for session in sessions if self.p_EDT.valid(session, self.day_index, self.slot_index)])
         self.rooms_ComboBox = ExtendedComboBox(self)
         current_session_index = self.SessionSelectComboBox.currentIndex()
         current_session = sessions[current_session_index]
@@ -359,16 +365,15 @@ class SessionAddDialog(QDialog):
         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
 
         self.layout.addRow("session ", self.SessionSelectComboBox)
-        self.layout.addRow("Number of Allocated Groups/sections", self.CardinalitySpinBox)
-        self.layout.addRow("Type of assignment", self.rooms_ComboBox)
+        self.layout.addRow("room", self.rooms_ComboBox)
         self.layout.addWidget(buttonBox)
 
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
     def get_inputs(self):
-        return self.SessionSelectComboBox.currentIndex(), self.CardinalitySpinBox.value(), \
-               self.rooms_ComboBox.currentIndex() + 1
+        return self.p_EDT.sessions_list[self.section_index][self.SessionSelectComboBox.currentIndex()], \
+               self.p_EDT.list_of_rooms[self.rooms_ComboBox.currentIndex()]
 
     def get_rooms(self, session_type, attendannce):
         """ find the smallest room that will fit for the session"""
@@ -399,3 +404,26 @@ def session_type_from_int(task):
         return "TD"
     else:
         return "TP"
+
+def assign(possible_session, equipment, section, day, slot):
+    equipment.set_busy_on(day, slot)
+    section.EDT[day][slot].add_session(possible_session)
+    possible_session.prof.set_busy_on(day, slot)
+    possible_session.room.set_busy_on(day, slot)
+    possible_session.attendance.set_busy_on(day, slot)
+    from src.resources import SessionType
+    if possible_session.session_type == SessionType.Cour:
+        section.EDT[day][slot].is_full = True
+    max_session = section.nb_group // 2 + 1 if section.nb_group > 4 else section.nb_group
+    if len(section.EDT[day][slot].sessions) == max_session:
+        section.EDT[day][slot].is_full = True
+    # pprint(section.EDT)
+
+
+def unassign(possible_session, equipment, section, day, slot):
+    equipment.set_available_on(day, slot)
+    section.EDT[day][slot].sessions.pop()
+    possible_session.prof.set_available_on(day, slot)
+    possible_session.room.set_available_on(day, slot)
+    possible_session.attendance.set_available_on(day, slot)
+    section.EDT[day][slot].is_full = False
