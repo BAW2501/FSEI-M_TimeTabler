@@ -303,6 +303,12 @@ class SessionSetterInputDialog(QDialog):
         self.edit_pushButton.setText("Edit")
         self.remove_pushButton.setText("Remove")
         self.session_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        sect_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
+        slot_clicked = self.p_EDT.section_list[sect_index].EDT[self.day_index][self.slot_index]
+        self.session_table.setRowCount(len(slot_clicked.sessions))
+        if len(slot_clicked.sessions) == 0:
+            self.edit_pushButton.setEnabled(False)
+            self.remove_pushButton.setEnabled(False)
         self.load_session_data()
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
@@ -320,31 +326,45 @@ class SessionSetterInputDialog(QDialog):
             self.session_table.setItem(i, 4, QTableWidgetItem(str(session.prof)))
 
     def add_session(self):
+
         sect_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
+        #print(sect_index)
         diag = SessionAddDialog(self.p_EDT, self.promo_index, self.section_index, self.day_index, self.slot_index,
-                                self.p_EDT.sessions_list[sect_index])
+                                self.p_EDT.sessions_list[sect_index],sect_index)
+        sessions =self.p_EDT.sessions_list[sect_index]
+        yes_gotry = False
+        for session in sessions:
+            prof, attendance, module, session_type = session
+            session_object = Session(attendance, prof, module, Room("temp", session_type.value, attendance.effective),
+                                     session_type)
+            if self.p_EDT.valid(session_object, self.day_index, self.slot_index):
+                yes_gotry = True
+                break
+
         diag.setModal(True)
-        if diag.exec():
-            possible_session, room = diag.get_inputs()
-            prof, attendance, module, session_type = possible_session
-            possible_session_object = Session(attendance, prof, module, room, session_type)
-            assign(possible_session_object,DataShow([]),self.p_EDT.section_list[self.section_index],self.day_index,self.slot_index)
-            self.load_session_data()
-            #self.l
+        if yes_gotry:
+            if diag.exec():
+                possible_session, room = diag.get_inputs()
+                prof, attendance, module, session_type = possible_session
+                possible_session_object = Session(attendance, prof, module, room, session_type)
+                assign(possible_session_object,DataShow([]),self.p_EDT.section_list[sect_index],self.day_index,self.slot_index)
+                self.load_session_data()
+                #self.l
 
 
-            # insert_row_index = self.ui.professor_table.rowCount()
-            # self.ui.professor_table.insertRow(insert_row_index)
-            # self.ui.professor_table.setItem(
-            #     insert_row_index, 0, QTableWidgetItem(name))
-            # self.profs.append(name)
+                # insert_row_index = self.ui.professor_table.rowCount()
+                # self.ui.professor_table.insertRow(insert_row_index)
+                # self.ui.professor_table.setItem(
+                #     insert_row_index, 0, QTableWidgetItem(name))
+                # self.profs.append(name)
 
 
 class SessionAddDialog(QDialog):
 
-    def __init__(self, problem_emploi_du_temp, promo_index, section_index, day_index, slot_index, sessions,
+    def __init__(self, problem_emploi_du_temp, promo_index, section_index, day_index, slot_index, sessions,real_sect_index,
                  parent=None):
         super().__init__(parent)
+        self.real_sect_index = real_sect_index
         self.promo_index = promo_index
         self.section_index = section_index
         self.day_index = day_index
@@ -353,14 +373,15 @@ class SessionAddDialog(QDialog):
         self.p_EDT: PET = problem_emploi_du_temp
         self.setWindowTitle("Add")
         self.layout = QFormLayout(self)
+        self.temp = []
         self.SessionSelectComboBox = ExtendedComboBox(self)
-        # TODO make session an object before validating it
         for session in sessions:
             prof, attendance, module, session_type = session
             session_object = Session(attendance, prof, module, Room("temp", session_type, attendance.effective),
                                      session_type)
             if self.p_EDT.valid(session_object, self.day_index, self.slot_index):
                 self.SessionSelectComboBox.addItem(str(session))
+                self.temp.append(str(session))
 
         self.rooms_ComboBox = ExtendedComboBox(self)
         current_session_index = self.SessionSelectComboBox.currentIndex()
@@ -379,12 +400,17 @@ class SessionAddDialog(QDialog):
         buttonBox.rejected.connect(self.reject)
 
     def get_inputs(self):
-        return self.p_EDT.sessions_list[self.section_index][self.SessionSelectComboBox.currentIndex()], \
-               self.p_EDT.list_of_rooms[self.rooms_ComboBox.currentIndex()]
+        str_index = self.SessionSelectComboBox.currentIndex()
 
-    def get_rooms(self, session_type, attendannce):
-        """ find the smallest room that will fit for the session"""
-        effective = attendannce.effective
+        for i,session in enumerate(self.p_EDT.sessions_list[self.real_sect_index]):
+            #print(self.real_sect_index,str_index)
+            #print(str(session), self.temp[str_index])
+            if str(session) == self.temp[str_index]:
+                return self.p_EDT.sessions_list[self.real_sect_index].pop(i), \
+                       self.p_EDT.list_of_rooms[self.rooms_ComboBox.currentIndex()]
+
+    def get_rooms(self, session_type, attendance):
+        effective = attendance.effective
         appropriate_type = []
         from src.resources import SessionType
         from src.resources import RoomType
