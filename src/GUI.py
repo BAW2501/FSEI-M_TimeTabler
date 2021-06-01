@@ -1017,6 +1017,7 @@ class MainWindow(QMainWindow):
         # self.ui.verticalLayout_15.addWidget(self.ui.timetable_tableview)
         self.ui.generate_pushButton.setEnabled(True)
         self.ui.generate_pushButton.clicked.connect(self.generate_timetable)
+        self.ui.export_excel_pushButton.clicked.connect(self.export_excel_file)
         self.update_options()
 
     def promo_input(self):
@@ -1337,8 +1338,6 @@ class MainWindow(QMainWindow):
                         for j in range(len(self.module_assignments[i])):
                             if len(self.module_assignments[i][j]) == 0:
                                 msg_str += "the module called " +self.modules[i][j]["Name"] + " is missinng assigned profs\n"
-                                print(self.profs.index('HOCINE N.'))
-
                 QMessageBox.information(self, "", msg_str)
         elif i == 4:
             print("debug message")
@@ -1666,6 +1665,12 @@ class MainWindow(QMainWindow):
                     item = QTableWidgetItem(cell_str)
                     item.setFont(font)
                     self.ui.timetable_tableview.setItem(i, j, item)
+
+    def export_excel_file(self):
+        save_path = QFileDialog.getSaveFileUrl(self,"Save Timetables",'c:\\',"excel file (*.xlsx)")
+        print(save_path[0].toLocalFile())
+        import main
+        main.excel_export(self.faculty.list_promo,save_path[0].toLocalFile(),example=r"../../test/result.xlsx")
 
 
 if __name__ == "__main__":

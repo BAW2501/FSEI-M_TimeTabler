@@ -346,7 +346,7 @@ class SessionSetterInputDialog(QDialog):
         diag.setModal(True)
         if yes_gotry and diag.exec():
             possible_session, room = diag.get_inputs()
-            print(room)
+            #print(room)
             prof, attendance, module, session_type = possible_session
             possible_session_object = Session(attendance, prof, module, room, session_type)
             assign(possible_session_object, DataShow([]), self.p_EDT.section_list[sect_index], self.day_index,
