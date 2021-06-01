@@ -162,6 +162,7 @@ class MainWindow(QMainWindow):
         # self.ui.verticalLayout_15.addWidget(self.ui.timetable_tableview)
         self.ui.generate_pushButton.setEnabled(True)
         self.ui.generate_pushButton.clicked.connect(self.generate_timetable)
+        self.update_options()
 
     def promo_input(self):
         diag = PromoInputDialog()
