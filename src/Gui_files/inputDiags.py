@@ -1,7 +1,7 @@
 from PySide6.QtCore import QSortFilterProxyModel, Qt
 from PySide6.QtWidgets import *
 
-from src.resources import Session
+from src.resources import Session, Room, DataShow
 
 
 class PromoInputDialog(QDialog):
@@ -328,7 +328,9 @@ class SessionSetterInputDialog(QDialog):
             possible_session, room = diag.get_inputs()
             prof, attendance, module, session_type = possible_session
             possible_session_object = Session(attendance, prof, module, room, session_type)
-            assign(possible_session_object,None,self.p_EDT.section_list[self.section_index])
+            assign(possible_session_object,DataShow([]),self.p_EDT.section_list[self.section_index],self.day_index,self.slot_index)
+            self.load_session_data()
+            #self.l
 
 
             # insert_row_index = self.ui.professor_table.rowCount()
@@ -353,8 +355,13 @@ class SessionAddDialog(QDialog):
         self.layout = QFormLayout(self)
         self.SessionSelectComboBox = ExtendedComboBox(self)
         # TODO make session an object before validating it
-        self.SessionSelectComboBox.addItems(
-            [str(session) for session in sessions if self.p_EDT.valid(session, self.day_index, self.slot_index)])
+        for session in sessions:
+            prof, attendance, module, session_type = session
+            session_object = Session(attendance, prof, module, Room("temp", session_type, attendance.effective),
+                                     session_type)
+            if self.p_EDT.valid(session_object, self.day_index, self.slot_index):
+                self.SessionSelectComboBox.addItem(str(session))
+
         self.rooms_ComboBox = ExtendedComboBox(self)
         current_session_index = self.SessionSelectComboBox.currentIndex()
         current_session = sessions[current_session_index]
