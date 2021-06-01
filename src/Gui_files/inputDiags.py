@@ -370,6 +370,7 @@ class SessionAddDialog(QDialog):
         self.day_index = day_index
         self.slot_index = slot_index
         from src.Solver import PET
+        self.sessions = sessions
         self.p_EDT: PET = problem_emploi_du_temp
         self.setWindowTitle("Add")
         self.layout = QFormLayout(self)
@@ -384,10 +385,8 @@ class SessionAddDialog(QDialog):
                 self.temp.append(str(session))
 
         self.rooms_ComboBox = ExtendedComboBox(self)
-        current_session_index = self.SessionSelectComboBox.currentIndex()
-        current_session = sessions[current_session_index]
-
-        self.rooms_ComboBox.addItems(str(room) for room in self.get_rooms(current_session[3], current_session[1]))
+        self.SessionSelectComboBox.currentIndexChanged.connect(self.refresh_rooms)
+        self.refresh_rooms()
         # self.
 
         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
@@ -398,6 +397,13 @@ class SessionAddDialog(QDialog):
 
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
+
+    def refresh_rooms(self):
+
+        current_session_index = self.SessionSelectComboBox.currentIndex()
+        self.rooms_ComboBox.clear()
+        current_session = self.sessions[current_session_index]
+        self.rooms_ComboBox.addItems(str(room) for room in self.get_rooms(current_session[3], current_session[1]))
 
     def get_inputs(self):
         str_index = self.SessionSelectComboBox.currentIndex()
