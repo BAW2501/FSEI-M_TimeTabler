@@ -369,7 +369,6 @@ class SessionSetterInputDialog(QDialog):
             self.session_table.removeRow(index)
 
     def change_room(self):
-        temp = []
         index = self.session_table.selectedIndexes()
         if index:
             index = index[0].row()  # cause single selection
@@ -380,6 +379,7 @@ class SessionSetterInputDialog(QDialog):
                 promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
             current_session = self.p_EDT.section_list[real_sect_index].EDT[self.day_index][self.slot_index].sessions[
                 current_session_index]
+            temp = []
             for room in self.get_rooms(current_session.session_type, current_session.attendance):
                 temp.append(room)
                 diag.room_name.addItem(str(room))
