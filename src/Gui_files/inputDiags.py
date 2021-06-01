@@ -279,6 +279,7 @@ class SessionSetterInputDialog(QDialog):
 
         self.remove_pushButton = QPushButton(self.frame)
         self.remove_pushButton.setObjectName(u"pushButton_2")
+        self.remove_pushButton.clicked.connect(self.remove_assignment)
 
         self.verticalLayout.addWidget(self.remove_pushButton)
 
@@ -329,10 +330,10 @@ class SessionSetterInputDialog(QDialog):
     def add_session(self):
 
         sect_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
-        #print(sect_index)
+        # print(sect_index)
         diag = SessionAddDialog(self.p_EDT, self.promo_index, self.section_index, self.day_index, self.slot_index,
-                                self.p_EDT.sessions_list[sect_index],sect_index)
-        sessions =self.p_EDT.sessions_list[sect_index]
+                                self.p_EDT.sessions_list[sect_index], sect_index)
+        sessions = self.p_EDT.sessions_list[sect_index]
         yes_gotry = False
         for session in sessions:
             prof, attendance, module, session_type = session
@@ -345,22 +346,40 @@ class SessionSetterInputDialog(QDialog):
         diag.setModal(True)
         if yes_gotry and diag.exec():
             possible_session, room = diag.get_inputs()
+            print(room)
             prof, attendance, module, session_type = possible_session
             possible_session_object = Session(attendance, prof, module, room, session_type)
-            assign(possible_session_object,DataShow([]),self.p_EDT.section_list[sect_index],self.day_index,self.slot_index)
+            assign(possible_session_object, DataShow([]), self.p_EDT.section_list[sect_index], self.day_index,
+                   self.slot_index)
             self.load_session_data()
 
+    def remove_assignment(self):
+        index = self.session_table.selectedIndexes()
+        sect_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
+        if index:
+            index = index[0].row()  # cause single selection
+            print(self.p_EDT.section_list[sect_index].EDT[self.day_index][self.slot_index].sessions[index])
+            session_to_remove = self.p_EDT.section_list[sect_index].EDT[self.day_index][self.slot_index].sessions[index]
+            unassign(index, session_to_remove, DataShow([]), session_to_remove.attendance, self.day_index,
+                     self.slot_index)
+            self.p_EDT.section_list[sect_index].required_sessions.append((session_to_remove.prof,
+                                                                          self.p_EDT.section_list[sect_index],
+                                                                          session_to_remove.module,
+                                                                          session_to_remove.session_type))
+            self.session_table.removeRow(index)
+
     def change_room(self):
-        temp=[]
+        temp = []
         index = self.session_table.selectedIndexes()
         if index:
             index = index[0].row()  # cause single selection
             current_session_index = index
-            #print(index)
+            # print(index)
             diag = RoomPickerInput()
             real_sect_index = sum(
                 promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
-            current_session = self.p_EDT.section_list[real_sect_index].EDT[self.day_index][self.slot_index].sessions[current_session_index]
+            current_session = self.p_EDT.section_list[real_sect_index].EDT[self.day_index][self.slot_index].sessions[
+                current_session_index]
             for room in self.get_rooms(current_session.session_type, current_session.attendance):
                 temp.append(room)
                 diag.room_name.addItem(str(room))
@@ -368,13 +387,13 @@ class SessionSetterInputDialog(QDialog):
             diag.setModal(True)
             if diag.exec():
                 room_index = diag.get_inputs()
-                current_session.room.set_available_on(self.day_index,self.slot_index)
-                current_session.room=temp[room_index]
-                current_session.room.set_busy_on(self.day_index,self.slot_index)
+                current_session.room.set_available_on(self.day_index, self.slot_index)
+                current_session.room = temp[room_index]
+                current_session.room.set_busy_on(self.day_index, self.slot_index)
                 self.session_table.setItem(current_session_index, 3, QTableWidgetItem(str(current_session.room)))
 
         else:
-           QMessageBox.about(self, "Error", "Please select a row")
+            QMessageBox.about(self, "Error", "Please select a row")
 
     def get_rooms(self, session_type, attendance):
         effective = attendance.effective
@@ -389,16 +408,19 @@ class SessionSetterInputDialog(QDialog):
         if session_type.value == SessionType.Cour.value:
             appropriate_type.append(RoomType.amphi.value)
         appropriate_rooms = [room for room in self.p_EDT.list_of_rooms if room.capacity >= effective and
-                             room.type_salle in appropriate_type and  room.is_available_on(self.day_index, self.slot_index)]
+                             room.type_salle in appropriate_type and room.is_available_on(self.day_index,
+                                                                                          self.slot_index)]
 
         if appropriate_rooms:
             return appropriate_rooms
         else:
             QMessageBox.about(self, "Error", "no available rooms for this session at this time slot")
 
+
 class SessionAddDialog(QDialog):
 
-    def __init__(self, problem_emploi_du_temp, promo_index, section_index, day_index, slot_index, sessions,real_sect_index,
+    def __init__(self, problem_emploi_du_temp, promo_index, section_index, day_index, slot_index, sessions,
+                 real_sect_index,
                  parent=None):
         super().__init__(parent)
         self.real_sect_index = real_sect_index
@@ -412,6 +434,7 @@ class SessionAddDialog(QDialog):
         self.setWindowTitle("Add")
         self.layout = QFormLayout(self)
         self.temp = []
+        self.temp2 = []
         self.SessionSelectComboBox = ExtendedComboBox(self)
         self.SessionSelectComboBox.blockSignals(True)
         for session in sessions:
@@ -440,22 +463,23 @@ class SessionAddDialog(QDialog):
     def refresh_rooms(self):
 
         current_session_index = self.SessionSelectComboBox.currentIndex()
-        if current_session_index !=-1:
+        if current_session_index != -1:
             self.rooms_ComboBox.clear()
             current_session = self.sessions[current_session_index]
-            self.rooms_ComboBox.addItems(str(room) for room in self.get_rooms(current_session[3], current_session[1]))
+            self.temp2= [room for room in self.get_rooms(current_session[3], current_session[1])]
+            self.rooms_ComboBox.addItems([str(room) for room in self.temp2])
         else:
             QMessageBox.about(self, "Error", "no sessions remainning for this slot ")
 
     def get_inputs(self):
         str_index = self.SessionSelectComboBox.currentIndex()
 
-        for i,session in enumerate(self.p_EDT.sessions_list[self.real_sect_index]):
-            #print(self.real_sect_index,str_index)
-            #print(str(session), self.temp[str_index])
+        for i, session in enumerate(self.p_EDT.sessions_list[self.real_sect_index]):
+            # print(self.real_sect_index,str_index)
+            # print(str(session), self.temp[str_index])
             if str(session) == self.temp[str_index]:
                 return self.p_EDT.sessions_list[self.real_sect_index].pop(i), \
-                       self.p_EDT.list_of_rooms[self.rooms_ComboBox.currentIndex()]
+                       self.temp2[self.rooms_ComboBox.currentIndex()]
 
     def get_rooms(self, session_type, attendance):
         effective = attendance.effective
@@ -476,6 +500,7 @@ class SessionAddDialog(QDialog):
             return [room for room in appropriate_rooms if room.is_available_on(self.day_index, self.slot_index)]
         else:
             QMessageBox.about(self, "Error", "no available rooms for this session at this time slot")
+
 
 class RoomPickerInput(QDialog):
 
@@ -505,6 +530,7 @@ def session_type_from_int(task):
     else:
         return "TP"
 
+
 def assign(possible_session, equipment, section, day, slot):
     equipment.set_busy_on(day, slot)
     section.EDT[day][slot].add_session(possible_session)
@@ -520,9 +546,9 @@ def assign(possible_session, equipment, section, day, slot):
     # pprint(section.EDT)
 
 
-def unassign(possible_session, equipment, section, day, slot):
+def unassign(index, possible_session, equipment, section, day, slot):
     equipment.set_available_on(day, slot)
-    section.EDT[day][slot].sessions.pop()
+    section.EDT[day][slot].sessions.pop(index)
     possible_session.prof.set_available_on(day, slot)
     possible_session.room.set_available_on(day, slot)
     possible_session.attendance.set_available_on(day, slot)

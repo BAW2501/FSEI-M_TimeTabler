@@ -1678,10 +1678,9 @@ if __name__ == "__main__":
 
     sys.exit(app.exec())
 
-    # TODO make session added diag for manual session setting
-    # TODO parse excel data to normal gui data for testing
+
+
     # TODO make all data serializable and savable into a file
-    # TODO define project file xml for saving (maybe json instead of xml)
     # TODO make open,edit,save project methods and connect them to the home tab
 
     # TODO OPTIONAL FEATURE custom sessions adding after TT generation
