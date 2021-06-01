@@ -52,9 +52,9 @@ class MainWindow(QMainWindow):
                       "Mlle Zelmat Souhila", "Mme Ablaoui", "Mme Belmouhoub-Ould Ali", "Mme Bendahmane Hafida",
                       "Mme Bendehmane H", "Mme Bouabdelli", "Mme Diala.H", "Mme Kaisserli", "Mme Limam", "Mme Saidani",
                       "Mme Tabharit", "Moumen M.", "Moussa M.", "Mr Bouzit H", "Sehaba K.", ]
-        self.rooms = [{"Name": "amphi1", "Capacity": 150, "RoomType": 1},
-                      {"Name": "amphi2", "Capacity": 150, "RoomType": 1},
-                      {"Name": "amphi3", "Capacity": 150, "RoomType": 1},
+        self.rooms = [{"Name": "amphi1", "Capacity": 175, "RoomType": 1},
+                      {"Name": "amphi2", "Capacity": 175, "RoomType": 1},
+                      {"Name": "amphi3", "Capacity": 175, "RoomType": 1},
                       {"Name": "amphi4", "Capacity": 300, "RoomType": 1},
                       {"Name": "S1", "Capacity": 30, "RoomType": 2},
                       {"Name": "S2", "Capacity": 30, "RoomType": 2},
@@ -311,9 +311,9 @@ class MainWindow(QMainWindow):
             index = index[0].row()  # cause single selection
             diag = RoomInputDialog()
 
-            diag.name.setText(self.ui.room_table.item(index, 0).text())
-            diag.capacitySpinBox.setValue(int(self.ui.room_table.item(index, 1).text()))
-            diag.typecomboBox.setCurrentIndex(int(self.ui.room_table.item(index, 2).text()))
+            diag.name.setText(self.rooms[index]["Name"])
+            diag.capacitySpinBox.setValue(self.rooms[index]["Capacity"])
+            diag.typecomboBox.setCurrentIndex(self.rooms[index]["RoomType"]-1)
 
             diag.setModal(True)
             if diag.exec():

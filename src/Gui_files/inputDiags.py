@@ -65,6 +65,7 @@ class RoomInputDialog(QDialog):
         self.capacitySpinBox = QSpinBox()
         self.capacitySpinBox.setValue(1)
         self.capacitySpinBox.setMinimum(1)
+        self.capacitySpinBox.setMaximum(1000)
         self.typecomboBox = QComboBox(self)
         self.typecomboBox.addItem("Lecture")
         self.typecomboBox.addItem("TD")
@@ -261,20 +262,21 @@ class SessionSetterInputDialog(QDialog):
         self.frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout = QVBoxLayout(self.frame)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.pushButton_3 = QPushButton(self.frame)
-        self.pushButton_3.setObjectName(u"pushButton_3")
+        self.add_pushButton = QPushButton(self.frame)
+        self.add_pushButton.clicked.connect(self.add_session)
+        self.add_pushButton.setObjectName(u"pushButton_3")
 
-        self.verticalLayout.addWidget(self.pushButton_3)
+        self.verticalLayout.addWidget(self.add_pushButton)
 
-        self.pushButton = QPushButton(self.frame)
-        self.pushButton.setObjectName(u"pushButton")
+        self.edit_pushButton = QPushButton(self.frame)
+        self.edit_pushButton.setObjectName(u"pushButton")
 
-        self.verticalLayout.addWidget(self.pushButton)
+        self.verticalLayout.addWidget(self.edit_pushButton)
 
-        self.pushButton_2 = QPushButton(self.frame)
-        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.remove_pushButton = QPushButton(self.frame)
+        self.remove_pushButton.setObjectName(u"pushButton_2")
 
-        self.verticalLayout.addWidget(self.pushButton_2)
+        self.verticalLayout.addWidget(self.remove_pushButton)
 
         self.buttonBox = QDialogButtonBox(self.frame)
         self.buttonBox.setObjectName(u"buttonBox")
@@ -294,9 +296,9 @@ class SessionSetterInputDialog(QDialog):
         ___qtablewidgetitem3.setText("Place")
         ___qtablewidgetitem4 = self.session_table.horizontalHeaderItem(4)
         ___qtablewidgetitem4.setText("Professor")
-        self.pushButton_3.setText("Add")
-        self.pushButton.setText("Edit")
-        self.pushButton_2.setText("Remove")
+        self.add_pushButton.setText("Add")
+        self.edit_pushButton.setText("Edit")
+        self.remove_pushButton.setText("Remove")
         self.session_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.load_session_data()
         self.buttonBox.accepted.connect(self.accept)
@@ -313,6 +315,81 @@ class SessionSetterInputDialog(QDialog):
             self.session_table.setItem(i, 2, QTableWidgetItem(str(session.attendance)))
             self.session_table.setItem(i, 3, QTableWidgetItem(str(session.room)))
             self.session_table.setItem(i, 4, QTableWidgetItem(str(session.prof)))
+
+    def add_session(self):
+        sect_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
+        diag = SessionAddDialog(self.p_EDT, self.promo_index, self.section_index, self.day_index, self.slot_index,
+                                self.p_EDT.sessions_list[sect_index])
+        diag.setModal(True)
+        if diag.exec():
+            pass
+            # name = diag.get_inputs()
+            # insert_row_index = self.ui.professor_table.rowCount()
+            # self.ui.professor_table.insertRow(insert_row_index)
+            # self.ui.professor_table.setItem(
+            #     insert_row_index, 0, QTableWidgetItem(name))
+            # self.profs.append(name)
+
+
+class SessionAddDialog(QDialog):
+
+    def __init__(self, problem_emploi_du_temp, promo_index, section_index, day_index, slot_index, sessions,
+                 parent=None):
+        super().__init__(parent)
+        self.promo_index = promo_index
+        self.section_index = section_index
+        self.day_index = day_index
+        self.slot_index = slot_index
+        from src.Solver import PET
+        self.p_EDT: PET = problem_emploi_du_temp
+        self.setWindowTitle("Add")
+        self.layout = QFormLayout(self)
+        self.CardinalitySpinBox = QSpinBox()
+        self.CardinalitySpinBox.setValue(1)
+        self.CardinalitySpinBox.setMinimum(1)
+        self.SessionSelectComboBox = ExtendedComboBox(self)
+        self.SessionSelectComboBox.addItems([str(session) for session in sessions])
+        self.rooms_ComboBox = ExtendedComboBox(self)
+        current_session_index = self.SessionSelectComboBox.currentIndex()
+        current_session = sessions[current_session_index]
+
+        self.rooms_ComboBox.addItems(str(room) for room in self.get_rooms(current_session[3], current_session[1]))
+        # self.
+
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+
+        self.layout.addRow("session ", self.SessionSelectComboBox)
+        self.layout.addRow("Number of Allocated Groups/sections", self.CardinalitySpinBox)
+        self.layout.addRow("Type of assignment", self.rooms_ComboBox)
+        self.layout.addWidget(buttonBox)
+
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+    def get_inputs(self):
+        return self.SessionSelectComboBox.currentIndex(), self.CardinalitySpinBox.value(), \
+               self.rooms_ComboBox.currentIndex() + 1
+
+    def get_rooms(self, session_type, attendannce):
+        """ find the smallest room that will fit for the session"""
+        effective = attendannce.effective
+        appropriate_type = []
+        from src.resources import SessionType
+        from src.resources import RoomType
+
+        if session_type.value == SessionType.Tp.value:
+            appropriate_type.append(RoomType.tp.value)
+        else:
+            appropriate_type.append(RoomType.td.value)
+        if session_type.value == SessionType.Cour.value:
+            appropriate_type.append(RoomType.amphi.value)
+        appropriate_rooms = [room for room in self.p_EDT.list_of_rooms if room.capacity >= effective and
+                             room.type_salle in appropriate_type]
+
+        if appropriate_rooms:
+            return [room for room in appropriate_rooms if room.is_available_on(self.day_index, self.slot_index)]
+        else:
+            QMessageBox.about(self, "Error", "no available rooms for this session at this time slot")
 
 
 def session_type_from_int(task):
