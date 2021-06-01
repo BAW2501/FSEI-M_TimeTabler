@@ -1,5 +1,6 @@
 import time
 from pathlib import Path
+from pprint import pprint
 
 from openpyxl import load_workbook
 from openpyxl.styles import Font, Alignment
@@ -47,25 +48,155 @@ def excel_export(promo_list: list[Promotion]):
 
 
 def get_data(xlsx):
+    prof_names = ['Abbassa',
+                  'Abbes',
+                  'ABID M.',
+                  'Adda',
+                  'BAHNES N.',
+                  'Beghdad',
+                  'Belayachi',
+                  'Belhachemi',
+                  'Belhakem',
+                  'belhalfaoui',
+                  'Belhouari',
+                  'Belouatek',
+                  'BENAMEUR',
+                  'Bencherif',
+                  'Benguettat',
+                  'BENHAMED',
+                  'BENIDRIS F.Z',
+                  'Benmalti',
+                  'Benotsmane',
+                  'BENSALLOUA',
+                  'BENTAOUZA C',
+                  'BESNASSI',
+                  'BESSAOUD K.',
+                  'BETOUATI',
+                  'Bouattou',
+                  'Boukra',
+                  'Boulenouar',
+                  'Bourada',
+                  'Bourahla',
+                  'BOUZEBIBA',
+                  'DELALI A.',
+                  'DJAHAFI',
+                  'DJEBBARA R.',
+                  'FILALI F.',
+                  'HABIB ZAHMANI M',
+                  'HAMAMI',
+                  'Hamiani',
+                  'harrats',
+                  'HASSAINE',
+                  'HENNI F',
+                  'HENNI K',
+                  'HENNI K.',
+                  'Hentit H',
+                  'Hentit N',
+                  'HOCINE N.',
+                  'Kadi',
+                  'KAID SLIMANE',
+                  'KENNICHE A.',
+                  'KHELIFA N.',
+                  'KHIAT',
+                  'Labdelli',
+                  'LAREDJ A. M',
+                  'Latreuch',
+                  'M. AMIR A.',
+                  'M. Andasmas M',
+                  'M. B. BENDOUKHA',
+                  'M. BELAIDI Benharrat',
+                  'M. BELARBI Lakehal',
+                  'M. Belhamiti Omar',
+                  'M. Benchehida',
+                  'M. Benyatou Kamel',
+                  'M. Benzidane',
+                  'M. BOUZIT Hamid',
+                  'M. Dahmani Z.',
+                  'M. Fettouch Houari',
+                  'M. Ghezzar Med',
+                  'M. Kaid',
+                  'M. Kaid Med',
+                  'M. Medeghri Ahmed',
+                  'M. Menad Abdallah',
+                  'M. Mohammedi Mustapha',
+                  'M. Ould Ali M',
+                  'M. Zoubir DAHMANI',
+                  'M.Ould ali',
+                  'MAGHNI SANDID Z.',
+                  'MECHAOUI M. D.G',
+                  'Meghoufel',
+                  'Mekemmeche',
+                  'Melati',
+                  'MENAD',
+                  'MEROUFEL B.',
+                  'Messaoudi',
+                  'MIDOUN M.',
+                  'MIROUD',
+                  'Mlle Ali Merina.H',
+                  'Mlle Amina FERRAOUN',
+                  'Mlle Benaouad',
+                  'Mlle Bouzid',
+                  'Mlle Bouzid Leila',
+                  'Mlle Dj. BENSIKADDOUR',
+                  'Mlle Dj.BENSIKADDOUR',
+                  'Mlle FERRAOUN A.',
+                  'Mlle Hamou Maamar.M',
+                  'Mlle Lakeb Ouda',
+                  'Mlle Medeghri Ahmed',
+                  'Mlle Zelmat Souhila',
+                  'Mme Ablaoui',
+                  'Mme Belmouhoub-Ould ali',
+                  'Mme Bendahmane Hafida',
+                  'Mme Bendehmane H',
+                  'Mme Bouabdelli',
+                  'Mme Diala.H',
+                  'Mme Kaisserli',
+                  'Mme Limam',
+                  'Mme SAIDANI',
+                  'Mme TABHARIT',
+                  'Mme.Bechaoui',
+                  'MOUMEN M.',
+                  'MOUSSA M.',
+                  'Mr Ablaoui H.',
+                  'Mr Bouzit H',
+                  'Mr S. M. Bahri',
+                  'Mr. BOUAGADA',
+                  'Mr.Senouci',
+                  'SEHABA K.',
+                  'Terki']
     modules_dict = {}
     promos_dict = {}
     professors_dict = {}
     # using the data in the test file to check the validity of the data model
     # the code looks bad but it's only test code
+    promo_data = []
+    prof_data = []
+    roomu_data = []
+    modules_data = []
+    module_assignment_data = []
     workbook = load_workbook(filename=Path(xlsx), read_only=True)
     Module_sheet = workbook['Modules']
     promos_sheet = workbook['Promos']
     rooms_sheet = workbook['Rooms']
     for promo_row in promos_sheet.iter_rows(min_row=2, values_only=True):
         promo_name, nb_section, nb_group, group_effective, mod_start, mod_end = promo_row
+        promo_data.append({"Name": promo_name, "Number of Sections": int(nb_section), "Number of Groups": int(nb_group),
+                           "Effective per Group": int(group_effective)})
+
         promos_dict[promo_name] = Promotion(promo_name)
         promos_dict[promo_name].list_section = [Section(i + 1) for i in range(nb_section)]
         for section in promos_dict[promo_name].list_section:
             section.list_group = [Group(i + 1, group_effective) for i in range(nb_group // nb_section)]
             nb_group -= nb_group // nb_section
             nb_section -= 1
+        modules = []
+        modules_ass = []
         for module_row in Module_sheet.iter_rows(min_row=mod_start, max_row=mod_end, min_col=2, values_only=True):
+            specific_mod = []
             # print(module_row)
+            modules.append({"Name": module_row[0], "abriv": module_row[1], "nb_cour": module_row[2] or 0,
+                            "nb_td": module_row[3] or 0,
+                            "nb_tp": module_row[4] or 0})
             mod = Module(module_row[0], module_row[1], module_row[2] or 0, module_row[3] or 0, module_row[4] or 0)
             modules_dict[module_row[0]] = mod
             cour_str, td_str, tp_str = module_row[5], module_row[6], module_row[7]
@@ -74,7 +205,10 @@ def get_data(xlsx):
                 cour_profs = []
                 for prof_string in cour_profs_strings:
                     name = prof_string.split("(")[0]
+
                     times = int(prof_string[prof_string.find("(") + 1].split(")")[0])
+                    prof_data.append(name)
+                    specific_mod.append({"prof_name": prof_names.index(name), "number": times, "type": 1})
                     cour_profs.extend([Professor(name) for _ in range(times * mod.nb_cour)])
                 for sect_i in promos_dict[promo_name].list_section:
                     sect_i.add_required_sessions(
@@ -85,6 +219,8 @@ def get_data(xlsx):
                 for prof_string in td_profs_strings:
                     name = prof_string.split("(")[0]
                     times = int(prof_string[prof_string.find("(") + 1].split(")")[0])
+                    specific_mod.append({"prof_name": prof_names.index(name.strip()), "number": times, "type": 2})
+                    prof_data.append(name)
                     td_profs.extend([Professor(name) for _ in range(times * mod.nb_td)])
                 for sect_i in promos_dict[promo_name].list_section:
                     for group in sect_i.list_group:
@@ -95,15 +231,27 @@ def get_data(xlsx):
                 tp_profs = []
                 for prof_string in tp_profs_strings:
                     name = prof_string.split("(")[0]
+                    prof_data.append(name)
                     times = int(prof_string[prof_string.find("(") + 1].split(")")[0])
+                    specific_mod.append({"prof_name": prof_names.index(name.strip()), "number": times, "type": 3})
                     tp_profs.extend([Professor(name) for _ in range(times * mod.nb_tp)])
                 for sect_i in promos_dict[promo_name].list_section:
                     for group in sect_i.list_group:
                         sect_i.add_required_sessions(
                             [(tp_profs.pop(), group, mod, SessionType.Tp) for _ in range(mod.nb_tp)])
                     sect_i.required_sessions.sort(key=lambda s: s[3].value)
+            modules_ass.append(specific_mod)
+        module_assignment_data.append(modules_ass)
+        modules_data.append(modules)
     # *room == room_name, room_type, capacity = room
     rooms_list = [(Room(*room)) for room in rooms_sheet.iter_rows(min_row=2, values_only=True)]
+    for room in rooms_sheet.iter_rows(min_row=2, values_only=True):
+        roomu_data.append({"Name": room[0], "Capacity": int(room[2]), "RoomType": int(room[1])})
+
+    prof_data = [s.strip() for s in prof_data]
+    prof_data = list(set(prof_data))
+    prof_data.sort(key=lambda x: x.lower())
+    #pprint(module_assignment_data)
     return modules_dict, promos_dict, professors_dict, rooms_list
 
 
@@ -112,8 +260,11 @@ if __name__ == '__main__':
     modules, promos, professors, rooms = get_data(r"../test/Resources.xlsx")
     promos = list(promos.values())
     data_shows = [DataShow(promos[:10]) for _ in range(4)]
+    print([p.level for p in promos[:10]])
     data_shows.extend([DataShow(promos[13:15]) for _ in range(2)])
+    print([p.level for p in promos[13:15]])
     physic = promos[10:13] + [promos[-1]]
+    print([p.level for p in physic])
     data_shows.extend([DataShow(physic) for _ in range(2)])
     fsei_mosta = Faculty("FSEI-MOSTA", promos, rooms, data_shows)
 
@@ -141,6 +292,6 @@ if __name__ == '__main__':
         print("nope debug more")
     # promos.reverse()
     start = time.perf_counter()
-    excel_export(list(promos))
+    # excel_export(list(promos))
     end = time.perf_counter()
     print("exported to excel in", format((end - start) * 1000, ".2f"), "ms")

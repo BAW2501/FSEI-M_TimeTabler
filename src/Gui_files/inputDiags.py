@@ -368,7 +368,6 @@ class SessionSetterInputDialog(QDialog):
             diag.setModal(True)
             if diag.exec():
                 room_index = diag.get_inputs()
-                print(temp[room_index])
                 current_session.room.set_available_on(self.day_index,self.slot_index)
                 current_session.room=temp[room_index]
                 current_session.room.set_busy_on(self.day_index,self.slot_index)
