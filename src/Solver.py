@@ -93,6 +93,23 @@ class TwoCourPerDayMax(HardConstraint):
         return cour_count < 2
 
 
+class MinProfDays(SoftConstraint):
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
+        days = [all(slots_from_day) for slots_from_day in seance.prof.available]
+        # not working yet
+        if days.count(False) <= 1:
+            return True
+        else:
+            return days.count(False) <= 2 and not days[day]
+
+
+class CoursFirst(SoftConstraint):
+    """if possible assign assign Cours to the first two slots of the day """
+
+    def satisfied(self, seance: Session, day: int, slot: int) -> bool:
+        return seance.session_type == SessionType.Cour and slot < 2
+
+
 def assign(possible_session, equipment, section, day, slot):
     equipment.set_busy_on(day, slot)
     section.EDT[day][slot].add_session(possible_session)
@@ -217,7 +234,7 @@ class PET:
         section = self.section_list[section_index]
         sessions = self.sessions_list[section_index]
         if self.soft_constraints:
-            sessions.sort(key=lambda s: self.eval_soft_valid(*s, day, slot))
+            sessions.sort(key=lambda s: self.eval_soft_valid(*s, day, slot), reverse=True)
 
         for i, possible_session in enumerate(sessions[:]):
 

@@ -769,7 +769,7 @@ class MainWindow(QMainWindow):
                                     [{'number': 1, 'prof_name': 44, 'type': 1},
                                      {'number': 7, 'prof_name': 44, 'type': 3}],
                                     [{'number': 1, 'prof_name': 44, 'type': 1}],
-                                    [{'number': 7, 'prof_name': 44, 'type': 2}],
+
                                     [{'number': 1, 'prof_name': 82, 'type': 1}]],
                                    [[{'number': 1, 'prof_name': 103, 'type': 1},
                                      {'number': 2, 'prof_name': 103, 'type': 2}],
@@ -948,6 +948,8 @@ class MainWindow(QMainWindow):
         self.three_consecutive_sessions_constraint_checked = False
         self.two_cour_per_day_max_constraint_checked = False
         self.unique_session_daily_constraint_checked = False
+        self.min_prof_days_constraint_checked = False
+        self.cours_first_constraint_checked = False
         self.faculty = Faculty("FSEI-MOSTA")
         self.problem_emploi_du_temp = None
 
@@ -1003,6 +1005,8 @@ class MainWindow(QMainWindow):
         self.ui.threeconsecutivemaxsessions_checkBox.stateChanged.connect(self.update_options)
         self.ui.twocourderdaymax_checkBox.stateChanged.connect(self.update_options)
         self.ui.uniquesessiondaily_checkBox.stateChanged.connect(self.update_options)
+        self.ui.CoursFirst.stateChanged.connect(self.update_options)
+        self.ui.MinProfDays.stateChanged.connect(self.update_options)
 
         self.load_promo_data()
         self.load_prof_data()
@@ -1337,10 +1341,12 @@ class MainWindow(QMainWindow):
                     for i in range(len(self.module_assignments)):
                         for j in range(len(self.module_assignments[i])):
                             if len(self.module_assignments[i][j]) == 0:
-                                msg_str += "the module called " +self.modules[i][j]["Name"] + " is missinng assigned profs\n"
+                                msg_str += "the module called " + self.modules[i][j][
+                                    "Name"] + " is missinng assigned profs\n"
                 QMessageBox.information(self, "", msg_str)
         elif i == 4:
             print("debug message")
+        self.ui.timetable_tableview.clearContents()
 
     def update_faculty_data(self):
         resources.timeslots_per_day = self.number_of_slots_per_day_input
@@ -1366,11 +1372,38 @@ class MainWindow(QMainWindow):
             self.problem_emploi_du_temp.add_hard_constraint(TwoCourPerDayMax())
         if self.unique_session_daily_constraint_checked:
             self.problem_emploi_du_temp.add_hard_constraint(UniqueSessionDaily())
+        if self.cours_first_constraint_checked:
+            self.problem_emploi_du_temp.add_soft_constraint(CoursFirst())
+        if self.min_prof_days_constraint_checked:
+            self.problem_emploi_du_temp.add_soft_constraint(MinProfDays())
+
 
     def generate_timetable(self):
+        # for prof in self.profs:
+        #     sum=0
+        #     index =self.profs.index(prof)
+        #     for promo in self.module_assignments:
+        #         for module in promo:
+        #             for assignment in module:
+        #                 if assignment["prof_name"]==index:
+        #                     sum+=assignment["number"]
+        #     print(index,prof,sum)
         try:
+            # for section in self.problem_emploi_du_temp.section_list:
+
+            #section.required_sessions.sort(key= lambda x:x[3].value)
+                #print(section.required_sessions)
             if self.problem_emploi_du_temp.solve():
+                for prof in self.profs:
+                    amount= [all(slots_from_day) for slots_from_day in Professor(prof).available]
+                    if amount.count(False)>2:
+                        print(prof,amount.count(False))
+                    # from pprint import pprint
+                    # pprint(Professor(prof).available)
                 self.load_timetable_data()
+
+
+
             else:
                 print("messed up somewhere")
         except Exception as e:
@@ -1527,6 +1560,8 @@ class MainWindow(QMainWindow):
         self.three_consecutive_sessions_constraint_checked = self.ui.threeconsecutivemaxsessions_checkBox.isChecked()
         self.two_cour_per_day_max_constraint_checked = self.ui.twocourderdaymax_checkBox.isChecked()
         self.unique_session_daily_constraint_checked = self.ui.uniquesessiondaily_checkBox.isChecked()
+        self.cours_first_constraint_checked = self.ui.CoursFirst.isChecked()
+        self.min_prof_days_constraint_checked = self.ui.MinProfDays.isChecked()
 
     def delete_datashow(self):
         index = self.ui.datashows_table.selectedIndexes()
@@ -1661,16 +1696,21 @@ class MainWindow(QMainWindow):
             timetable_needed = self.problem_emploi_du_temp.section_list[timetable_index].EDT
             for i, day in enumerate(timetable_needed):
                 for j, slot in enumerate(day):
+                    if slot.sessions and slot.sessions[0].session_type ==SessionType.Cour:
+                        font.setBold(True)
+                    else:
+                        font.setBold(False)
                     cell_str = "\n".join(str(session) for session in slot.sessions)
                     item = QTableWidgetItem(cell_str)
                     item.setFont(font)
                     self.ui.timetable_tableview.setItem(i, j, item)
 
     def export_excel_file(self):
-        save_path = QFileDialog.getSaveFileUrl(self,"Save Timetables",'c:\\',"excel file (*.xlsx)")
+        save_path = QFileDialog.getSaveFileUrl(self, "Save Timetables", 'c:\\', "excel file (*.xlsx)")
         print(save_path[0].toLocalFile())
-        import main
-        main.excel_export(self.faculty.list_promo,save_path[0].toLocalFile(),example=r"../../test/result.xlsx")
+        if save_path[0].toLocalFile():
+            import main
+            main.excel_export(self.faculty.list_promo, save_path[0].toLocalFile(), example=r"../../test/result.xlsx")
 
 
 if __name__ == "__main__":
@@ -1683,9 +1723,7 @@ if __name__ == "__main__":
 
     sys.exit(app.exec())
 
-
-
-    # TODO make all data serializable and savable into a file
+    # TODO make all data serializable and save-able into a file
     # TODO make open,edit,save project methods and connect them to the home tab
 
     # TODO OPTIONAL FEATURE custom sessions adding after TT generation
