@@ -95,6 +95,7 @@ class Group(LimitedResource):
         super().__init__()
         self.number: int = number
         self.effective: int = effective
+        self.parent_section = None
 
     def __repr__(self) -> str:
         return f'G{self.number}'
@@ -113,7 +114,12 @@ class Section(LimitedResource):
         self.required_sessions: list[tuple[Professor, 'Attendance', Module, SessionType]] = list()
 
     def add_group(self, gr: Group) -> None:
+        gr.parent_section=self
         self.list_group.append(gr)
+
+    def add_groups(self,groups:list[Group]):
+        for gr in groups:
+            self.add_group(gr)
 
     def add_required_session(self, tuple_details: tuple[Professor, 'Attendance', Module, SessionType]) -> None:
         self.required_sessions.append(tuple_details)

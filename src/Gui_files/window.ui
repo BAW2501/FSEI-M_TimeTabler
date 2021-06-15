@@ -1309,7 +1309,7 @@ p, li { white-space: pre-wrap; }
                </rect>
               </property>
               <property name="toolTip">
-               <string>if a session repeats multiple times a week make sure it's not on the same day</string>
+               <string>assign Cours before all</string>
               </property>
               <property name="text">
                <string>Cours First</string>
@@ -1325,7 +1325,7 @@ p, li { white-space: pre-wrap; }
                </rect>
               </property>
               <property name="toolTip">
-               <string>if a session repeats multiple times a week make sure it's not on the same day</string>
+               <string>minimize the amount of days Professors have to be at the faculty</string>
               </property>
               <property name="text">
                <string>Min Professor Days</string>

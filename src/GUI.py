@@ -7,7 +7,7 @@ import sys
 import resources
 from Gui_files.inputDiags import *
 from Gui_files.ui_window import *
-from src.Solver import *
+from Solver import *
 
 
 def session_type_from_int(task):
@@ -536,10 +536,7 @@ class MainWindow(QMainWindow):
             # section.required_sessions.sort(key= lambda x:x[3].value)
             # print(section.required_sessions)
             if self.problem_emploi_du_temp.solve():
-                for prof in self.profs:
-                    amount = [all(slots_from_day) for slots_from_day in Professor(prof).available]
-                    if amount.count(False) > 2:
-                        print(prof, amount.count(False))
+                print(sum([all(slots_from_day) for slots_from_day in Professor(prof).available].count(False) for prof in self.profs))
                     # from pprint import pprint
                     # pprint(Professor(prof).available)
                 self.load_timetable_data()
@@ -749,7 +746,7 @@ class MainWindow(QMainWindow):
             groups_per_section = Number_of_Groups // number_of_sections + bool(Number_of_Groups % number_of_sections)
             for i in range(0, Number_of_Groups, groups_per_section):
                 valid_index = i // groups_per_section
-                promo.list_section[valid_index].list_group = groups_in_promo[i:i + groups_per_section]
+                promo.list_section[valid_index].add_groups( groups_in_promo[i:i + groups_per_section])
 
         # making a list of modules and making a list of assignments
         list_canvases = []
@@ -839,6 +836,7 @@ class MainWindow(QMainWindow):
             timetable_needed = self.problem_emploi_du_temp.section_list[timetable_index].EDT
             for i, day in enumerate(timetable_needed):
                 for j, slot in enumerate(day):
+                    slot.sessions.sort(key=lambda s: s.attendance.number)
                     if slot.sessions and slot.sessions[0].session_type == SessionType.Cour:
                         font.setBold(True)
                     else:

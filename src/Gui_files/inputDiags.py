@@ -1,7 +1,7 @@
 from PySide6.QtCore import QSortFilterProxyModel, Qt
 from PySide6.QtWidgets import *
-
-from src.resources import Session, Room, DataShow
+from src.Solver import PET
+from src.resources import *
 
 
 class PromoInputDialog(QDialog):
@@ -232,7 +232,7 @@ class SessionSetterInputDialog(QDialog):
         self.day_index = day_index
         self.slot_index = slot_index
         self.faculty = faculty
-        from src.Solver import PET
+
         self.p_EDT: PET = problem_emploi_du_temp
         self.manually_added = []
         self.setWindowTitle("Input")
@@ -346,7 +346,7 @@ class SessionSetterInputDialog(QDialog):
         diag.setModal(True)
         if yes_gotry and diag.exec():
             possible_session, room = diag.get_inputs()
-            #print(room)
+            # print(room)
             prof, attendance, module, session_type = possible_session
             possible_session_object = Session(attendance, prof, module, room, session_type)
             assign(possible_session_object, DataShow([]), self.p_EDT.section_list[sect_index], self.day_index,
@@ -398,8 +398,6 @@ class SessionSetterInputDialog(QDialog):
     def get_rooms(self, session_type, attendance):
         effective = attendance.effective
         appropriate_type = []
-        from src.resources import SessionType
-        from src.resources import RoomType
 
         if session_type.value == SessionType.Tp.value:
             appropriate_type.append(RoomType.tp.value)
@@ -428,7 +426,6 @@ class SessionAddDialog(QDialog):
         self.section_index = section_index
         self.day_index = day_index
         self.slot_index = slot_index
-        from src.Solver import PET
         self.sessions = sessions
         self.p_EDT: PET = problem_emploi_du_temp
         self.setWindowTitle("Add")
@@ -466,7 +463,7 @@ class SessionAddDialog(QDialog):
         if current_session_index != -1:
             self.rooms_ComboBox.clear()
             current_session = self.sessions[current_session_index]
-            self.temp2= [room for room in self.get_rooms(current_session[3], current_session[1])]
+            self.temp2 = [room for room in self.get_rooms(current_session[3], current_session[1])]
             self.rooms_ComboBox.addItems([str(room) for room in self.temp2])
         else:
             QMessageBox.about(self, "Error", "no sessions remainning for this slot ")
@@ -484,8 +481,6 @@ class SessionAddDialog(QDialog):
     def get_rooms(self, session_type, attendance):
         effective = attendance.effective
         appropriate_type = []
-        from src.resources import SessionType
-        from src.resources import RoomType
 
         if session_type.value == SessionType.Tp.value:
             appropriate_type.append(RoomType.tp.value)
@@ -537,7 +532,6 @@ def assign(possible_session, equipment, section, day, slot):
     possible_session.prof.set_busy_on(day, slot)
     possible_session.room.set_busy_on(day, slot)
     possible_session.attendance.set_busy_on(day, slot)
-    from src.resources import SessionType
     if possible_session.session_type == SessionType.Cour:
         section.EDT[day][slot].is_full = True
     max_session = section.nb_group // 2 + 1 if section.nb_group > 4 else section.nb_group

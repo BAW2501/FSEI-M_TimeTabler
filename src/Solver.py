@@ -68,12 +68,9 @@ class UniqueSessionDaily(HardConstraint):
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         if slot == 0 or day == days_per_week - 1:
             return True
-        edt = None
-        for section in self.section_timetables:
-            if seance.attendance is section or seance.attendance in section.list_group:
-                edt = section
-                break
-        assert edt is not None
+
+        edt = seance.attendance if isinstance(seance.attendance, Section) else seance.attendance.parent_section
+
         for slot_object in edt.EDT[day][0:slot]:
             for seance_1 in slot_object.sessions:
                 if seance_1 == seance:
@@ -94,13 +91,16 @@ class TwoCourPerDayMax(HardConstraint):
 
 
 class MinProfDays(SoftConstraint):
+    """ the idea is set a preferance to assigning  sessions on the days the prof is already working"""
+
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         days = [all(slots_from_day) for slots_from_day in seance.prof.available]
-        # not working yet
-        if days.count(False) <= 1:
+        if all(days):
+            # his timetable is completely empty so assign anyways
             return True
         else:
-            return days.count(False) <= 2 and not days[day]
+            # if s/he works today return True to prefer assigning if he doesn't return False to dissuade assigning today
+            return bool(not days[day])
 
 
 class CoursFirst(SoftConstraint):
@@ -177,9 +177,10 @@ class PET:
     def best_fit_room(self, session_type: SessionType, attendannce: Attendance, day, slot) -> Union[
         tuple[Room, DataShow], tuple[None, None]]:
         """ find the smallest room that will fit for the session"""
+        # small modification to keep students in the same room if possible
         effective = attendannce.effective
         appropriate_type = []
-        data_show_maybe = None
+        data_show_maybe = DataShow([])
         if session_type == SessionType.Tp:
             appropriate_type.append(RoomType.tp.value)
         else:
@@ -190,6 +191,11 @@ class PET:
                 if attendannce in ds.allowed and ds.is_available_on(day, slot):
                     data_show_maybe = ds
                     break
+        edt = attendannce.EDT if isinstance(attendannce, Section) else attendannce.parent_section.EDT
+        for slot_object in edt[day][0:slot]:
+            for seance_1 in slot_object.sessions:
+                if seance_1.attendance is attendannce and seance_1.session_type.value in appropriate_type:
+                    return seance_1.room, data_show_maybe
 
         # appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
         #                                             and room.type_salle in appropriate_type, self.list_of_rooms))
@@ -203,15 +209,14 @@ class PET:
         #     if room.capacity >= effective and room.is_available_on(day, slot) and room.type_salle in appropriate_type:
         #         appropriate_rooms.append(room)
 
-        if appropriate_rooms:
-            # smallest fit could be first fit here which is faster performance wise
-            room = min(appropriate_rooms)
-            if room.type_salle != RoomType.td:
-                return room, DataShow([])
-            assert data_show_maybe is not None
-            return room, data_show_maybe
-        else:
+        if not appropriate_rooms:
             return None, None
+        # smallest fit could be first fit here which is faster performance wise
+        room = min(appropriate_rooms)
+        if room.type_salle != RoomType.td:
+            return room, DataShow([])
+        assert data_show_maybe is not None
+        return room, data_show_maybe
 
     def all_assigned(self) -> bool:
         return all(len(sect_sessions) == 0 for sect_sessions in self.sessions_list)
