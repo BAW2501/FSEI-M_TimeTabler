@@ -8,7 +8,7 @@ from Solver import *
 from resources import *
 
 
-def excel_export(promo_list: list[Promotion],path:str,example:str=r"../test/result.xlsx"):
+def excel_export(promo_list: list[Promotion], path: str, example: str = r"../test/result.xlsx"):
     # saving solution to an excel file
     export_workbook = load_workbook(filename=Path(example))
 
@@ -16,7 +16,7 @@ def excel_export(promo_list: list[Promotion],path:str,example:str=r"../test/resu
         for sect in promo.list_section:
             EDT_sheet = export_workbook.copy_worksheet(export_workbook["template"])
             EDT_sheet.title = f'{promo.level}_{sect.number}'
-            EDT_sheet["A5"] = f"Emploi du {promo.level}"
+            EDT_sheet["A5"] = f"Emploi du {promo.level}_{sect.number}"
             nb_row = sect.nb_group
             for day in sect.EDT:
                 for slot in day:
@@ -44,6 +44,29 @@ def excel_export(promo_list: list[Promotion],path:str,example:str=r"../test/resu
                         EDT_sheet.cell(start_session_index, k).value = str(session)
     del export_workbook["template"]
     export_workbook.save(path or 'FSEI_Mosta_EDT.xlsx')
+
+
+def excel_prof_export(sections: list[Section], profs: list[str], path: str, example: str = r"test/prof_TT.xlsx"):
+    # saving  prof Tt to an excel file
+    day_range = len(sections[0].EDT)
+    slot_range = len(sections[0].EDT[0])
+    export_workbook = load_workbook(filename=Path.cwd().parent.parent / example)
+
+    prof_TT_sheets = {}
+    for prof in profs:
+        v = export_workbook.copy_worksheet(export_workbook["template"])
+        v.title = prof
+        v["A5"] = f"{prof}'s Timetable"
+        prof_TT_sheets[prof]=v
+        v.sheet_view.zoomScale = 60
+
+    for sect in sections:
+        for day_index, day in enumerate(sect.EDT):
+            for slot_index, slot in enumerate(day):
+                for session in slot.sessions:
+                    prof_TT_sheets[session.prof.name].cell(day_index + 8, slot_index + 2).value = str(session)
+    del export_workbook["template"]
+    export_workbook.save(Path(path).parent / "prof_tt.xlsx" or 'prof_timestables.xlsx')
 
 
 def get_data(xlsx):
@@ -141,6 +164,6 @@ if __name__ == '__main__':
         print("nope debug more")
     # promos.reverse()
     start = time.perf_counter()
-    excel_export(list(promos),"")
+    excel_export(list(promos), "")
     end = time.perf_counter()
     print("exported to excel in", format((end - start) * 1000, ".2f"), "ms")

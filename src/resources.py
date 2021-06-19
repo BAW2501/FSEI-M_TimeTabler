@@ -190,6 +190,10 @@ class Promotion:
     def nb_group(self) -> int:
         return sum(section.nb_group for section in self.list_section)
 
+    @property
+    def effective(self):
+        return sum(sect.effective for sect in self.list_section)
+
     def find_section(self, section_index: int) -> Union[Section, None]:
         for section in self.list_section:
             if section.number == section_index:

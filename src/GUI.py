@@ -4,6 +4,7 @@ import os
 import pickle
 import sys
 
+import main
 import resources
 from Gui_files.inputDiags import *
 from Gui_files.ui_window import *
@@ -34,7 +35,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.current_project_file= None
+        self.current_project_file = None
         self.promos = []
         self.profs = []
         self.rooms = []
@@ -153,18 +154,18 @@ class MainWindow(QMainWindow):
 
     def get_open_file_path(self):
         open_path, ok = QFileDialog.getOpenFileUrl(self, "open TPP file ", '', "TimeTableProject (*.TTP)")
-        return open_path.toLocalFile()  if ok else None
+        return open_path.toLocalFile() if ok else None
+
     def get_new_file_path(self):
         open_path, ok = QFileDialog.getSaveFileUrl(self, "save TPP file ", '', "TimeTableProject (*.TTP)")
         self.current_project_file = open_path.toLocalFile() if ok else None
         with open(self.current_project_file, 'wb') as f:
             pickle.dump([], f)
+
     def save_project_file(self):
         file_path = self.current_project_file or self.get_save_file_path()
         with open(file_path, 'wb') as f:
             pickle.dump([self.promos, self.profs, self.modules, self.module_assignments, self.rooms, self.datashows], f)
-
-
 
     def promo_input(self):
         diag = PromoInputDialog()
@@ -496,7 +497,9 @@ class MainWindow(QMainWindow):
         resources.days_per_week = self.number_of_days_per_week_input
 
         promo, room, ds = self.build_data_model()
+        # TODO sort earlier probably fixes it
         self.faculty.list_promo = promo
+        #self.faculty.list_promo.sort(key= lambda a: a.effective,reverse=True)
         self.faculty.list_rooms = room
         self.faculty.list_datashows = ds
         Professor.cache_clear()
@@ -518,7 +521,7 @@ class MainWindow(QMainWindow):
         if self.cours_first_constraint_checked:
             self.problem_emploi_du_temp.add_soft_constraint(CoursFirst())
         if self.min_prof_days_constraint_checked:
-            self.problem_emploi_du_temp.add_soft_constraint(MinProfDays())
+            self.problem_emploi_du_temp.add_soft_constraint(MinProfDays(self.problem_emploi_du_temp.section_list))
 
     def generate_timetable(self):
         # for prof in self.profs:
@@ -537,8 +540,8 @@ class MainWindow(QMainWindow):
             # print(section.required_sessions)
             if self.problem_emploi_du_temp.solve():
                 print(sum([all(slots_from_day) for slots_from_day in Professor(prof).available].count(False) for prof in self.profs))
-                    # from pprint import pprint
-                    # pprint(Professor(prof).available)
+                # from pprint import pprint
+                # pprint(Professor(prof).available)
                 self.load_timetable_data()
 
 
@@ -746,7 +749,7 @@ class MainWindow(QMainWindow):
             groups_per_section = Number_of_Groups // number_of_sections + bool(Number_of_Groups % number_of_sections)
             for i in range(0, Number_of_Groups, groups_per_section):
                 valid_index = i // groups_per_section
-                promo.list_section[valid_index].add_groups( groups_in_promo[i:i + groups_per_section])
+                promo.list_section[valid_index].add_groups(groups_in_promo[i:i + groups_per_section])
 
         # making a list of modules and making a list of assignments
         list_canvases = []
@@ -850,8 +853,8 @@ class MainWindow(QMainWindow):
         save_path = QFileDialog.getSaveFileUrl(self, "Save Timetables", 'c:\\', "excel file (*.xlsx)")
         print(save_path[0].toLocalFile())
         if save_path[0].toLocalFile():
-            import main
             main.excel_export(self.faculty.list_promo, save_path[0].toLocalFile(), example=r"../../test/result.xlsx")
+            main.excel_prof_export(self.problem_emploi_du_temp.section_list, self.profs, save_path[0].toLocalFile())
 
 
 if __name__ == "__main__":
@@ -863,7 +866,6 @@ if __name__ == "__main__":
     window.show()
 
     sys.exit(app.exec())
-
 
     # TODO OPTIONAL FEATURE custom sessions adding after TT generation
     # TODO OPTIONAL FEATURE generate professor TT in excel export

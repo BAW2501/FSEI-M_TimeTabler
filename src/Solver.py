@@ -93,6 +93,13 @@ class TwoCourPerDayMax(HardConstraint):
 class MinProfDays(SoftConstraint):
     """ the idea is set a preferance to assigning  sessions on the days the prof is already working"""
 
+    def __init__(self, section_timetables: list[Section] = None, section_canvases: list[list[Module]] = None) -> None:
+        super().__init__()
+        self.section_timetables: list[Section] = section_timetables
+        for sect in self.section_timetables:
+            sect.required_sessions.sort(key=lambda a: (a[0].name,a[3].value))
+        self.section_canvases: list[list[Module]] = section_canvases
+
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
         days = [all(slots_from_day) for slots_from_day in seance.prof.available]
         if all(days):
@@ -175,7 +182,7 @@ class PET:
         return sum(1 for constraint in self.soft_constraints if constraint.satisfied(session, day, slot))
 
     def best_fit_room(self, session_type: SessionType, attendannce: Attendance, day, slot) -> Union[
-        tuple[Room, DataShow], tuple[None, None]]:
+        tuple[Room, DataShow], tuple[None, None]]:  # sourcery skip
         """ find the smallest room that will fit for the session"""
         # small modification to keep students in the same room if possible
         effective = attendannce.effective
@@ -195,7 +202,8 @@ class PET:
         for slot_object in edt[day][0:slot]:
             for seance_1 in slot_object.sessions:
                 if seance_1.attendance is attendannce and seance_1.session_type.value in appropriate_type:
-                    return seance_1.room, data_show_maybe
+                    if seance_1.room.is_available_on(day, slot):
+                        return seance_1.room, data_show_maybe
 
         # appropriate_rooms = list(filter(lambda room: room.capacity >= effective and room.is_available_on(day, slot)
         #                                             and room.type_salle in appropriate_type, self.list_of_rooms))
