@@ -502,7 +502,6 @@ class MainWindow(QMainWindow):
         #self.faculty.list_promo.sort(key= lambda a: a.effective,reverse=True)
         self.faculty.list_rooms = room
         self.faculty.list_datashows = ds
-        Professor.cache_clear()
         # TODO MAKE EDIT FLAG HERE
         self.problem_emploi_du_temp = PET(self.faculty)
         # print(sum(len(session_list) for session_list in problem_emploi_du_temp.sessions_list))
@@ -539,13 +538,7 @@ class MainWindow(QMainWindow):
             # section.required_sessions.sort(key= lambda x:x[3].value)
             # print(section.required_sessions)
             if self.problem_emploi_du_temp.solve():
-                print(sum([all(slots_from_day) for slots_from_day in Professor(prof).available].count(False) for prof in self.profs))
-                # from pprint import pprint
-                # pprint(Professor(prof).available)
                 self.load_timetable_data()
-
-
-
             else:
                 print("messed up somewhere")
         except Exception as e:
@@ -753,14 +746,15 @@ class MainWindow(QMainWindow):
 
         # making a list of modules and making a list of assignments
         list_canvases = []
+        professors = [Professor(prof_name) for prof_name in self.profs]
         for promo_index, promo_canvas in enumerate(self.modules):
             canvas = [Module(*module.values()) for module in promo_canvas]
             list_canvases.append(canvas)
             promo_list[promo_index].canvas = canvas
             for module_index, module in enumerate(canvas):
-                self.generate_cour_sessions(canvas, module_index, promo_index, promo_list)
-                self.generate_td_sessions(canvas, module_index, promo_index, promo_list)
-                self.generate_tp_sessions(canvas, module_index, promo_index, promo_list)
+                self.generate_cour_sessions(canvas, module_index, promo_index, promo_list,professors)
+                self.generate_td_sessions(canvas, module_index, promo_index, promo_list,professors)
+                self.generate_tp_sessions(canvas, module_index, promo_index, promo_list,professors)
         # making a list of all the rooms
         rooms_list = [Room(room["Name"], room["RoomType"], room["Capacity"]) for room in self.rooms]
         # making a list of all the data-shows
@@ -768,16 +762,15 @@ class MainWindow(QMainWindow):
         # finally return it all
         return promo_list, rooms_list, data_shows_list
 
-    def generate_tp_sessions(self, canvas, module_index, promo_index, promo_list):
+    def generate_tp_sessions(self, canvas, module_index, promo_index, promo_list,professors):
         assignments = self.module_assignments[promo_index][module_index]
         tp_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Tp.value]
         profs = []
         sessions_per_week = 0
         for assignment in tp_assign:
-            name = self.profs[assignment["prof_name"]]
             sections_taught = assignment["number"]
             sessions_per_week = canvas[module_index].nb_tp
-            profs.extend([Professor(name) for _ in range(sections_taught * sessions_per_week)])
+            profs.extend([professors[assignment["prof_name"]] for _ in range(sections_taught * sessions_per_week)])
         for sect in promo_list[promo_index].list_section:
             for group in sect.list_group:
                 sect.add_required_sessions(
@@ -785,16 +778,15 @@ class MainWindow(QMainWindow):
                      range(sessions_per_week)])
         assert len(profs) == 0
 
-    def generate_td_sessions(self, canvas, module_index, promo_index, promo_list):
+    def generate_td_sessions(self, canvas, module_index, promo_index, promo_list,professors):
         assignments = self.module_assignments[promo_index][module_index]
         td_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Td.value]
         profs = []
         sessions_per_week = 0
         for assignment in td_assign:
-            name = self.profs[assignment["prof_name"]]
             sections_taught = assignment["number"]
             sessions_per_week = canvas[module_index].nb_td
-            profs.extend([Professor(name) for _ in range(sections_taught * sessions_per_week)])
+            profs.extend([professors[assignment["prof_name"]] for _ in range(sections_taught * sessions_per_week)])
         for sect in promo_list[promo_index].list_section:
             for group in sect.list_group:
                 sect.add_required_sessions(
@@ -802,17 +794,16 @@ class MainWindow(QMainWindow):
                      range(sessions_per_week)])
         assert len(profs) == 0
 
-    def generate_cour_sessions(self, canvas, module_index, promo_index, promo_list):
+    def generate_cour_sessions(self, canvas, module_index, promo_index, promo_list,professors):
         assignments = self.module_assignments[promo_index][module_index]
         cour_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Cour.value]
 
         profs = []
         sessions_per_week = 0
         for assignment in cour_assign:
-            name = self.profs[assignment["prof_name"]]
             sections_taught = assignment["number"]
             sessions_per_week = canvas[module_index].nb_cour
-            profs.extend([Professor(name) for _ in range(sections_taught * sessions_per_week)])
+            profs.extend([professors[assignment["prof_name"]] for _ in range(sections_taught * sessions_per_week)])
         for sect in promo_list[promo_index].list_section:
             sect.add_required_sessions([(profs.pop(0), sect, canvas[module_index], SessionType.Cour) for _ in
                                         range(sessions_per_week)])

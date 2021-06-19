@@ -7,6 +7,8 @@ from openpyxl.styles import Font, Alignment
 from Solver import *
 from resources import *
 
+# THIS FILE WILL BE DEPRECATED SOON
+
 
 def excel_export(promo_list: list[Promotion], path: str, example: str = r"../test/result.xlsx"):
     # saving solution to an excel file
@@ -51,7 +53,7 @@ def excel_prof_export(sections: list[Section], profs: list[str], path: str, exam
     day_range = len(sections[0].EDT)
     slot_range = len(sections[0].EDT[0])
     export_workbook = load_workbook(filename=Path.cwd().parent.parent / example)
-
+    # memory intensive should be put on it's own thread probably
     prof_TT_sheets = {}
     for prof in profs:
         v = export_workbook.copy_worksheet(export_workbook["template"])

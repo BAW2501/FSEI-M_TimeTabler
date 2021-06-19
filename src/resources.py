@@ -63,7 +63,7 @@ class Room(LimitedResource):
         return self.capacity <= other.capacity
 
 
-@lru_cache(maxsize=None)
+
 class Professor(LimitedResource):
     def __init__(self, name: str) -> None:
         super().__init__()

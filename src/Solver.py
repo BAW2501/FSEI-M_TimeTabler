@@ -91,7 +91,7 @@ class TwoCourPerDayMax(HardConstraint):
 
 
 class MinProfDays(SoftConstraint):
-    """ the idea is set a preferance to assigning  sessions on the days the prof is already working"""
+    """ the idea is set a preference to assigning  sessions on the days the prof is already working"""
 
     def __init__(self, section_timetables: list[Section] = None, section_canvases: list[list[Module]] = None) -> None:
         super().__init__()
