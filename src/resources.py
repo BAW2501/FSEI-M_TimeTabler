@@ -211,12 +211,13 @@ class Promotion:
 class Faculty:
 
     def __init__(self, name: str, promos: list[Promotion] = None, rooms: list[Room] = None,
-                 datashows: list[DataShow] = None) -> None:
+                 datashows: list[DataShow] = None,profs:list[Professor]=None) -> None:
         super().__init__()
         self.name: str = name
         self.list_promo: list[Promotion] = promos
         self.list_rooms: list[Room] = rooms
         self.list_datashows: list[DataShow] = datashows
+        self.list_profs : list[Professor] = profs
 
     def add_promo(self, promo: Promotion) -> None:
         self.list_promo.append(promo)

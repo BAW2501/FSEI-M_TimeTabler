@@ -71,6 +71,37 @@ def excel_prof_export(sections: list[Section], profs: list[str], path: str, exam
     export_workbook.save(Path(path).parent / "prof_tt.xlsx" or 'prof_timestables.xlsx')
 
 
+def excel_room_availability_export(rooms: list[Room], path: str, example: str = r"test/prof_TT.xlsx"):
+    # saving  room availability Tt to an excel file
+
+    export_workbook = load_workbook(filename=Path.cwd().parent.parent / example)
+    # memory intensive should be put on it's own thread probably
+    free_room_TT_sheet = export_workbook.copy_worksheet(export_workbook["template"])
+    free_room_TT_sheet.title = "Free Rooms "
+    free_room_TT_sheet["A5"] = "Free Rooms"
+    busy_room_TT_sheet = export_workbook.copy_worksheet(export_workbook["template"])
+    busy_room_TT_sheet.title = "Busy Rooms "
+    busy_room_TT_sheet["A5"] = "Busy Rooms"
+    days = rooms[0].days
+    slots = rooms[0].slots_per_day
+    align = Alignment(horizontal='center', vertical='center', wrapText=True)
+    for day_index in range(days):
+        for slot_index in range(slots):
+            free = []
+            busy = []
+            for room in rooms:
+                if room.is_available_on(day_index,slot_index):
+                    free.append(str(room))
+                else:
+                    busy.append(str(room))
+            free_room_TT_sheet.cell(day_index + 8, slot_index + 2).alignment = align
+            free_room_TT_sheet.cell(day_index + 8, slot_index + 2).value = ", ".join(free)
+            busy_room_TT_sheet.cell(day_index + 8, slot_index + 2).alignment = align
+            busy_room_TT_sheet.cell(day_index + 8, slot_index + 2).value = ", ".join(busy)
+    del export_workbook["template"]
+    export_workbook.save(Path(path).parent / "room_availability.xlsx" or 'room_availability.xlsx')
+
+
 def get_data(xlsx):
     modules_dict = {}
     promos_dict = {}

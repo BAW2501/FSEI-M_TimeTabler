@@ -493,10 +493,11 @@ class MainWindow(QMainWindow):
         self.ui.timetable_tableview.clearContents()
 
     def update_faculty_data(self):
+        print("updated here")
         resources.timeslots_per_day = self.number_of_slots_per_day_input
         resources.days_per_week = self.number_of_days_per_week_input
 
-        promo, room, ds = self.build_data_model()
+        promo, room, ds ,professors = self.build_data_model()
         # TODO sort earlier probably fixes it
         self.faculty.list_promo = promo
         #self.faculty.list_promo.sort(key= lambda a: a.effective,reverse=True)
@@ -505,6 +506,7 @@ class MainWindow(QMainWindow):
         # TODO MAKE EDIT FLAG HERE
         self.problem_emploi_du_temp = PET(self.faculty)
         # print(sum(len(session_list) for session_list in problem_emploi_du_temp.sessions_list))
+        self.problem_emploi_du_temp.list_of_profs = professors
         if self.professor_availability_constraint_checked:
             self.problem_emploi_du_temp.add_hard_constraint(ProfessorAvailability())
         if self.student_availability_constraint_checked:
@@ -538,6 +540,8 @@ class MainWindow(QMainWindow):
             # section.required_sessions.sort(key= lambda x:x[3].value)
             # print(section.required_sessions)
             if self.problem_emploi_du_temp.solve():
+                days = sum(1 if not all(day) else 0 for prof in self.problem_emploi_du_temp.list_of_profs for day in prof.available )
+                print(days)
                 self.load_timetable_data()
             else:
                 print("messed up somewhere")
@@ -760,7 +764,7 @@ class MainWindow(QMainWindow):
         # making a list of all the data-shows
         data_shows_list = [DataShow([promo_list[i] for ds in self.datashows for i in ds["allocated"]])]
         # finally return it all
-        return promo_list, rooms_list, data_shows_list
+        return promo_list, rooms_list, data_shows_list,professors
 
     def generate_tp_sessions(self, canvas, module_index, promo_index, promo_list,professors):
         assignments = self.module_assignments[promo_index][module_index]
@@ -846,6 +850,7 @@ class MainWindow(QMainWindow):
         if save_path[0].toLocalFile():
             main.excel_export(self.faculty.list_promo, save_path[0].toLocalFile(), example=r"../../test/result.xlsx")
             main.excel_prof_export(self.problem_emploi_du_temp.section_list, self.profs, save_path[0].toLocalFile())
+            main.excel_room_availability_export(self.problem_emploi_du_temp.list_of_rooms, save_path[0].toLocalFile())
 
 
 if __name__ == "__main__":

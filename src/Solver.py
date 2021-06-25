@@ -126,7 +126,7 @@ def assign(possible_session, equipment, section, day, slot):
     if possible_session.session_type == SessionType.Cour:
         section.EDT[day][slot].is_full = True
     max_session = section.nb_group // 2 + 1 if section.nb_group > 4 else section.nb_group
-    if len(section.EDT[day][slot].sessions) == max_session:
+    if len(section.EDT[day][slot].sessions) == max_sessionK:
         section.EDT[day][slot].is_full = True
     # pprint(section.EDT)
 
@@ -156,6 +156,7 @@ class PET:
                                                                                              promo.list_section]
         self.list_of_rooms: list[Room] = fac.list_rooms
         self.list_of_data_shows: list[DataShow] = fac.list_datashows
+        self.list_of_profs: list[Professor]= fac.list_profs
         # list of hard and soft constraints pretty self explanatory
         self.hard_constraints: list[HardConstraint] = []
         self.soft_constraints: list[SoftConstraint] = []
