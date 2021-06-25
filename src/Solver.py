@@ -126,7 +126,7 @@ def assign(possible_session, equipment, section, day, slot):
     if possible_session.session_type == SessionType.Cour:
         section.EDT[day][slot].is_full = True
     max_session = section.nb_group // 2 + 1 if section.nb_group > 4 else section.nb_group
-    if len(section.EDT[day][slot].sessions) == max_session:
+    if len(section.EDT[day][slot].sessions) == max_sessionK:
         section.EDT[day][slot].is_full = True
     # pprint(section.EDT)
 
