@@ -156,6 +156,7 @@ class PET:
                                                                                              promo.list_section]
         self.list_of_rooms: list[Room] = fac.list_rooms
         self.list_of_data_shows: list[DataShow] = fac.list_datashows
+        self.list_of_profs: list[Professor]= fac.list_profs
         # list of hard and soft constraints pretty self explanatory
         self.hard_constraints: list[HardConstraint] = []
         self.soft_constraints: list[SoftConstraint] = []
