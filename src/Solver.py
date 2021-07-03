@@ -97,7 +97,7 @@ class MinProfDays(SoftConstraint):
         super().__init__()
         self.section_timetables: list[Section] = section_timetables
         for sect in self.section_timetables:
-            sect.required_sessions.sort(key=lambda a: (a[0].name,a[3].value))
+            sect.required_sessions.sort(key=lambda a: (a[0].name, a[3].value))
         self.section_canvases: list[list[Module]] = section_canvases
 
     def satisfied(self, seance: Session, day: int, slot: int) -> bool:
@@ -126,7 +126,7 @@ def assign(possible_session, equipment, section, day, slot):
     if possible_session.session_type == SessionType.Cour:
         section.EDT[day][slot].is_full = True
     max_session = section.nb_group // 2 + 1 if section.nb_group > 4 else section.nb_group
-    if len(section.EDT[day][slot].sessions) == max_sessionK:
+    if len(section.EDT[day][slot].sessions) >= max_session:
         section.EDT[day][slot].is_full = True
     # pprint(section.EDT)
 
@@ -156,7 +156,7 @@ class PET:
                                                                                              promo.list_section]
         self.list_of_rooms: list[Room] = fac.list_rooms
         self.list_of_data_shows: list[DataShow] = fac.list_datashows
-        self.list_of_profs: list[Professor]= fac.list_profs
+        self.list_of_profs: list[Professor] = fac.list_profs
         # list of hard and soft constraints pretty self explanatory
         self.hard_constraints: list[HardConstraint] = []
         self.soft_constraints: list[SoftConstraint] = []

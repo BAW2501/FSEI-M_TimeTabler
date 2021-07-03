@@ -1,5 +1,4 @@
 from enum import Enum
-from functools import lru_cache
 from typing import Union
 
 # this is temporary this will be later taken as class arguments
@@ -63,7 +62,6 @@ class Room(LimitedResource):
         return self.capacity <= other.capacity
 
 
-
 class Professor(LimitedResource):
     def __init__(self, name: str) -> None:
         super().__init__()
@@ -114,10 +112,10 @@ class Section(LimitedResource):
         self.required_sessions: list[tuple[Professor, 'Attendance', Module, SessionType]] = list()
 
     def add_group(self, gr: Group) -> None:
-        gr.parent_section=self
+        gr.parent_section = self
         self.list_group.append(gr)
 
-    def add_groups(self,groups:list[Group]):
+    def add_groups(self, groups: list[Group]):
         for gr in groups:
             self.add_group(gr)
 
@@ -211,13 +209,13 @@ class Promotion:
 class Faculty:
 
     def __init__(self, name: str, promos: list[Promotion] = None, rooms: list[Room] = None,
-                 datashows: list[DataShow] = None,profs:list[Professor]=None) -> None:
+                 datashows: list[DataShow] = None, profs: list[Professor] = None) -> None:
         super().__init__()
         self.name: str = name
         self.list_promo: list[Promotion] = promos
         self.list_rooms: list[Room] = rooms
         self.list_datashows: list[DataShow] = datashows
-        self.list_profs : list[Professor] = profs
+        self.list_profs: list[Professor] = profs
 
     def add_promo(self, promo: Promotion) -> None:
         self.list_promo.append(promo)

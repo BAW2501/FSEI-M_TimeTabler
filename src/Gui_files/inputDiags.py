@@ -1,5 +1,8 @@
+from pprint import pprint
+
 from PySide6.QtCore import QSortFilterProxyModel, Qt
 from PySide6.QtWidgets import *
+
 from src.Solver import PET
 from src.resources import *
 
@@ -330,7 +333,6 @@ class SessionSetterInputDialog(QDialog):
     def add_session(self):
 
         sect_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
-        # print(sect_index)
         diag = SessionAddDialog(self.p_EDT, self.promo_index, self.section_index, self.day_index, self.slot_index,
                                 self.p_EDT.sessions_list[sect_index], sect_index)
         sessions = self.p_EDT.sessions_list[sect_index]
@@ -358,14 +360,16 @@ class SessionSetterInputDialog(QDialog):
         sect_index = sum(promo.nb_section for promo in self.faculty.list_promo[0:self.promo_index]) + self.section_index
         if index:
             index = index[0].row()  # cause single selection
-            print(self.p_EDT.section_list[sect_index].EDT[self.day_index][self.slot_index].sessions[index])
+            #print(self.p_EDT.section_list[sect_index].EDT[self.day_index][self.slot_index].sessions[index])
             session_to_remove = self.p_EDT.section_list[sect_index].EDT[self.day_index][self.slot_index].sessions[index]
-            unassign(index, session_to_remove, DataShow([]), session_to_remove.attendance, self.day_index,
+            section_to_edit = session_to_remove.attendance if isinstance(session_to_remove.attendance,
+                                                                         Section) else session_to_remove.attendance.parent_section
+            unassign(index, session_to_remove, DataShow([]), section_to_edit, self.day_index,
                      self.slot_index)
-            self.p_EDT.section_list[sect_index].required_sessions.append((session_to_remove.prof,
-                                                                          self.p_EDT.section_list[sect_index],
-                                                                          session_to_remove.module,
-                                                                          session_to_remove.session_type))
+            section_to_edit.required_sessions.append((session_to_remove.prof,
+                                                      session_to_remove.attendance,
+                                                      session_to_remove.module,
+                                                      session_to_remove.session_type))
             self.session_table.removeRow(index)
 
     def change_room(self):
@@ -435,12 +439,15 @@ class SessionAddDialog(QDialog):
         self.SessionSelectComboBox = ExtendedComboBox(self)
         self.SessionSelectComboBox.blockSignals(True)
         for session in sessions:
+            print(session)
             prof, attendance, module, session_type = session
             session_object = Session(attendance, prof, module, Room("temp", session_type, attendance.effective),
                                      session_type)
+            print(f'{self.p_EDT.valid(session_object, self.day_index, self.slot_index)=}')
             if self.p_EDT.valid(session_object, self.day_index, self.slot_index):
                 self.SessionSelectComboBox.addItem(str(session))
                 self.temp.append(str(session))
+        pprint(self.temp)
 
         self.rooms_ComboBox = ExtendedComboBox(self)
         self.SessionSelectComboBox.blockSignals(False)
@@ -533,9 +540,6 @@ def assign(possible_session, equipment, section, day, slot):
     possible_session.room.set_busy_on(day, slot)
     possible_session.attendance.set_busy_on(day, slot)
     if possible_session.session_type == SessionType.Cour:
-        section.EDT[day][slot].is_full = True
-    max_session = section.nb_group // 2 + 1 if section.nb_group > 4 else section.nb_group
-    if len(section.EDT[day][slot].sessions) == max_session:
         section.EDT[day][slot].is_full = True
     # pprint(section.EDT)
 

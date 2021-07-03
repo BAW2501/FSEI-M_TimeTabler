@@ -497,10 +497,10 @@ class MainWindow(QMainWindow):
         resources.timeslots_per_day = self.number_of_slots_per_day_input
         resources.days_per_week = self.number_of_days_per_week_input
 
-        promo, room, ds ,professors = self.build_data_model()
+        promo, room, ds, professors = self.build_data_model()
         # TODO sort earlier probably fixes it
         self.faculty.list_promo = promo
-        #self.faculty.list_promo.sort(key= lambda a: a.effective,reverse=True)
+        # self.faculty.list_promo.sort(key= lambda a: a.effective,reverse=True)
         self.faculty.list_rooms = room
         self.faculty.list_datashows = ds
         # TODO MAKE EDIT FLAG HERE
@@ -540,7 +540,8 @@ class MainWindow(QMainWindow):
             # section.required_sessions.sort(key= lambda x:x[3].value)
             # print(section.required_sessions)
             if self.problem_emploi_du_temp.solve():
-                days = sum(1 if not all(day) else 0 for prof in self.problem_emploi_du_temp.list_of_profs for day in prof.available )
+                days = sum(1 if not all(day) else 0 for prof in self.problem_emploi_du_temp.list_of_profs for day in
+                           prof.available)
                 print(days)
                 self.load_timetable_data()
             else:
@@ -586,7 +587,8 @@ class MainWindow(QMainWindow):
             self.ui.modules_assign_table.setRowCount(len(self.module_assignments[promo_index][module_index]))
             for i, task in enumerate(self.module_assignments[promo_index][module_index]):
                 self.ui.modules_assign_table.setItem(i, 0, QTableWidgetItem(self.profs[task['prof_name']]))
-                self.ui.modules_assign_table.setItem(i, 1, QTableWidgetItem(str(task['number'])))
+                self.ui.modules_assign_table.setItem(i, 1, QTableWidgetItem(
+                    str(task['number']) + (" section(s)" if task["type"] == 1 else " group(s)")))
                 session_type = session_type_from_int(task["type"])
                 self.ui.modules_assign_table.setItem(i, 2, QTableWidgetItem(session_type))
 
@@ -602,7 +604,8 @@ class MainWindow(QMainWindow):
     def _extracted_from_edit_assign_data_6(self, promo_index, module_index, index):
         index = index[0].row()  # cause single selection
         diag = AssignModuleInputDialog(self.profs)
-        name, val, session_type = self.module_assignments[promo_index][module_index][index].values()
+        val, name, session_type = self.module_assignments[promo_index][module_index][index].values()
+        print(name, val, session_type)
         session_type -= 1
 
         diag.SelectProfComboBox.setCurrentIndex(name)
@@ -756,17 +759,17 @@ class MainWindow(QMainWindow):
             list_canvases.append(canvas)
             promo_list[promo_index].canvas = canvas
             for module_index, module in enumerate(canvas):
-                self.generate_cour_sessions(canvas, module_index, promo_index, promo_list,professors)
-                self.generate_td_sessions(canvas, module_index, promo_index, promo_list,professors)
-                self.generate_tp_sessions(canvas, module_index, promo_index, promo_list,professors)
+                self.generate_cour_sessions(canvas, module_index, promo_index, promo_list, professors)
+                self.generate_td_sessions(canvas, module_index, promo_index, promo_list, professors)
+                self.generate_tp_sessions(canvas, module_index, promo_index, promo_list, professors)
         # making a list of all the rooms
         rooms_list = [Room(room["Name"], room["RoomType"], room["Capacity"]) for room in self.rooms]
         # making a list of all the data-shows
         data_shows_list = [DataShow([promo_list[i] for ds in self.datashows for i in ds["allocated"]])]
         # finally return it all
-        return promo_list, rooms_list, data_shows_list,professors
+        return promo_list, rooms_list, data_shows_list, professors
 
-    def generate_tp_sessions(self, canvas, module_index, promo_index, promo_list,professors):
+    def generate_tp_sessions(self, canvas, module_index, promo_index, promo_list, professors):
         assignments = self.module_assignments[promo_index][module_index]
         tp_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Tp.value]
         profs = []
@@ -782,7 +785,7 @@ class MainWindow(QMainWindow):
                      range(sessions_per_week)])
         assert len(profs) == 0
 
-    def generate_td_sessions(self, canvas, module_index, promo_index, promo_list,professors):
+    def generate_td_sessions(self, canvas, module_index, promo_index, promo_list, professors):
         assignments = self.module_assignments[promo_index][module_index]
         td_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Td.value]
         profs = []
@@ -798,7 +801,7 @@ class MainWindow(QMainWindow):
                      range(sessions_per_week)])
         assert len(profs) == 0
 
-    def generate_cour_sessions(self, canvas, module_index, promo_index, promo_list,professors):
+    def generate_cour_sessions(self, canvas, module_index, promo_index, promo_list, professors):
         assignments = self.module_assignments[promo_index][module_index]
         cour_assign = [assignment for assignment in assignments if assignment["type"] == SessionType.Cour.value]
 
