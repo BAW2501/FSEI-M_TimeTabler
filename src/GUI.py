@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import datetime
-import os
 import pickle
 import sys
 
 import main
 import resources
-from Gui_files.inputDiags import *
-from Gui_files.ui_window import *
+from inputDiags import *
+from ui_window import *
 from Solver import *
 
 
@@ -489,11 +488,10 @@ class MainWindow(QMainWindow):
                                     "Name"] + " is missinng assigned profs\n"
                 QMessageBox.information(self, "", msg_str)
         elif i == 4:
-            print("debug message")
+            print("") # removed
         self.ui.timetable_tableview.clearContents()
 
     def update_faculty_data(self):
-        print("updated here")
         resources.timeslots_per_day = self.number_of_slots_per_day_input
         resources.days_per_week = self.number_of_days_per_week_input
 
@@ -848,18 +846,15 @@ class MainWindow(QMainWindow):
                     self.ui.timetable_tableview.setItem(i, j, item)
 
     def export_excel_file(self):
-        save_path = QFileDialog.getSaveFileUrl(self, "Save Timetables", 'c:\\', "excel file (*.xlsx)")
-        print(save_path[0].toLocalFile())
+        save_path = QFileDialog.getSaveFileUrl(self, "Save Timetables", 'c:', "excel file (*.xlsx)")
         if save_path[0].toLocalFile():
-            main.excel_export(self.faculty.list_promo, save_path[0].toLocalFile(), example=r"../../test/result.xlsx")
+            main.excel_export(self.faculty.list_promo, save_path[0].toLocalFile())
             main.excel_prof_export(self.problem_emploi_du_temp.section_list, self.profs, save_path[0].toLocalFile())
             main.excel_room_availability_export(self.problem_emploi_du_temp.list_of_rooms, save_path[0].toLocalFile())
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    os.chdir("Gui_files")
-
     window = MainWindow()
     window.bind()
     window.show()

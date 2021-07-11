@@ -10,7 +10,7 @@ from resources import *
 # THIS FILE WILL BE DEPRECATED SOON
 
 
-def excel_export(promo_list: list[Promotion], path: str, example: str = r"../test/result.xlsx"):
+def excel_export(promo_list: list[Promotion], path: str, example: str = r"test/result.xlsx"):
     # saving solution to an excel file
     export_workbook = load_workbook(filename=Path(example))
 
@@ -50,10 +50,8 @@ def excel_export(promo_list: list[Promotion], path: str, example: str = r"../tes
 
 def excel_prof_export(sections: list[Section], profs: list[str], path: str, example: str = r"test/prof_TT.xlsx"):
     # saving  prof Tt to an excel file
-    day_range = len(sections[0].EDT)
-    slot_range = len(sections[0].EDT[0])
-    export_workbook = load_workbook(filename=Path.cwd().parent.parent / example)
-    # memory intensive should be put on it's own thread probably
+    export_workbook = load_workbook(filename=Path.cwd() / example)
+    # memory intensive takes relatively long (could break gui) should be put on it's own thread probably
     prof_TT_sheets = {}
     for prof in profs:
         v = export_workbook.copy_worksheet(export_workbook["template"])
@@ -74,7 +72,7 @@ def excel_prof_export(sections: list[Section], profs: list[str], path: str, exam
 def excel_room_availability_export(rooms: list[Room], path: str, example: str = r"test/prof_TT.xlsx"):
     # saving  room availability Tt to an excel file
 
-    export_workbook = load_workbook(filename=Path.cwd().parent.parent / example)
+    export_workbook = load_workbook(filename=Path.cwd() / example)
     # memory intensive should be put on it's own thread probably
     free_room_TT_sheet = export_workbook.copy_worksheet(export_workbook["template"])
     free_room_TT_sheet.title = "Free Rooms "
