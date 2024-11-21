@@ -28,7 +28,7 @@ class SessionType(str, Enum):
 
 @dataclass(kw_only=True)
 class BaseClass:
-    # _id: str = field(default_factory=get_new_uuid)
+    _id: str = field(default_factory=get_new_uuid)
     pass
 
 

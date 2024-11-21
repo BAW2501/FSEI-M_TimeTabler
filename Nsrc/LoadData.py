@@ -1,6 +1,6 @@
 import csv
 import json
-from dataclasses import asdict, fields
+from dataclasses import asdict, fields,is_dataclass
 from typing import Any, TypeVar
 
 from Def import (
@@ -400,9 +400,12 @@ def data_parser() -> Faculty:
 T = TypeVar("T")
 
 
+# Global cache to store instances by their _id
+_DATACLASS_INSTANCE_CACHE: dict[str, Any] = {}
+
 def dataclass_from_dict(klass: type[T], d: dict[str, Any]) -> T:
     """
-    Recursively convert a dictionary into a dataclass.
+    Recursively convert a dictionary into a dataclass, using caching to prevent duplicate instances.
 
     Args:
         klass: The dataclass type to create.
@@ -415,9 +418,14 @@ def dataclass_from_dict(klass: type[T], d: dict[str, Any]) -> T:
     if d is None or not isinstance(d, dict):
         return d  # Return as-is if not a dictionary
 
+    # Check if the input has an '_id' and it's already in the cache
+    instance_id = d.get('_id')
+    if instance_id and instance_id in _DATACLASS_INSTANCE_CACHE:
+        return _DATACLASS_INSTANCE_CACHE[instance_id]
+
     try:
         # Get the field types of the dataclass
-        fieldtypes = {f.name: f.type for f in fields(klass)}  # type: ignore
+        fieldtypes = {f.name: f.type for f in fields(klass)} # type: ignore
 
         # Prepare kwargs for dataclass initialization
         kwargs = {}
@@ -428,34 +436,41 @@ def dataclass_from_dict(klass: type[T], d: dict[str, Any]) -> T:
             field_type = fieldtypes[f]
 
             # Handle nested dataclasses and lists of dataclasses
-            if hasattr(field_type, "__origin__") and field_type.__origin__ is list:  # type: ignore
+            if hasattr(field_type, "__origin__") and field_type.__origin__ is list: # type: ignore
                 # Get the type of list elements
-                element_type = field_type.__args__[0]  # type: ignore
+                element_type = field_type.__args__[0] # type: ignore
 
                 # If the list contains dataclasses, recursively convert each element
-                if hasattr(element_type, "__annotations__"):
-                    kwargs[f] = [dataclass_from_dict(element_type, item) for item in value]
+                if is_dataclass(element_type):
+                    kwargs[f] = [dataclass_from_dict(element_type, item) for item in value] # type: ignore
                 else:
                     kwargs[f] = value
-            elif hasattr(field_type, "__annotations__"):
+            elif is_dataclass(field_type):
                 # If it's a nested dataclass, recursively convert
-                kwargs[f] = dataclass_from_dict(field_type, value)  # type: ignore
+                kwargs[f] = dataclass_from_dict(field_type, value) # type: ignore
             else:
                 # Simple type, direct assignment
                 kwargs[f] = value
 
-        return klass(**kwargs)
+        # Create the instance
+        instance = klass(**kwargs)
+
+        # Cache the instance if it has an '_id'
+        if hasattr(instance, '_id') and instance._id: # type: ignore
+            _DATACLASS_INSTANCE_CACHE[instance._id] = instance # type: ignore
+
+        return instance
 
     except Exception as e:
-        print(f"Error converting dictionary: {e}")
-        return d  # type: ignore # Fallback to original dict if conversion fails
+        raise ValueError(f"Error converting dictionary to {klass.__name__}: {e}")
+
     
 def load_data_from_json(file_path: str = '',json_file:dict[str,Any] = {}) -> Faculty:
     # if both both are available or not available raise error
     if file_path == '' and json == {}:
         raise Exception("No file path or JSON data provided.")
     if file_path != '':
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             json_file = json.load(f)
     fac = dataclass_from_dict(Faculty, json_file)
     return fac
