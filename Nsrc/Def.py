@@ -29,12 +29,11 @@ class SessionType(str, Enum):
 @dataclass(kw_only=True)
 class BaseClass:
     _id: str = field(default_factory=get_new_uuid)
-    pass
 
 
 class LimitedResource(BaseClass):
     availability_matrix: list[list[bool]] = [
-        [True] * TIME_SLOTS_PER_DAY for _ in range(DAYS_PER_WEEK)
+        [True for _ in range(TIME_SLOTS_PER_DAY)] for _ in range(DAYS_PER_WEEK)
     ]
 
 
@@ -69,7 +68,6 @@ class Group(LimitedResource):
 @dataclass(kw_only=True)
 class Section(LimitedResource):
     number: int
-    schedule: list[list[list["Session"]]] = field(default_factory=list)
     list_group: list[Group] = field(default_factory=list)
 
 
@@ -94,8 +92,14 @@ class Session(BaseClass):
 class Level(BaseClass):
     name: str
     curriculum: list[Module] = field(default_factory=list)
-    required_sessions: list[PendingSession] = field(default_factory=list)
     list_section: list[Section] = field(default_factory=list)
+    required_sessions: list[PendingSession] = field(default_factory=list)
+    schedule: list[list[list[list[Session]]]] = field(default_factory=list)
+    # first list for sessions,slots,days,sections
+    # schedule[i] is the week schedule for section i
+    # schedule[i][j] is the schedule for day j in section i
+    # schedule[i][j][k] is the sessions for slot k in day j in section i
+    # schedule[i][j][k][l] is the session l in slot k in day j in section i
 
 
 @dataclass(kw_only=True)
@@ -119,9 +123,11 @@ class Faculty(BaseClass):
             for section in level.list_section
             for group in section.list_group
         )
+
     @property
     def number_professors(self):
         return len(self.list_profs)
+
     @property
     def number_rooms(self):
         return len(self.list_rooms)

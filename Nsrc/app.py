@@ -1,8 +1,9 @@
-import pandas as pd
 import streamlit as st
+
+import json
+
 from Def import (
     Faculty,
-    Group,
     Level,
     Module,
     PendingSession,
@@ -11,402 +12,556 @@ from Def import (
     RoomType,
     Section,
     SessionType,
+    Group,
+    DataShow,
 )
-from LoadData import load_data_from_json
 
 
-class UniversityScheduler:
+class AppState:
     def __init__(self):
-        fac = load_data_from_json("data.json")
-        if "faculties" not in st.session_state:
-            st.session_state.faculties = [fac]
-        if "current_faculty" not in st.session_state:
-            st.session_state.current_faculty = fac
+        self.selected_faculty: Faculty =Faculty(name="FSEI-MOSTA")
+        self.selected_faculty.list_promo = [Level(name="L1"), Level(name="L2")]
+        self.selected_level: Level = self.selected_faculty.list_promo[0]
+        self.faculties: list[Faculty] = [self.selected_faculty]
 
-    @property
-    def current_faculty(self) -> Faculty | None:
-        return st.session_state.current_faculty
+    def save_state(self):
+        # Convert the state to JSON-serializable format
+        state_dict = {"faculties": [faculty.__dict__ for faculty in self.faculties]}
+        st.session_state["app_state"] = json.dumps(state_dict)
 
-    @current_faculty.setter
-    def current_faculty(self, value: Faculty | None) -> None:
-        st.session_state.current_faculty = value
+    def load_state(self):
+        if "app_state" in st.session_state:
+            state_dict = json.loads(st.session_state["app_state"])
+            self.faculties = [Faculty(**f) for f in state_dict["faculties"]]
 
-    def main(self):
-        st.title("University Course Scheduler")
-        pg = st.navigation(
-            [
-                st.Page(self.faculty_management, title="Faculties"),
-                st.Page(self.promotion_management, title="Promotions"),
-                st.Page(self.section_management, title="Sections"),
-                st.Page(self.professor_management, title="Professors"),
-                st.Page(self.room_management, title="Rooms"),
-                st.Page(self.session_management, title="Sessions"),
-            ],
+    def select_faculty(self, faculty: Faculty):
+        self.selected_faculty = faculty
+
+    def select_level(self, level: Level):
+        self.selected_level = level
+
+
+state = AppState()
+
+
+def initialize_state():
+    if "app_state" not in st.session_state:
+        state = AppState()
+        state.save_state()
+    return AppState()
+
+
+def faculty_crud():
+    st.header("Faculty Management")
+
+    # Create
+    with st.expander("Add New Faculty"):
+        new_faculty_name = st.text_input("Faculty Name")
+        if st.button("Create Faculty"):
+            if new_faculty_name:
+                new_faculty = Faculty(name=new_faculty_name)
+                state.faculties.append(new_faculty)
+                state.save_state()
+                st.success(f"Created faculty: {new_faculty_name}")
+
+    # Read
+    st.subheader("Existing Faculties")
+
+    for fac in state.faculties:
+
+        # Display fac info
+        col0, col1, col2, col3, col4 = st.columns(5)
+        col0.metric("Name:", fac.name)
+        col1.metric("Number of Students:", fac.number_students)
+        col2.metric("Number of Professors:", fac.number_professors)
+        col3.metric("Number of Rooms:", fac.number_rooms)
+        if col4.button(f"Select This Faculty", on_click=lambda: state.select_faculty(fac)):
+            st.success(f"Selected faculty: {fac.name}")
+
+        # Update
+        with col4.expander("Update Faculty"):
+            updated_name = st.text_input("New Name", fac.name)
+            if st.button("Update"):
+                fac.name = updated_name
+                state.save_state()
+                st.success("Faculty updated successfully")
+
+        # Delete
+        if col4.button("Delete Faculty"):
+            state.faculties.remove(fac)
+            state.save_state()
+            st.success("Faculty deleted successfully")
+            st.rerun()
+
+
+def level_crud():
+    if state.selected_faculty == None:
+        st.warning("Please select a faculty first")
+        return
+
+    st.header("Level Management")
+
+    # Create
+    with st.expander("Add New Level"):
+        new_level_name = st.text_input("Level Name")
+        if st.button("Create Level"):
+            if new_level_name:
+                new_level = Level(name=new_level_name)
+                state.selected_faculty.list_promo.append(new_level)
+                state.save_state()
+                st.success(f"Created level: {new_level_name}")
+
+    # Read
+    st.subheader("Existing Levels")
+    level_names = [l.name for l in state.selected_faculty.list_promo]
+    selected_level_name = st.selectbox("Select Level", level_names)
+
+    if selected_level_name:
+        level = next(
+            l
+            for l in state.selected_faculty.list_promo
+            if l.name == selected_level_name
         )
-        pg.run()
+        state.selected_level = level
 
-    def faculty_management(self):
-        st.header("Faculty Management")
+        # Update
+        with st.expander("Update Level"):
+            updated_name = st.text_input("New Name", level.name)
+            if st.button("Update"):
+                level.name = updated_name
+                state.save_state()
+                st.success("Level updated successfully")
 
-        # Add new faculty
-        with st.form("add_faculty"):
-            faculty_name = st.text_input("Faculty Name")
-            submit = st.form_submit_button("Add Faculty")
+        # Delete
+        if st.button("Delete Level"):
+            state.selected_faculty.list_promo.remove(level)
+            state.save_state()
+            st.success("Level deleted successfully")
+            st.rerun()
 
-            if submit and faculty_name:
-                new_faculty = Faculty(name=faculty_name)
-                st.session_state.faculties.append(new_faculty)
-                st.success(f"Faculty {faculty_name} added successfully!")
 
-        # List existing faculties
-        if st.session_state.faculties:
-            st.subheader("Existing Faculties")
-            for faculty in st.session_state.faculties:
-                col1, col2 = st.columns([4, 1])
-                with col1:
-                    col11, col12, col13, col14 = st.columns(4)
+def section_crud():
+    if not state.selected_level:
+        st.warning("Please select a level first")
+        return
 
-                    col11.write(faculty.name)
-                    col12.metric("Students", faculty.number_students)
-                    col13.metric("Professors", faculty.number_professors)
-                    col14.metric("Rooms", faculty.number_rooms)
-                with col2:
-                    if st.button("Select", key=f"select_{faculty.name}"):
-                        self.current_faculty = faculty
-                        st.success(f"Selected faculty: {faculty.name}")
+    st.header("Section Management")
 
-    def promotion_management(self):
-        st.header("Promotion Management")
+    # Create
+    with st.expander("Add New Section"):
+        new_section_number = st.number_input("Section Number", min_value=1)
+        nb_groups = st.number_input("Number of Groups", min_value=1)
+        students_per_group = st.number_input("Students per Group", min_value=1)
 
-        if not self.current_faculty:
-            st.warning("Please select a faculty first!")
-            return
+        if st.button("Create Section"):
+            groups = [
+                Group(number=i + 1, effective=students_per_group)
+                for i in range(nb_groups)
+            ]
+            new_section = Section(number=new_section_number, list_group=groups)
+            state.selected_level.list_section.append(new_section)
+            state.save_state()
+            st.success("Section created successfully")
 
-        # Create tabs for Promotions and Modules
-        promotion_tab, module_tab = st.tabs(["Promotions", "Modules"])
+    # Read
+    st.subheader("Existing Sections")
+    for section in state.selected_level.list_section:
+        with st.expander(f"Section {section.number}"):
+            st.write(f"Number of groups: {len(section.list_group)}")
+            st.write(f"Students per group: {section.list_group[0].effective}")
 
-        with promotion_tab:
-            # Add new promotion
-            with st.form("add_promotion"):
-                level = st.text_input("Promotion Level")
-                submit = st.form_submit_button("Add Promotion")
+            # Update
+            new_number = st.number_input("New Section Number", value=section.number)
+            new_groups = st.number_input(
+                "New Number of Groups", value=len(section.list_group)
+            )
+            new_students = st.number_input(
+                "New Students per Group", value=section.list_group[0].effective
+            )
 
-                if submit and level:
-                    new_promotion = Level(name=level)
-                    self.current_faculty.list_promo.append(new_promotion)
-                    st.success(f"Promotion {level} added successfully!")
+            if st.button(f"Update Section {section.number}"):
+                section.number = new_number
+                section.list_group = [
+                    Group(number=i + 1, effective=new_students)
+                    for i in range(new_groups)
+                ]
+                state.save_state()
+                st.success("Section updated successfully")
 
-            # List existing promotions
-            if self.current_faculty.list_promo:
-                st.subheader("Existing Promotions")
-                st.table(promo.name for promo in self.current_faculty.list_promo)
+            # Delete
+            if st.button(f"Delete Section {section.number}"):
+                state.selected_level.list_section.remove(section)
+                state.save_state()
+                st.success("Section deleted successfully")
+                st.rerun()
 
-        with module_tab:
-            # Select promotion for module management
-            if self.current_faculty.list_promo:
-                selected_promotion = st.selectbox(
-                    "Select Promotion",
-                    self.current_faculty.list_promo,
-                    format_func=lambda x: x.name,
-                    key="module_promotion_select",
-                )
 
-                if selected_promotion:
-                    # Add new module
-                    with st.form("add_module"):
-                        st.subheader("Add New Module")
-                        col1, col2 = st.columns(2)
+def professor_crud():
+    if not state.selected_faculty:
+        st.warning("Please select a faculty first")
+        return
 
-                        with col1:
-                            module_name = st.text_input("Module Name")
-                            module_abbr = st.text_input("Module Abbreviation")
+    st.header("Professor Management")
 
-                        with col2:
-                            nb_lecture = st.number_input(
-                                "Number of Lectures",
-                                min_value=0,
-                                value=0,
-                            )
-                            nb_td = st.number_input(
-                                "Number of Tutorial Sessions",
-                                min_value=0,
-                                value=0,
-                            )
-                            nb_tp = st.number_input(
-                                "Number of Lab Sessions",
-                                min_value=0,
-                                value=0,
-                            )
+    # Create
+    with st.expander("Add New Professor"):
+        new_prof_name = st.text_input("Professor Name")
+        if st.button("Create Professor"):
+            if new_prof_name:
+                new_prof = Professor(name=new_prof_name)
+                state.selected_faculty.list_profs.append(new_prof)
+                state.save_state()
+                st.success(f"Created professor: {new_prof_name}")
 
-                        submit_module = st.form_submit_button("Add Module")
+    # Read
+    st.subheader("Existing Professors")
+    filter_name = st.text_input("Filter by name")
 
-                        if submit_module and module_name and module_abbr:
-                            new_module = Module(
-                                name=module_name,
-                                abbreviation=module_abbr,
-                                semester=1,
-                                number_of_lectures=nb_lecture,
-                                number_of_tutorials=nb_td,
-                                number_of_labs=nb_tp,
-                            )
-                            selected_promotion.curriculum.append(new_module)
-                            st.success(f"Module {module_name} added successfully!")
+    filtered_profs = [
+        p
+        for p in state.selected_faculty.list_profs
+        if filter_name.lower() in p.name.lower()
+    ]
 
-                    # Display existing modules
-                    if selected_promotion.curriculum:
-                        st.subheader("Existing Modules")
+    for prof in filtered_profs:
+        with st.expander(prof.name):
+            # Update
+            updated_name = st.text_input("New Name", prof.name)
+            if st.button(f"Update {prof.name}"):
+                prof.name = updated_name
+                state.save_state()
+                st.success("Professor updated successfully")
 
-                        df = pd.DataFrame(selected_promotion.curriculum)
-                        st.table(df)
+            # Delete
+            if st.button(f"Delete {prof.name}"):
+                state.selected_faculty.list_profs.remove(prof)
+                state.save_state()
+                st.success("Professor deleted successfully")
+                st.rerun()
 
-                        # Add delete functionality
-                        if st.button("Clear All Modules"):
-                            selected_promotion.curriculum.clear()
-                            st.success("All modules have been removed")
-                            st.rerun()
-                    else:
-                        st.info("No modules added yet for this promotion.")
-            else:
-                st.warning("Please add a promotion first!")
 
-    def professor_management(self):
-        st.header("Professor Management")
+def room_crud():
+    if not state.selected_faculty:
+        st.warning("Please select a faculty first")
+        return
 
-        if not self.current_faculty:
-            st.warning("Please select a faculty first!")
-            return
+    st.header("Room Management")
 
-        # Add new professor
-        with st.form("add_professor"):
-            prof_name = st.text_input("Professor Name")
-            submit = st.form_submit_button("Add Professor")
+    # Create
+    with st.expander("Add New Room"):
+        new_room_name = st.text_input("Room Name")
+        room_type = st.selectbox("Room Type", [t.value for t in RoomType])
+        capacity = st.number_input("Capacity", min_value=1)
 
-            if submit and prof_name:
-                new_professor = Professor(name=prof_name)
-                self.current_faculty.list_profs.append(new_professor)
-                st.success(f"Professor {prof_name} added successfully!")
-
-        # List existing professors
-        if self.current_faculty.list_profs:
-            st.subheader("Existing Professors")
-            # for professor in self.current_faculty.list_profs:
-            #     st.write(
-            #         f"Name: {professor.name}",
-            #     )
-            st.table(pd.DataFrame(self.current_faculty.list_profs))
-
-    def room_management(self):
-        st.header("Room Management")
-
-        if not self.current_faculty:
-            st.warning("Please select a faculty first!")
-            return
-
-        # Add new room
-        with st.form("add_room"):
-            room_name = st.text_input("Room Name")
-            room_type = st.selectbox("Room Type", [type.name for type in RoomType])
-            capacity = st.number_input("Capacity", min_value=1)
-            submit = st.form_submit_button("Add Room")
-
-            if submit and room_name:
+        if st.button("Create Room"):
+            if new_room_name:
                 new_room = Room(
-                    name=room_name,
-                    room_type=RoomType[room_type],
-                    capacity=capacity,
+                    name=new_room_name, room_type=RoomType(room_type), capacity=capacity
                 )
-                self.current_faculty.list_rooms.append(new_room)
-                st.success(f"Room {room_name} added successfully!")
+                state.selected_faculty.list_rooms.append(new_room)
+                state.save_state()
+                st.success(f"Created room: {new_room_name}")
 
-        # List existing rooms
-        if self.current_faculty.list_rooms:
-            st.subheader("Existing Rooms")
-            st.table(self.current_faculty.list_rooms)
+    # Read
+    st.subheader("Existing Rooms")
+    filter_type = st.selectbox("Filter by type", ["All"] + [t.value for t in RoomType])
+    min_capacity = st.number_input("Minimum capacity", min_value=0)
 
-    def section_management(self):
-        st.header("Section Management")
+    filtered_rooms = state.selected_faculty.list_rooms
+    if filter_type != "All":
+        filtered_rooms = [
+            r for r in filtered_rooms if r.room_type == RoomType(filter_type)
+        ]
+    filtered_rooms = [r for r in filtered_rooms if r.capacity >= min_capacity]
 
-        if not self.current_faculty:
-            st.warning("Please select a faculty first!")
-            return
+    for room in filtered_rooms:
+        with st.expander(f"{room.name} ({room.room_type.value})"):
+            # Update
+            updated_name = st.text_input("New Name", room.name)
+            updated_type = st.selectbox(
+                "New Type",
+                [t.value for t in RoomType],
+                index=[t.value for t in RoomType].index(room.room_type.value),
+            )
+            updated_capacity = st.number_input("New Capacity", value=room.capacity)
 
-        # Select promotion
-        if self.current_faculty.list_promo:
-            selected_promotion = st.selectbox(
-                "Select Promotion",
-                self.current_faculty.list_promo,
-                format_func=lambda x: x.name,
-                key="section_promotion_select",
+            if st.button(f"Update {room.name}"):
+                room.name = updated_name
+                room.room_type = RoomType(updated_type)
+                room.capacity = updated_capacity
+                state.save_state()
+                st.success("Room updated successfully")
+
+            # Delete
+            if st.button(f"Delete {room.name}"):
+                state.selected_faculty.list_rooms.remove(room)
+                state.save_state()
+                st.success("Room deleted successfully")
+                st.rerun()
+
+
+def module_crud():
+    if not state.selected_level:
+        st.warning("Please select a level first")
+        return
+
+    st.header("Module Management")
+
+    # Create
+    with st.expander("Add New Module"):
+        new_module_name = st.text_input("Module Name")
+        abbreviation = st.text_input("Abbreviation")
+        semester = st.number_input("Semester", min_value=1, max_value=2)
+        n_lectures = st.number_input("Number of Lectures", min_value=0)
+        n_tutorials = st.number_input("Number of Tutorials", min_value=0)
+        n_labs = st.number_input("Number of Labs", min_value=0)
+
+        if st.button("Create Module"):
+            if new_module_name and abbreviation:
+                new_module = Module(
+                    name=new_module_name,
+                    abbreviation=abbreviation,
+                    semester=semester,
+                    number_of_lectures=n_lectures,
+                    number_of_tutorials=n_tutorials,
+                    number_of_labs=n_labs,
+                )
+                state.selected_level.curriculum.append(new_module)
+                state.save_state()
+                st.success(f"Created module: {new_module_name}")
+
+    # Read
+    st.subheader("Curriculum")
+    semester_filter = st.selectbox("Filter by semester", [0, 1, 2])
+
+    filtered_modules = state.selected_level.curriculum
+    if semester_filter > 0:
+        filtered_modules = [
+            m for m in filtered_modules if m.semester == semester_filter
+        ]
+
+    for module in filtered_modules:
+        with st.expander(f"{module.name} ({module.abbreviation})"):
+            # Display details
+            st.write(f"Semester: {module.semester}")
+            st.write(f"Lectures: {module.number_of_lectures}")
+            st.write(f"Tutorials: {module.number_of_tutorials}")
+            st.write(f"Labs: {module.number_of_labs}")
+
+            # Update
+            updated_name = st.text_input("New Name", module.name)
+            updated_abbr = st.text_input("New Abbreviation", module.abbreviation)
+            updated_semester = st.number_input("New Semester", value=module.semester)
+            updated_lectures = st.number_input(
+                "New Number of Lectures", value=module.number_of_lectures
+            )
+            updated_tutorials = st.number_input(
+                "New Number of Tutorials", value=module.number_of_tutorials
+            )
+            updated_labs = st.number_input(
+                "New Number of Labs", value=module.number_of_labs
             )
 
-            if selected_promotion:
-                # Create sections and groups tab
-                create_tab, view_tab = st.tabs(["Create Sections", "View Sections"])
+            if st.button(f"Update {module.name}"):
+                module.name = updated_name
+                module.abbreviation = updated_abbr
+                module.semester = updated_semester
+                module.number_of_lectures = updated_lectures
+                module.number_of_tutorials = updated_tutorials
+                module.number_of_labs = updated_labs
+                state.save_state()
+                st.success("Module updated successfully")
 
-                with create_tab:
-                    with st.form("add_sections"):
-                        st.subheader("Create Multiple Sections with Groups")
+            # Delete
+            if st.button(f"Delete {module.name}"):
+                state.selected_level.curriculum.remove(module)
+                state.save_state()
+                st.success("Module deleted successfully")
+                st.rerun()
 
-                        col1, col2, col3 = st.columns(3)
 
-                        with col1:
-                            num_sections = st.number_input(
-                                "Number of Sections ",
-                                min_value=1,
-                                value=1,
-                                help="Total number of sections to create",
-                            )
+# Continuing from the provided code...
 
-                        with col2:
-                            groups_per_section = st.number_input(
-                                "Groups per Section ",
-                                min_value=1,
-                                value=2,
-                                help="Number of groups to create in each section",
-                            )
 
-                        with col3:
-                            students_per_group = st.number_input(
-                                "Students per Group",
-                                min_value=1,
-                                value=25,
-                                help="Number of students in each group",
-                            )
+def pending_session_crud():
+    if not state.selected_level:
+        st.warning("Please select a level first")
+        return
 
-                        starting_section_number = st.number_input(
-                            "Starting Section Number",
-                            min_value=1,
-                            value=1,
-                            help="The number for the first section",
-                        )
+    st.header("Pending Session Management")
 
-                        submit = st.form_submit_button("Create Sections and Groups")
+    # Create
+    with st.expander("Add New Pending Session"):
+        # Professor selection
+        selected_prof = st.selectbox(
+            "Professor", state.selected_faculty.list_profs, format_func=lambda p: p.name
+        )
 
-                        if submit:
-                            print(
-                                f"{num_sections=}{groups_per_section=}{students_per_group=}",
-                            )
-                            selected_promotion.list_section = []
+        # Module selection
+        selected_module = st.selectbox(
+            "Module", state.selected_level.curriculum, format_func=lambda m: m.name
+        )
 
-                            # Create sections and groups
-                            for i in range(num_sections):
-                                section_num = starting_section_number + i
-                                new_section = Section(number=section_num)
-
-                                # Create groups for this section
-                                for j in range(groups_per_section):
-                                    group_number = j + 1 + (i * groups_per_section)
-                                    new_group = Group(
-                                        number=group_number,
-                                        effective=students_per_group,
-                                    )
-                                    new_section.list_group.append(new_group)
-
-                                selected_promotion.list_section.append(new_section)
-
-                            st.success(
-                                f"Successfully created {num_sections} sections with {groups_per_section} groups each!",
-                            )
-                            st.rerun()
-
-                with view_tab:
-                    if selected_promotion.list_section:
-                        st.subheader("Existing Sections and Groups")
-
-                        # Create a structured view of sections and groups
-                        for section in selected_promotion.list_section:
-                            with st.expander(f"Section {section.number}"):
-                                if section.list_group:
-                                    # Create a DataFrame for groups in this section
-
-                                    df = pd.DataFrame(section.list_group)
-                                    df.set_index("number", inplace=True)
-
-                                    st.table(df)
-
-                                    # Summary statistics
-                                    total_students = sum(
-                                        group.effective for group in section.list_group
-                                    )
-                                    st.info(
-                                        f"Total students in section: {total_students}",
-                                    )
-                                else:
-                                    st.warning("No groups in this section")
-
-                            # Add delete button for each section
-                            if st.button(
-                                f"Delete Section {section.number}",
-                                key=f"del_section_{section.number}",
-                            ):
-                                selected_promotion.list_section.remove(section)
-                                st.success(
-                                    f"Section {section.number} deleted successfully!",
-                                )
-                                st.rerun()
-                    else:
-                        st.info("No sections created yet for this promotion.")
+        # Section/Group selection
+        attendance_type = st.selectbox("Attendance Type", ["Section", "Group"])
+        if attendance_type == "Section":
+            attendance = st.selectbox(
+                "Section",
+                state.selected_level.list_section,
+                format_func=lambda s: f"Section {s.number}",
+            )
         else:
-            st.warning("Please add a promotion first!")
-
-    def session_management(self):
-        st.header("Session Management")
-        professor = None
-        promotion = None
-        section = None
-        module = None
-
-        if not self.current_faculty:
-            st.warning("Please select a faculty first!")
-            return
-
-        # Add new pending session
-        with st.form("add_session"):
-            # Select professor
-
-            professor = st.selectbox(
-                "Select Professor",
-                self.current_faculty.list_profs,
-                format_func=lambda x: x.name,
+            flattened_groups = [
+                g for s in state.selected_level.list_section for g in s.list_group
+            ]
+            attendance = st.selectbox(
+                "Group", flattened_groups, format_func=lambda g: f"Group {g.number}"
             )
 
-            # Select promotion and section
-            promotion = st.selectbox(
-                "Select Promotion",
-                self.current_faculty.list_promo,
-                format_func=lambda x: x.name,
+        session_type = st.selectbox("Session Type", [t.value for t in SessionType])
+
+        if st.button("Create Pending Session"):
+            new_pending_session = PendingSession(
+                prof=selected_prof,
+                module=selected_module,
+                attendance=attendance,
+                session_type=SessionType(session_type),
+            )
+            state.selected_level.required_sessions.append(new_pending_session)
+            state.save_state()
+            st.success("Pending session created successfully")
+
+    # Read & Filter
+    st.subheader("Existing Pending Sessions")
+
+    # Filters
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        filter_prof = st.selectbox(
+            "Filter by Professor",
+            ["All"] + [p.name for p in state.selected_faculty.list_profs],
+        )
+    with col2:
+        filter_module = st.selectbox(
+            "Filter by Module",
+            ["All"] + [m.name for m in state.selected_level.curriculum],
+        )
+    with col3:
+        filter_type = st.selectbox(
+            "Filter by Session Type", ["All"] + [t.value for t in SessionType]
+        )
+
+    # Apply filters
+    filtered_sessions = state.selected_level.required_sessions
+    if filter_prof != "All":
+        filtered_sessions = [s for s in filtered_sessions if s.prof.name == filter_prof]
+    if filter_module != "All":
+        filtered_sessions = [
+            s for s in filtered_sessions if s.module.name == filter_module
+        ]
+    if filter_type != "All":
+        filtered_sessions = [
+            s for s in filtered_sessions if s.session_type.value == filter_type
+        ]
+
+    # Display sessions
+    for session in filtered_sessions:
+        with st.expander(
+            f"Session: {session.module.name} - {session.session_type.value}"
+        ):
+            # Display current details
+            st.write(f"Professor: {session.prof.name}")
+            st.write(
+                f"Attendance: {'Section' if isinstance(session.attendance, Section) else 'Group'} {session.attendance.number}"
             )
 
-            # Select module from promotion's curriculum
-            if promotion:
-                module = st.selectbox(
-                    "Select Module",
-                    promotion.curriculum,
-                    format_func=lambda x: x.name,
-                )
-
-            session_type = st.selectbox(
-                "Session Type",
-                [type.name for type in SessionType],
+            # Update form
+            updated_prof = st.selectbox(
+                "New Professor",
+                state.selected_faculty.list_profs,
+                format_func=lambda p: p.name,
+                index=state.selected_faculty.list_profs.index(session.prof),
             )
 
-            submit = st.form_submit_button("Add Session")
+            updated_module = st.selectbox(
+                "New Module",
+                state.selected_level.curriculum,
+                format_func=lambda m: m.name,
+                index=state.selected_level.curriculum.index(session.module),
+            )
 
-            if submit and professor and section and module:
-                new_session = PendingSession(
-                    prof=professor,
-                    attendance=section,
-                    module=module,
-                    session_type=SessionType[session_type],
-                )
-                promotion.required_sessions.append(new_session)
-                st.success("Session added successfully!")
+            updated_type = st.selectbox(
+                "New Session Type",
+                [t.value for t in SessionType],
+                index=[t.value for t in SessionType].index(session.session_type.value),
+            )
+
+            if st.button(f"Update Session"):
+                session.prof = updated_prof
+                session.module = updated_module
+                session.session_type = SessionType(updated_type)
+                state.save_state()
+                st.success("Session updated successfully")
+
+            if st.button(f"Delete Session"):
+                state.selected_level.required_sessions.remove(session)
+                state.save_state()
+                st.success("Session deleted successfully")
+                st.rerun()
+
+
+def datashow_crud():
+    if not state.selected_faculty:
+        st.warning("Please select a faculty first")
+        return
+
+    st.header("DataShow Management")
+
+    # Create
+    with st.expander("Add New DataShow"):
+        if st.button("Add DataShow"):
+            new_datashow = DataShow()
+            state.selected_faculty.list_datashows.append(new_datashow)
+            state.save_state()
+            st.success("DataShow added successfully")
+
+    # Read
+    st.subheader("Existing DataShows")
+    for idx, datashow in enumerate(state.selected_faculty.list_datashows):
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.write(f"DataShow #{idx + 1}")
+        with col2:
+            if st.button(f"Delete DataShow #{idx + 1}"):
+                state.selected_faculty.list_datashows.remove(datashow)
+                state.save_state()
+                st.success("DataShow deleted successfully")
+                st.rerun()
 
 
 def main():
-    scheduler = UniversityScheduler()
-    scheduler.main()
+    st.set_page_config(page_title="University Course Management", layout="wide")
+    st.title("University Course Management System")
 
+    # Initialize state
+    global state
+    state = initialize_state()
+    state.load_state()
+
+    st.title("University Course Scheduler")
+    pg = st.navigation(
+        [
+            st.Page(title="Faculties",page = faculty_crud),
+            st.Page(title= "Levels",page = level_crud),
+            st.Page(title= "Sections",page = section_crud),
+            st.Page(title= "Professors",page = professor_crud),
+            st.Page(title= "Rooms",page = room_crud),
+            st.Page(title= "Modules",page = module_crud),
+            st.Page(title= "Pending Sessions",page = pending_session_crud),
+            st.Page(title= "DataShows",page = datashow_crud),
+        ],
+    )
+    pg.run()
 
 if __name__ == "__main__":
     main()
