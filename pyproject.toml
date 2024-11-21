@@ -1,0 +1,96 @@
+[project]
+name = "fsei-m-timetabler"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openpyxl==3.0.7",
+    "pyside6>=6.8.0.2",
+    "sqlalchemy>=2.0.36",
+    "streamlit>=1.40.1",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pyupgrade>=3.19.0",
+    "ruff>=0.7.4",
+]
+
+
+[tool.ruff]
+target-version = "py310"
+src = ["src", "tests"]
+preview = true
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle
+    "F",     # pyflakes
+    "W",     # pycodestyle
+    "C90",   # mccabe
+    "I",     # isort
+    "D",     # pydocstyle
+    "UP",    # pyupgrade
+    "N",     # pep8-naming
+    "YTT",   # flake8-2020
+    "ANN",   # flake8-annotations
+    "ASYNC", # flake8-async
+    "S",     # flake8-bandit
+    "BLE",   # flake8-blind-except
+    "FBT",   # flake8-boolean-trap
+    "B",     # flake8-bugbear
+    "A",     # flake8-builtins
+    "COM",   # flake8-commas
+    "CPY",   # copyright-related rules
+    "C4",    # flake8-comprehensions
+    "DTZ",   # flake8-datetimez
+    "T10",   # flake8-debugger
+    "DJ",    # flake8-django
+    "EM",    # flake8-errmsg
+    "EXE",   # flake8-executable
+    "FA",    # flake8-future-annotations
+    "ISC",   # flake8-implicit-str-concat
+    "ICN",   # flake8-import-conventions
+    "G",     # flake8-logging-format
+    "INP",   # flake8-no-pep420
+    "PIE",   # flake8-pie
+    "T20",   # flake8-print
+    "PYI",   # flake8-pyi
+    "PT",    # flake8-pytest-style
+    "Q",     # flake8-quotes
+    "RSE",   # flake8-raise
+    "RET",   # flake8-return
+    "SLF",   # flake8-self
+    "SLOT",  # flake8-slots
+    "SIM",   # flake8-simplify
+    "TID",   # flake8-tidy-imports
+    "TCH",   # flake8-type-checking
+    "INT",   # flake8-type-checking
+    "ARG",   # flake8-unused-arguments
+    "PTH",   # flake8-use-pathlib
+    "TD",    # flake8-todos
+    "FIX",   # flake8-fixme
+    "ERA",   # eradicate
+    "PD",    # pandas-vet
+    "PGH",   # pygrep-hooks
+    "PL",    # pylint
+    "TRY",   # tryceratops
+    "FLY",   # flynt
+    "NPY",   # NumPy-specific rules
+    "AIR",   # Airflow
+    "PERF",  # Perflint
+    "FURB",  # refurb
+    "RUF",   # Ruff-specific rules
+]
+ignore = ["ANN101", "CPY001"] # annotations for self
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = [
+    "PLR2004", # magic value comparison
+    "S101",    # use of assert detected
+    "TCH002",  # third party import (for pytest)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
