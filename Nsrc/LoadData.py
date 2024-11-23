@@ -1,6 +1,6 @@
 import csv
 import json
-from dataclasses import asdict, fields,is_dataclass
+from dataclasses import asdict, fields, is_dataclass
 from typing import Any, TypeVar
 
 from Def import (
@@ -34,7 +34,8 @@ ROOM_TYPE_MAPPING = {
 
 
 def split_groups_into_sections(
-    all_groups: list[Group], section_count: int,
+    all_groups: list[Group],
+    section_count: int,
 ) -> list[list[Group]]:
     """Splits groups into n sections trying to maintain even distribution"""
     if not all_groups or section_count <= 0:
@@ -90,7 +91,9 @@ def create_curriculum(curriculum_data: list[list[str]]) -> list[Module]:
 
 
 def assign_curriculum_to_levels(
-    levels: list[Level], level_table: list[list[str]], curriculum: list[Module],
+    levels: list[Level],
+    level_table: list[list[str]],
+    curriculum: list[Module],
 ) -> list[Level]:
     """Maps curriculum modules to levels using index ranges from level table"""
     if not levels or not level_table or not curriculum:
@@ -127,7 +130,9 @@ def create_rooms(rooms_data: list[list[str]]) -> list[Room]:
 
         rooms.append(
             Room(
-                name=name, room_type=ROOM_TYPE_MAPPING[type_idx], capacity=room_capacity,
+                name=name,
+                room_type=ROOM_TYPE_MAPPING[type_idx],
+                capacity=room_capacity,
             ),
         )
     return rooms
@@ -162,12 +167,14 @@ def find_professor(professors: list[Professor], prof_name: str) -> Professor | N
         return None
     prof_name = prof_name.strip().lower()
     return next(
-        (prof for prof in professors if prof.name.strip().lower() == prof_name), None,
+        (prof for prof in professors if prof.name.strip().lower() == prof_name),
+        None,
     )
 
 
 def parse_professor_assignments(
-    professors: list[Professor], assignments: str,
+    professors: list[Professor],
+    assignments: str,
 ) -> list[tuple[Professor, int]]:
     """Parses professor assignment string format: 'name1(count1),name2(count2),...'"""
     assignment_pairs: list[tuple[Professor, int]] = []
@@ -199,7 +206,10 @@ def create_session(
 ) -> PendingSession:
     """Creates a pending session with given parameters"""
     return PendingSession(
-        attendance=attendance, prof=professor, module=module, session_type=session_type,
+        attendance=attendance,
+        prof=professor,
+        module=module,
+        session_type=session_type,
     )
 
 
@@ -232,7 +242,8 @@ def create_lecture_sessions(
     sessions: list[PendingSession] = []
     assignments = parse_professor_assignments(professors, professor_assignments)
     prof_section_pairs = distribute_professors_to_attendances(
-        assignments, level.list_section,
+        assignments,
+        level.list_section,
     )
 
     for _ in range(lecture_count):
@@ -266,7 +277,9 @@ def create_group_sessions(
 
 
 def find_module_row(
-    curriculum_table: list[list[str]], module_name: str, starting_from: int,
+    curriculum_table: list[list[str]],
+    module_name: str,
+    starting_from: int,
 ) -> tuple[int, list[str]]:
     """Finds a module's row in curriculum table starting from given index"""
     for i, row in enumerate(curriculum_table[starting_from:], start=starting_from):
@@ -276,7 +289,9 @@ def find_module_row(
 
 
 def create_sessions(
-    levels: list[Level], professors: list[Professor], curriculum_table: list[list[str]],
+    levels: list[Level],
+    professors: list[Professor],
+    curriculum_table: list[list[str]],
 ) -> list[Level]:
     """Creates all required sessions for each level and module"""
     current_row = 0
@@ -287,7 +302,9 @@ def create_sessions(
         for module in level.curriculum:
             try:
                 current_row, row = find_module_row(
-                    curriculum_table, module.name, current_row,
+                    curriculum_table,
+                    module.name,
+                    current_row,
                 )
             except ValueError:
                 continue
@@ -315,7 +332,11 @@ def create_sessions(
             # Create different types of sessions
             all_sessions.extend(
                 create_lecture_sessions(
-                    level, module, prof_lecture.strip(), professors, lecture_count,
+                    level,
+                    module,
+                    prof_lecture.strip(),
+                    professors,
+                    lecture_count,
                 ),
             )
 
@@ -403,6 +424,7 @@ T = TypeVar("T")
 # Global cache to store instances by their _id
 _DATACLASS_INSTANCE_CACHE: dict[str, Any] = {}
 
+
 def dataclass_from_dict(klass: type[T], d: dict[str, Any]) -> T:
     """
     Recursively convert a dictionary into a dataclass, using caching to prevent duplicate instances.
@@ -419,13 +441,13 @@ def dataclass_from_dict(klass: type[T], d: dict[str, Any]) -> T:
         return d  # Return as-is if not a dictionary
 
     # Check if the input has an '_id' and it's already in the cache
-    instance_id = d.get('_id')
+    instance_id = d.get("_id")
     if instance_id and instance_id in _DATACLASS_INSTANCE_CACHE:
         return _DATACLASS_INSTANCE_CACHE[instance_id]
 
     try:
         # Get the field types of the dataclass
-        fieldtypes = {f.name: f.type for f in fields(klass)} # type: ignore
+        fieldtypes = {f.name: f.type for f in fields(klass)}  # type: ignore
 
         # Prepare kwargs for dataclass initialization
         kwargs = {}
@@ -436,18 +458,18 @@ def dataclass_from_dict(klass: type[T], d: dict[str, Any]) -> T:
             field_type = fieldtypes[f]
 
             # Handle nested dataclasses and lists of dataclasses
-            if hasattr(field_type, "__origin__") and field_type.__origin__ is list: # type: ignore
+            if hasattr(field_type, "__origin__") and field_type.__origin__ is list:  # type: ignore
                 # Get the type of list elements
-                element_type = field_type.__args__[0] # type: ignore
+                element_type = field_type.__args__[0]  # type: ignore
 
                 # If the list contains dataclasses, recursively convert each element
                 if is_dataclass(element_type):
-                    kwargs[f] = [dataclass_from_dict(element_type, item) for item in value] # type: ignore
+                    kwargs[f] = [dataclass_from_dict(element_type, item) for item in value]  # type: ignore
                 else:
                     kwargs[f] = value
             elif is_dataclass(field_type):
                 # If it's a nested dataclass, recursively convert
-                kwargs[f] = dataclass_from_dict(field_type, value) # type: ignore
+                kwargs[f] = dataclass_from_dict(field_type, value)  # type: ignore
             else:
                 # Simple type, direct assignment
                 kwargs[f] = value
@@ -456,20 +478,20 @@ def dataclass_from_dict(klass: type[T], d: dict[str, Any]) -> T:
         instance = klass(**kwargs)
 
         # Cache the instance if it has an '_id'
-        if hasattr(instance, '_id') and instance._id: # type: ignore
-            _DATACLASS_INSTANCE_CACHE[instance._id] = instance # type: ignore
+        if hasattr(instance, "_id") and instance._id:  # type: ignore
+            _DATACLASS_INSTANCE_CACHE[instance._id] = instance  # type: ignore
 
         return instance
 
     except Exception as e:
         raise ValueError(f"Error converting dictionary to {klass.__name__}: {e}")
 
-    
-def load_data_from_json(file_path: str = '',json_file:dict[str,Any] = {}) -> Faculty:
+
+def load_data_from_json(file_path: str = "", json_file: dict[str, Any] = {}) -> Faculty:
     # if both both are available or not available raise error
-    if file_path == '' and json == {}:
+    if file_path == "" and json_file == {}:
         raise Exception("No file path or JSON data provided.")
-    if file_path != '':
+    if file_path != "":
         with open(file_path, encoding="utf-8") as f:
             json_file = json.load(f)
     fac = dataclass_from_dict(Faculty, json_file)
@@ -479,6 +501,6 @@ def load_data_from_json(file_path: str = '',json_file:dict[str,Any] = {}) -> Fac
 if __name__ == "__main__":
     fsei = data_parser()
     fsei_as_dict = asdict(fsei)
-    # save as json
+    # save as json ,making as dict of faculty to support multiple faculties
     with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(fsei_as_dict, f, indent=4)
+        json.dump({0: fsei_as_dict}, f, indent=4)

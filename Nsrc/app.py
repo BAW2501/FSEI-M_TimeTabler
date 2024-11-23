@@ -1,7 +1,8 @@
+from dataclasses import asdict
 import streamlit as st
 
 import json
-
+from LoadData import dataclass_from_dict
 from Def import (
     Faculty,
     Level,
@@ -18,21 +19,21 @@ from Def import (
 
 
 class AppState:
+    selected_faculty: Faculty
+    selected_level: Level 
+    faculties: list[Faculty] 
     def __init__(self):
-        self.selected_faculty: Faculty =Faculty(name="FSEI-MOSTA")
-        self.selected_faculty.list_promo = [Level(name="L1"), Level(name="L2")]
-        self.selected_level: Level = self.selected_faculty.list_promo[0]
-        self.faculties: list[Faculty] = [self.selected_faculty]
-
+        self.load_state()
     def save_state(self):
-        # Convert the state to JSON-serializable format
-        state_dict = {"faculties": [faculty.__dict__ for faculty in self.faculties]}
-        st.session_state["app_state"] = json.dumps(state_dict)
+        # save the faculties as json using the todict method of dataclasses
+        with open("state.json", "w") as f:
+            json.dump({i: asdict(fac) for i, fac in enumerate(self.faculties)}, f)
 
     def load_state(self):
-        if "app_state" in st.session_state:
-            state_dict = json.loads(st.session_state["app_state"])
-            self.faculties = [Faculty(**f) for f in state_dict["faculties"]]
+        with open("state.json", "r") as f:
+            self.faculties = [
+                dataclass_from_dict(Faculty, fac) for fac in json.load(f).values()
+            ]
 
     def select_faculty(self, faculty: Faculty):
         self.selected_faculty = faculty
@@ -52,6 +53,7 @@ def initialize_state():
 
 
 def faculty_crud():
+    global state
     st.header("Faculty Management")
 
     # Create
@@ -75,8 +77,9 @@ def faculty_crud():
         col1.metric("Number of Students:", fac.number_students)
         col2.metric("Number of Professors:", fac.number_professors)
         col3.metric("Number of Rooms:", fac.number_rooms)
-        if col4.button(f"Select This Faculty", on_click=lambda: state.select_faculty(fac)):
-            st.success(f"Selected faculty: {fac.name}")
+        if col4.button("Select This Faculty"):
+            state.select_faculty(fac)
+            st.success(f"Selected faculty: {state.selected_faculty.name}")
 
         # Update
         with col4.expander("Update Faculty"):
@@ -95,6 +98,7 @@ def faculty_crud():
 
 
 def level_crud():
+    global state
     if state.selected_faculty == None:
         st.warning("Please select a faculty first")
         return
@@ -141,6 +145,7 @@ def level_crud():
 
 
 def section_crud():
+    global state
     if not state.selected_level:
         st.warning("Please select a level first")
         return
@@ -197,6 +202,7 @@ def section_crud():
 
 
 def professor_crud():
+    global state
     if not state.selected_faculty:
         st.warning("Please select a faculty first")
         return
@@ -241,6 +247,7 @@ def professor_crud():
 
 
 def room_crud():
+    global state
     if not state.selected_faculty:
         st.warning("Please select a faculty first")
         return
@@ -301,6 +308,7 @@ def room_crud():
 
 
 def module_crud():
+    global state
     if not state.selected_level:
         st.warning("Please select a level first")
         return
@@ -384,6 +392,7 @@ def module_crud():
 
 
 def pending_session_crud():
+    global state
     if not state.selected_level:
         st.warning("Please select a level first")
         return
@@ -511,6 +520,7 @@ def pending_session_crud():
 
 
 def datashow_crud():
+    global state
     if not state.selected_faculty:
         st.warning("Please select a faculty first")
         return
@@ -551,17 +561,18 @@ def main():
     st.title("University Course Scheduler")
     pg = st.navigation(
         [
-            st.Page(title="Faculties",page = faculty_crud),
-            st.Page(title= "Levels",page = level_crud),
-            st.Page(title= "Sections",page = section_crud),
-            st.Page(title= "Professors",page = professor_crud),
-            st.Page(title= "Rooms",page = room_crud),
-            st.Page(title= "Modules",page = module_crud),
-            st.Page(title= "Pending Sessions",page = pending_session_crud),
-            st.Page(title= "DataShows",page = datashow_crud),
+            st.Page(title="Faculties", page=faculty_crud),
+            st.Page(title="Levels", page=level_crud),
+            st.Page(title="Sections", page=section_crud),
+            st.Page(title="Professors", page=professor_crud),
+            st.Page(title="Rooms", page=room_crud),
+            st.Page(title="Modules", page=module_crud),
+            st.Page(title="Pending Sessions", page=pending_session_crud),
+            st.Page(title="DataShows", page=datashow_crud),
         ],
     )
     pg.run()
+
 
 if __name__ == "__main__":
     main()
